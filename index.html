@@ -3456,6 +3456,165 @@ function deepButtons(box,sb){deepS();const add=(zh,en,fn,id)=>{const b=btn(zh,en
   add('🏛 知村事','Governors',()=>govUI(),'cGovB');add('🎖 招贤','Recruit',()=>offUI(),'cOffB');add('🔬 格物'+(CG.tech.cur?'':' ·'),'Research'+(CG.tech.cur?'':' ·'),()=>techUI(),'cTechB');
   const left=Math.max(0,20-CG.turn);const top=$('cNext')&&$('cNext').parentNode;if(top&&CG.turn<=21){(top.children[1]||top).insertAdjacentHTML('beforeend',`<span id="cClock" title="${Ts(LORE.arc.clockD.zh,LORE.arc.clockD.en)}" style="margin-left:12px;font-size:13px;color:${left<=4?'#ff8a6a':'#f4d27a'}">${zx(LORE.arc.clock,{n:left})} · ${Ts(LORE.arc.ready.zh,LORE.arc.ready.en)} ${Math.round(CG.ready+CG.fav.lv*5+(CG.stats.sentN||0)*5)} · ⚖${Math.round(CG.susp)}</span>`);}
   if(CG.phase===0)setTimeout(evShow,50);}
+// ==== t233u visible logistics: every load of spoils, trade goods and tribute is a real shipment (CG.ship) that is in transit
+// for whole seasons, can be raided by Xia when poorly escorted, and is carried out of / into the storehouses by porters or soldiers.
+const LOGI={on:true,force:false,scenes:[],cur:null,inEnd:false};try{LOGI.on=localStorage.getItem('sw_logi')!=='0';}catch(e){}
+const LOGV={};   // per-village visual queues (not saved): crates still to carry out / in, carriers, carts
+const SHIPK={loot:{zh:'缴获辎重',en:'Spoils convoy',c:'#c03020',ic:'📦'},raid:{zh:'劫掠所得',en:'Raid spoils',c:'#c03020',ic:'🐎'},buy:{zh:'购入货物',en:'Purchased goods',c:'#e0a030',ic:'🐫'},sell:{zh:'售出货物',en:'Goods for sale',c:'#e0a030',ic:'🐫'},
+  deal:{zh:'通商约货',en:'Trade-deal goods',c:'#e0a030',ic:'🤝'},court:{zh:'纲运上供',en:'Tribute to the court',c:'#ffd030',ic:'📜'},tribe:{zh:'羌部贡物',en:'Qiang tribute',c:'#d04030',ic:'🐎'},xiapay:{zh:'输夏岁币',en:'Paid to Xia',c:'#3a3a3a',ic:'🏳'}};
+function shipsOn(){return (CG&&CG.ship)||[];}
+function shipPath(a,b){if(a===b)return[a];const prev={[a]:null},q=[a];while(q.length){const x=q.shift();if(x===b)break;const nb=[...(CADJ[x]||[])].sort((u,v)=>(CG.T[u]&&CG.T[u].own==='xia'?1:0)-(CG.T[v]&&CG.T[v].own==='xia'?1:0));for(const y of nb)if(!(y in prev)){prev[y]=x;q.push(y);}}
+  if(!(b in prev))return[a,b];const p=[];for(let x=b;x!=null;x=prev[x])p.unshift(x);return p;}
+function goodsClean(g){const o={};for(const k in g){const n=Math.round(g[k]||0);if(n>0)o[k]=n;}return o;}
+function goodsTxt(g){return stockTxt(g);}
+function goodsVal(g){let v=0;for(const k in g)v+=g[k]*(k==='silver'?1:k==='horse'?8:EQ.includes(k)?.6:.25);return v;}
+function stampNow(){return CG.turn+(LOGI.inEnd?1:0);}
+function shipNew(kind,from,to,goods,o={}){if(!CG||!CT[from]||!CT[to])return null;CG.ship=CG.ship||[];CG.sid=CG.sid||1;goods=goodsClean(goods);if(!Object.keys(goods).length&&!o.pay)return null;
+  const path=shipPath(from,to),L=Math.max(1,path.length-1),eta=Math.max(1,Math.ceil(L/3));
+  const s={id:CG.sid++,kind,from,to,goods,path,eta,left:eta,t0:stampNow(),esc:null,...o};CG.ship.push(s);
+  if(CG.T[from]&&CG.T[from].st&&(owned(from)||kind==='loot'))logvPush(from,'out',goods,kind==='loot'||kind==='raid'?'soldier':'porter',s.id);
+  return s;}
+function shipRisk(s){if(s.kind==='xiapay'||s.p==='xia'||s.state)return 0;const rest=s.path.slice(Math.max(0,Math.floor((s.eta-s.left)/s.eta*(s.path.length-1))),-1);let ex=0;
+  for(const id of rest){const T=CG.T[id];if(!T)continue;if(T.own==='xia'){ex+=1.5;continue;}if((CADJ[id]||[]).some(b=>CG.T[b]&&CG.T[b].own==='xia'&&CG.T[b].str>=150))ex+=1;}
+  if(!ex)return 0;const D=[.7,1,1.35][CG.diff||1];const esc=shipEscMen(s);let p=Math.min(.45,.08*ex*D)*clamp(goodsVal(s.goods)/350,.6,1.6);if(esc>=80)p*=.3;if(esc>=200)p*=.5;return Math.min(.6,p);}
+function shipEscMen(s){const u=s.esc&&CG.U[s.esc];return u?u.men:0;}
+function shipEscort(sid,uid){const s=shipsOn().find(x=>x.id===sid),u=CG.U[uid];if(!s||!u||s.esc||s.state||CG.phase>1)return false;
+  for(const a of CG.armies)if(a.units.includes(uid))a.units=a.units.filter(i=>i!==uid);u.loc={ship:sid};s.esc=uid;sfx('order');return true;}
+function shipEscCands(s){const here=s.eta===s.left?s.from:null;if(!here)return[];const out=[];if(owned(here))for(const u of unitsAt(here))out.push(u);for(const a of CG.armies)if(a.loc===here)for(const u of armyUnits(a))out.push(u);return out;}
+function escHome(s,at){const u=s.esc&&CG.U[s.esc];if(!u)return;const dst=at&&owned(at)?at:HOME;u.loc={v:dst};s.esc=null;}
+function shipDeliver(s,lines){const T=CG.T[s.to],g=s.goods;s.state='done';
+  if(s.kind==='sell'){CAMP.res.silver+=s.pay||0;}
+  else if(s.kind==='court'||s.kind==='xiapay'){}
+  else if(T&&T.st){for(const k in g){if(k==='silver')CAMP.res.silver+=g[k];else if(EQ.includes(k))T.eq[k]=(T.eq[k]||0)+g[k];else T.st[k]=(T.st[k]||0)+g[k];}
+    if(owned(s.to))logvPush(s.to,'in',g,'porter',s.id);if(s.kind==='loot'&&s.to===HOME)LOGI.scenes.push({kind:'unload',id:HOME,sid:s.id});}
+  escHome(s,s.to);
+  const K=SHIPK[s.kind]||SHIPK.buy;lines.push([K.ic,Ts(`${K.zh}抵达${CT[s.to].zh}：`,`${K.en} reached ${CT[s.to].en}: `)+(s.kind==='sell'?'🪙'+(s.pay||0):goodsTxt(g))]);}
+function shipRaid(s,lines){const D=[.7,1,1.35][CG.diff||1];const rs=Math.round((150+CG.turn*12)*D*(.7+Math.random()*.6));const esc=shipEscMen(s);const K=SHIPK[s.kind]||SHIPK.buy;
+  if(esc&&esc*1.6>=rs){const u=CG.U[s.esc];u.men=Math.max(10,Math.round(u.men*.88));u.exp+=1;lines.push(['🛡',Ts(`夏军截击${K.zh}，护送之都击退来敌`,`Xia raiders struck the ${K.en.toLowerCase()} — the escort drove them off`)]);s.repel=CG.turn;return false;}
+  s.state='lost';s.lostT=CG.turn;s.lostAt=s.path[Math.min(s.path.length-1,Math.max(1,Math.round((s.eta-s.left+.5)/s.eta*(s.path.length-1))))];
+  const xs=(CADJ[s.lostAt]||[]).concat([s.lostAt]).find(b=>CG.T[b]&&CG.T[b].own==='xia'&&CG.T[b].stock);if(xs){const st=CG.T[xs].stock;for(const k in s.goods)st[k]=(st[k]||0)+Math.round(s.goods[k]*.8);}
+  if(s.kind==='court'&&CG.trib){CG.trib.paid.silver=Math.max(0,CG.trib.paid.silver-(s.goods.silver||0));CG.trib.paid.grain=Math.max(0,CG.trib.paid.grain-(s.goods.grain||0));}
+  if(s.esc){const u=CG.U[s.esc];u.men=Math.max(10,Math.round(u.men*.6));escHome(s,s.from);}
+  lines.push(['🔥',Ts(`${K.zh}在${CT[s.lostAt].zh}遭夏军劫掠！损失`,`${K.en} plundered by Xia raiders near ${CT[s.lostAt].en}! Lost `)+goodsTxt(s.goods)]);return true;}
+function shipTurn(lines){CG.ship=shipsOn().filter(s=>!s.state||(s.state==='lost'&&s.lostT>=CG.turn-0));
+  for(const s of CG.ship){if(s.state)continue;if(Math.random()<shipRisk(s)&&shipRaid(s,lines))continue;s.left--;if(s.left<=0)shipDeliver(s,lines);}
+  CG.ship=CG.ship.filter(s=>s.state!=='done');}
+// ---- season hook: raids, then arrivals (before production uses the goods), then the season itself (which may dispatch new shipments)
+{const _et=endTurn;endTurn=function(){const lines=[];LOGI.inEnd=true;let rep;try{if(CG)shipTurn(lines);rep=_et();}finally{LOGI.inEnd=false;}if(rep&&lines.length)rep.lines.unshift(...lines);for(const l of lines)cgLog(l[0],l[1]);for(const s of shipsOn())s._a=0;return rep;};}
+// ---- route the existing economy through shipments
+addConvoy=function(){};
+lootStock=function(id,frac,toId){const s=CG.T[id];if(!s.stock)return{};const g={};for(const k in s.stock){const n=Math.round(s.stock[k]*frac);if(!n)continue;s.stock[k]-=n;g[k]=n;}
+  const dst=toId===id?(id===HOME?null:HOME):toId;if(!dst){for(const k in g){if(k==='silver')CAMP.res.silver+=g[k];else if(EQ.includes(k))s.eq[k]=(s.eq[k]||0)+g[k];else s.st[k]=(s.st[k]||0)+g[k];}return g;}
+  const sh=shipNew(toId===id?'loot':'raid',id,dst,g);if(sh&&toId===id)LOGI.scenes.push({kind:'loot',id,sid:sh.id});return g;};
+cpTrade=function(p,k,side,quiet){const dep=cpDepot(p);if(!dep||!canDeal(p,k,side)||CG.phase>1)return false;const n=lotN(k),pr=cpPrice(p,k,side);
+  if(side==='buy'){if(CAMP.res.silver<pr)return false;CAMP.res.silver-=pr;}else{if(have(dep,k,true)<n)return false;take(dep,k,n,true);}
+  CG.mk[p]=CG.mk[p]||{};CG.mk[p][k]=(CG.mk[p][k]||0)+(side==='buy'?1:-1);CG.stats.trade+=pr;const org=p==='xia'?xiaNear(dep):p==='song'?'qinzhou':'qingshui';
+  if(p==='xia'){if(Math.random()<seizeP()){cgLog('⚠',Ts(LCP.seized.zh,LCP.seized.en));if(!quiet)sfx('lose');return 'seized';}if(side==='sell'&&(k==='ore'||k==='nitre')){CG.fac.court=clamp(CG.fac.court-8,0,100);favAdd(-3,'court');cgLog('⚠',Ts(LCP.contraband.zh,LCP.contraband.en));}CG.fac.qiang=clamp(CG.fac.qiang+1,0,100);CG.fac.court=clamp(CG.fac.court-.5,0,100);}
+  if(side==='buy')shipNew('buy',org,dep,{[k]:n},{p});else shipNew('sell',dep,org,{[k]:n},{p,pay:pr});if(!quiet)sfx('ui');return true;};
+{const _ct=commerceTurn;commerceTurn=function(rep){// deals and tribes now dispatch shipments instead of crediting stores at once
+  const H=CG.T[HOME].st,deals=(CG.deals||[]).map(d=>({...d,dep:cpDepot(d.p),ok:cpDepot(d.p)&&have(cpDepot(d.p),d.give,true)>=d.n}));
+  const giveBack=[];for(const d of deals)if(d.ok){const dep=d.dep;giveBack.push(d);}
+  _ct(rep);
+  // undo the instant credit of deal goods and tribe tribute, then send them as shipments
+  for(const d of giveBack){const dep=d.dep,org=d.p==='xia'?xiaNear(dep):d.p==='song'?'qinzhou':'qingshui';if(d.get==='silver')CAMP.res.silver-=d.m;else CG.T[dep].st[d.get]=Math.max(0,(CG.T[dep].st[d.get]||0)-d.m);
+    shipNew('deal',dep,org,{[d.give]:d.n},{p:d.p});shipNew('deal',org,dep,{[d.get]:d.m},{p:d.p});}
+  tribes();for(const t of LCP.tribes){const s=CG.tr[t.id];if(!s.vas)continue;const k=s.att/100+.5;const g={horse:Math.round(10*k),hide:Math.round(30*k),grain:Math.round(40*k)};
+    for(const r in g)H[r]=Math.max(0,(H[r]||0)-g[r]);shipNew('tribe',t.terr,HOME,g);}};}
+{const _pq=payQuota;payQuota=function(frac){const T0=tribState();const ps=T0.paid.silver,pg=T0.paid.grain;const ok=_pq(frac);if(ok)shipNew('court',HOME,'qinzhou',{silver:T0.paid.silver-ps,grain:T0.paid.grain-pg});return ok;};}
+{const _xa=xdemAnswer;xdemAnswer=function(pay){const X=CG.xdem;const ok=_xa(pay);if(ok&&pay&&X)shipNew('xiapay',X.terr,X.from,{...X.want});return ok;};}
+// ---- in transit totals (for UI)
+function inTransit(id){const o={},i={};for(const s of shipsOn()){if(s.state)continue;if(s.to===id&&s.kind!=='sell')for(const k in s.goods)i[k]=(i[k]||0)+s.goods[k];if(s.from===id)for(const k in s.goods)o[k]=(o[k]||0)+s.goods[k];}return{inb:i,outb:o};}
+// ---------------------------------------------------------------- village view: crates carried out of / into the storehouses in real time
+function logvGet(id){return LOGV[id]=LOGV[id]||{out:[],in:[],car:[],carts:[]};}
+function crateN(k,tot,n){if(k==='horse')return Math.max(10,Math.ceil(n/3/10)*10);if(k==='silver')return Math.max(50,Math.ceil(n/2/50)*50);return Math.max(100,Math.ceil(tot/11/100)*100);}
+function logvPush(id,dir,goods,who,sid){const V=logvGet(id),tot=Object.entries(goods).reduce((a,[k,b])=>a+(k==='horse'||k==='silver'?0:b),0),st=stampNow();
+  for(const k in goods){let n=goods[k];const c=crateN(k,tot,n);while(n>0){const m=Math.min(c,n);V[dir].push({k,n:m,who,sid,st});n-=m;}}
+  // interleave resources so the line of carriers looks mixed
+  V[dir].sort((a,b)=>(a.sid-b.sid)||((a.k.length*7+a.n)%5)-((b.k.length*7+b.n)%5));}
+function logvPrune(V){const t=CG.turn;V.out=V.out.filter(c=>c.st>=t);V.in=V.in.filter(c=>c.st>=t);}
+function logvDisp(id){const s=CG.T[id],V=LOGV[id];if(!V)return null;logvPrune(V);const st={...s.st},eq={...s.eq};const ad=(c,f)=>{if(c.k==='silver')return;const box=EQ.includes(c.k)?eq:st;box[c.k]=Math.max(0,(box[c.k]||0)+f*c.n);};
+  for(const c of V.out)ad(c,1);for(const c of V.in)ad(c,-1);for(const r of V.car){if(r.c&&r.dir==='in')ad(r.c,-1);if(r.c&&r.dir==='out'&&r.c.pend)ad(r.c,1);}return{st,eq};}
+// where a resource lives in the village
+function logvSpot(k){if(k==='horse')return{x:VZ.pad[0]+60,y:VZ.pad[1]+40};if(EQ.includes(k))return{x:(VZ.arm[0]+VZ.arm[2])/2,y:VZ.arm[1]+14};
+  const i=Math.max(0,STK_BINS.findIndex(b=>b.includes(k)));const gap=(VZ.store[2]-VZ.store[0])/4;return{x:VZ.store[0]+gap*(i+.5)+((k.length*13)%40-20),y:VZ.store[3]+8};}
+const CARRY_SOL=['song_spear','song_militia','song_shield','song_archer'],CARRY_POR=['villager','vil_b','porter','villager'];
+function logvStep(id,dt){const V=LOGV[id];if(!V)return;logvPrune(V);const lane=503;
+  // carts: one line of up to 4 oxcarts parked on the lane in front of the storehouses while work goes on
+  const work=V.out.length+V.in.length+V.car.length;const wantC=work?clamp(Math.ceil((V.out.length+V.in.length+V.car.length)/6),2,4):0;
+  while(V.carts.filter(c=>!c.go).length<wantC){const i=V.carts.length;const inb=V.in.length>0&&!V.out.length;V.carts.push({x:inb?VZ.store[0]-160-i*90:VZ.store[0]+140+i*150,px:VZ.store[0]+140+(i%4)*150,y:lane,load:inb?6:0,arr:!inb,go:0,dir:1});}
+  for(const c of V.carts){if(c.go){c.x+=c.dir*60*dt;continue;}if(!c.arr){c.x=Math.min(c.px,c.x+120*dt);if(c.x>=c.px-1)c.arr=1;}}
+  if(!work)for(const c of V.carts)if(!c.go&&c.arr){c.go=1;c.dir=c.x<VWW/2?-1:1;}
+  V.carts=V.carts.filter(c=>c.x>-260&&c.x<VWW+260);
+  const parked=V.carts.filter(c=>c.arr&&!c.go);if(!parked.length)return;
+  const nCar=V.out.some(c=>c.who==='soldier')?12:8;
+  while(V.car.length<nCar&&(V.out.length||V.in.length)){const i=V.car.length;const sol=V.out.some(c=>c.who==='soldier');const cart=parked[i%parked.length];
+    const sp=sol?CARRY_SOL[i%CARRY_SOL.length]:CARRY_POR[i%CARRY_POR.length];V.car.push({sp,x:cart.x+rnd(-20,20),y:lane+rnd(-6,6),c:null,dir:null,ph:rnd(1),cart,wait:i*.35});}
+  for(const r of V.car){if(r.wait>0){r.wait-=dt;continue;}
+    if(!r.c){// pick up a job: out-crates are fetched from the store, in-crates from the cart
+      const near=x=>parked.reduce((b,c)=>Math.abs(c.x-x)<Math.abs(b.x-x)?c:b,parked[0]);if(V.out.length){r.job=V.out[0];r.dir='out';r.tgt=logvSpot(r.job.k);r.cart=near(r.tgt.x);r.phase='fetch';V.out.shift();r.c=null;r.hold=null;r.c={k:r.job.k,n:r.job.n,pend:1};}
+      else if(V.in.length){r.job=V.in.shift();r.dir='in';r.c=r.job;r.cart=near(logvSpot(r.job.k).x);r.tgt={x:r.cart.x,y:lane};r.phase='fetch';}
+      else{r.tgt={x:r.cart.x+rnd(-30,30),y:lane+14};r.idle=1;r.phase=null;}}
+    const free=r.idle||r.phase==='fetch'||!r.c;const tx=free?r.tgt.x:(r.dir==='out'?r.cart.x:logvSpot(r.c.k).x),ty=free?r.tgt.y:(r.dir==='out'?lane:logvSpot(r.c.k).y);
+    const d=Math.hypot(tx-r.x,ty-r.y);const spd=r.c&&r.phase==='carry'?72:92;
+    if(d>3){const a=Math.atan2(ty-r.y,tx-r.x);r.x+=Math.cos(a)*Math.min(d,spd*dt);r.y+=Math.sin(a)*Math.min(d,spd*dt);r.f=a;r.ph+=dt*spd/30;r.mv=1;}
+    else{r.mv=0;if(r.idle){r.idle=0;r.c=null;continue;}
+      if(r.phase==='fetch'){r.phase='carry';r.hold=r.c;if(r.dir==='out')r.c.pend=0;}
+      else{if(r.dir==='out'){r.cart.load=(r.cart.load||0)+1;}else{r.cart.load=Math.max(0,(r.cart.load||0)-1);}r.c=null;r.hold=null;r.phase=null;r.wait=.25;}}}
+  if(!V.out.length&&!V.in.length&&V.car.every(r=>!r.c)){V.car=[];}}
+function chest(g,x,y,s){g.fillStyle='#5a2a14';g.fillRect(x-7*s,y-6*s,14*s,9*s);g.fillStyle='#7a3a1c';g.fillRect(x-7*s,y-8*s,14*s,3*s);g.fillStyle='#d8b050';g.fillRect(x-1.5*s,y-6*s,3*s,4*s);g.strokeStyle='#2a1208';g.lineWidth=1;g.strokeRect(x-7*s,y-8*s,14*s,11*s);}
+function carryProp(g,k,x,y,sc=1){if(k==='silver')return chest(g,x,y,sc*.9);if(EQ.includes(k))return sprProp('rack',x,y+6,RACK_V[k]??0,.32*sc);const v=CARGO_V[k];if(v!==undefined)return sprProp('stk',x,y+4,v,.3*sc);}
+function logvDraw(add,g,t,dt){const id=CVIL.id,V=LOGV[id];if(!V)return;logvStep(id,dt);
+  for(const c of V.carts)add(c.y+20,()=>{sprUnit('oxcart',c.x,c.y+20,14,c.go?(c.dir>0?0:Math.PI):0,(c.go||!c.arr)?Math.floor(t*6)%4:0);const n=Math.min(6,c.load||0);
+    for(let j=0;j<n;j++)sprProp('stk',c.x-14-(j%3)*8,c.y+8-Math.floor(j/3)*6,[0,3,5,6,9,0][j%6],.3);});
+  for(const r of V.car){if(r.wait>0&&!r.c)continue;const fr=r.mv?Math.floor(r.ph*4)%4:0;add(r.y,()=>{
+    if(r.hold&&r.hold.k==='horse'){sprProp('animal',r.x+12*Math.cos((r.f||0)+1.4),r.y+2,4,.55);}
+    sprUnit(r.sp,r.x,r.y,9,r.f||0,fr);if(r.hold&&r.hold.k!=='horse')carryProp(g,r.hold.k,r.x,r.y-22);});}
+  const n=V.out.length+V.in.length+V.car.filter(r=>r.c).length;if(n){const lab=V.out.length||V.car.some(r=>r.dir==='out'&&r.c)?Tz('装车外运','loading out'):Tz('卸货入库','unloading in');add(9999,()=>txt(''+lab+' · '+n+' '+Tz('件','loads'),(VZ.store[0]+VZ.store[2])/2,VZ.store[3]+122,15,'#2a1406','center','bold '));}}
+{const _cc=cvilCaravans7;cvilCaravans7=function(add,g,t,dt){_cc(add,g,t,dt);logvDraw(add,g,t,dt);};}
+// draw the village with stocks as they visibly are (still on the floor / not yet carried in)
+{const _cf=cvilFrame;cvilFrame=function(dt){const id=CVIL.id,s=CG&&CG.T[id];const D=s&&s.st?logvDisp(id):null;if(!D)return _cf(dt);const st0=s.st,eq0=s.eq;s.st=D.st;s.eq=D.eq;try{return _cf(dt);}finally{s.st=st0;s.eq=eq0;sceneTick(dt);}};}
+// ---------------------------------------------------------------- campaign map: convoys move along their road, season by season
+function shipProg(s){const p0=(s.eta-s.left)/s.eta,p1=Math.min(s.left<=1?.93:1,(s.eta-s.left+1)/s.eta);s._a=Math.min(1,(s._a||0)+1/60/14);const k=s._a*s._a*(3-2*s._a);return lerp(p0,p1,k);}
+function pathAt(path,k){const n=path.length-1;if(n<1){const p=tPos(path[0]);return{x:p.x,y:p.y,f:0};}const u=clamp(k,0,1)*n,i=Math.min(n-1,Math.floor(u)),f=u-i;const a=tPos(path[i]),b=tPos(path[i+1]);return{x:lerp(a.x,b.x,f),y:lerp(a.y,b.y,f),f:Math.atan2(b.y-a.y,b.x-a.x)};}
+function shipPill(g,t,x,y,sz,col){g.font='bold '+sz+'px serif';const w=g.measureText(t).width+10;g.fillStyle='rgba(30,16,8,.78)';g.fillRect(x-w/2,y-sz*.95,w,sz*1.35);g.strokeStyle='rgba(184,134,46,.8)';g.lineWidth=1;g.strokeRect(x-w/2,y-sz*.95,w,sz*1.35);txt(t,x,y,sz,col,'center','bold ');}
+function drawShips(g){const sc=iconScale();for(const s of shipsOn()){const K=SHIPK[s.kind]||SHIPK.buy;
+    if(s.state==='lost'){const p=tPos(s.lostAt||s.from),q=c2s(p.x,p.y);g.globalAlpha=.85;sprUnit('oxcart',q.x,q.y,7*sc,.6,0);g.fillStyle='rgba(255,120,30,'+(.5+.3*Math.sin(CTIME*9))+')';g.beginPath();g.ellipse(q.x,q.y-10*sc,7*sc,11*sc,0,0,TAU);g.fill();g.globalAlpha=1;
+      shipPill(g,Tz('🔥 辎重被劫','🔥 convoy plundered'),q.x,q.y-30*sc,Math.max(11,11*sc),'#ff9050');continue;}
+    const P=pathAt(s.path,shipProg(s)),q=c2s(P.x,P.y);if(q.x<-80||q.x>VW+80||q.y<-80||q.y>VH+80)continue;const f=P.f,cx=Math.cos(f),cy=Math.sin(f);
+    const tot=Object.entries(s.goods).reduce((a,[k,n])=>a+(k==='horse'?n*3:k==='silver'?n*2:n),0);const nc=clamp(Math.ceil(tot/400),1,4);const moving=(s._a||0)<1;const fr=moving?Math.floor(CTIME*6)%4:0;
+    const items=[];for(let j=0;j<nc;j++)items.push(['oxcart',-j*18]);if(s.goods.horse)items.push(['horse',-nc*18]);if(s.esc){items.unshift(['song_spear',16]);items.push(['song_spear',-(nc+1)*18]);}
+    if(s.kind==='loot'||s.kind==='raid')items.unshift(['song_militia',26]);else items.unshift(['porter',22]);
+    for(const[sp,o]of items){const x=q.x+cx*o*sc,y=q.y+cy*o*sc;if(sp==='horse')sprProp('animal',x,y+4*sc,4,.3*sc);else sprUnit(sp,x,y,sp==='oxcart'?8.5*sc:6.2*sc,f,fr);}
+    g.strokeStyle='#3a2410';g.lineWidth=1.5;g.beginPath();g.moveTo(q.x,q.y-4*sc);g.lineTo(q.x,q.y-26*sc);g.stroke();g.fillStyle=K.c;g.fillRect(q.x,q.y-26*sc,12*sc,8*sc);
+    const r=shipRisk(s);const lab=K.ic+' '+goodsTxt(s.kind==='sell'?s.goods:s.goods).slice(0,26)+' · '+Tz(`${s.left}季`,`${s.left} ssn`);shipPill(g,lab,q.x,q.y-33*sc,Math.max(10,10*sc),r>.15&&!s.esc?'#ff9a70':'#fff0c8');
+    if(r>.15&&!s.esc)txt('⚠',q.x+16*sc,q.y-12*sc,Math.max(11,13*sc),'#ff6030','center','bold ');}}
+{const _dc=drawCaravans;drawCaravans=function(g){_dc(g);if(CG)drawShips(g);};}
+// ---------------------------------------------------------------- haulage scenes: looting the captured stores, unloading spoils at home (skippable)
+function sceneOk(){if(!LOGI.on||LOGI.cur||!LOGI.scenes.length||MODE!=='camp')return false;if(navigator.webdriver&&!LOGI.force)return false;if(document.querySelector('#campUI .panel.modal'))return false;return true;}
+function sceneStart(){const S=LOGI.scenes.shift();if(!S||!CG.T[S.id])return;LOGI.scenes=LOGI.scenes.filter(x=>x.sid!==S.sid);if(!LOGV[S.id]||!(LOGV[S.id].out.length||LOGV[S.id].in.length)){return;}LOGI.cur={...S,t:0};const ob=$('logiBar');if(ob)ob.remove();showCVil(S.id);CVIL.z=1.55;CVIL.fx=(VZ.store[0]+VZ.store[2])/2+60;CVIL.fy=VZ.store[3]+40;
+  const o=document.createElement('div');o.id='logiBar';o.style.cssText='position:fixed;left:50%;top:86px;transform:translateX(-50%);z-index:40;background:rgba(30,16,8,.9);border:2px solid #b8862e;border-radius:6px;padding:8px 16px;color:#ffe7a0;font:bold 16px serif;max-width:640px;text-align:center;pointer-events:auto';
+  const sh=shipsOn().find(x=>x.id===S.sid);const g=sh?goodsTxt(sh.goods):'';
+  o.innerHTML=(S.kind==='loot'?Ts(`🚩 攻克${CT[S.id].zh}：将士搬空仓廪，装车押回清河`,`<br><span style="font-size:13px">${CT[S.id].en} taken: soldiers empty the stores and load the carts for Qinghe</span>`):Ts(`📦 缴获辎重运抵清河，民夫卸车入库`,`<br><span style="font-size:13px">The spoils convoy reaches Qinghe — porters unload into the storehouses</span>`))+`<br><span style="font-size:13px;color:#e8d8b0">${g}</span>`;
+  const b=document.createElement('div');b.className='btn';b.style.cssText='display:inline-block;margin-top:6px;padding:3px 14px';b.textContent=Ts('跳过 ⏭','Skip ⏭');b.onclick=()=>sceneEnd(true);o.appendChild(b);document.body.appendChild(o);}
+function sceneEnd(skip){const S=LOGI.cur;LOGI.cur=null;const o=$('logiBar');if(o)o.remove();if(!S)return;const V=LOGV[S.id];if(V&&skip){V.out=[];V.in=[];V.car=[];V.carts=[];}
+  if(MODE==='cvil'){showCamp();const sh=shipsOn().find(x=>x.id===S.sid);if(sh&&S.kind==='loot'){const p=tPos(sh.from);CC.tx=p.x-VW/2/CC.z;CC.ty=p.y-VH/2/CC.z;sh._a=0;}}}
+function sceneTick(dt){const S=LOGI.cur;if(!S)return;if(MODE!=='cvil'||CVIL.id!==S.id){sceneEnd(false);return;}if(!S.zoomed){S.zoomed=1;CVIL.z=2.3;CVIL.fx=VZ.store[0]+330;CVIL.fy=VZ.store[3]+30;}S.t+=dt;const V=LOGV[S.id];const busy=V&&(V.out.length||V.in.length||V.car.length||V.carts.some(c=>c.x>-200&&c.x<VWW+200));if(!busy&&S.t>2||S.t>60)sceneEnd(false);}
+{const _cfr=campFrame;campFrame=function(dt){_cfr(dt);if(sceneOk())sceneStart();};}
+function logiToggle(v){LOGI.on=v;try{localStorage.setItem('sw_logi',v?'1':'0');}catch(e){}}
+// ---------------------------------------------------------------- in-transit panel + map button + settlement lines
+function shipLine(s){const K=SHIPK[s.kind]||SHIPK.buy;const r=shipRisk(s);const esc=s.esc&&CG.U[s.esc];
+  return `${K.ic} <b style="color:${K.c}">${Ts(K.zh,K.en)}</b> · ${tName(s.from)} → ${tName(s.to)} · ${s.kind==='sell'?goodsTxt(s.goods)+' → 🪙'+(s.pay||0):goodsTxt(s.goods)} · ${Ts('还需','ETA')} ${s.left} ${Ts('季','ssn')} · ${esc?'🛡 '+Ts(UT[esc.type].zh,UT[esc.type].en)+' '+esc.men:Ts('无护送','no escort')}${r>0?` · <span style="color:${r>.15?'#ff8a60':'#e8c890'}">⚠ ${Ts('遭劫险','raid risk')} ${Math.round(r*100)}%</span>`:''}`;}
+function transitUI(){twCss();const old=$('cTransit');if(old)old.remove();const d=document.createElement('div');d.className='panel modal tw';d.id='cTransit';d.style.maxWidth='980px';d.style.width='92%';d.style.maxHeight='86vh';d.style.overflow='auto';
+  const L=shipsOn().filter(s=>!s.state);d.innerHTML=`<h2 style="text-align:center">🐫 ${T('在途辎重','Goods in transit')} · ${L.length}</h2><div class="tip">${Ts('货物离仓即在途，运抵方入库可用；无护送的车队途经夏境可能被劫。新出发的车队可从出发地驻军或军中调一都护送。','Goods leave the stores when loaded and can only be used once delivered. Unescorted convoys passing the Xia border may be plundered; a newly departed convoy can take a 都 from the garrison or army at its starting point as escort.')}</div>`;
+  for(const s of L){const r=document.createElement('div');r.style.cssText='margin:6px 0;padding:6px;border:1px solid rgba(184,134,46,.4);border-radius:4px';r.innerHTML=shipLine(s);
+    if(!s.esc&&s.kind!=='xiapay'){const C=shipEscCands(s);if(C.length&&CG.phase<=1){const u=C.sort((a,b)=>a.men-b.men)[0];const b=btn(`派${UT[u.type].zh}一都护送（${u.men}人）`,`Escort with ${UT[u.type].en} (${u.men} men)`,()=>{shipEscort(s.id,u.id);transitUI();});b.style.cssText='display:inline-block;margin-left:10px;padding:2px 8px';r.appendChild(b);}}
+    d.appendChild(r);}
+  const lost=shipsOn().filter(s=>s.state==='lost');for(const s of lost){const r=document.createElement('div');r.style.color='#ff8a60';r.innerHTML='🔥 '+Ts('被劫：','Plundered: ')+tName(s.from)+' → '+tName(s.to)+' · '+goodsTxt(s.goods);d.appendChild(r);}
+  const opt=document.createElement('label');opt.style.cssText='display:block;margin:10px 0';opt.innerHTML=`<input type="checkbox" ${LOGI.on?'checked':''}> ${Ts('播放搬运场面（攻克缴获、辎重入库）','Play haulage scenes (looting captured stores, unloading spoils)')}`;opt.querySelector('input').onchange=e=>logiToggle(e.target.checked);d.appendChild(opt);
+  d.appendChild(Object.assign(btn('关闭','Close',()=>d.remove()),{style:'display:block;margin:10px auto'}));campEl().appendChild(d);return d;}
+{const _cu=campUI;campUI=function(){const r=_cu.apply(this,arguments);try{const cp=$('cCPB');if(cp&&!$('cTRB')){const n=shipsOn().filter(s=>!s.state).length;const b=btn(`🐫 在途辎重 (${n})`,`🐫 In transit (${n})`,()=>transitUI());b.id='cTRB';b.style.cssText='display:block;margin:4px';cp.parentNode.insertBefore(b,cp.nextSibling);}}catch(e){}return r;};}
+{const _su=settleUI;settleUI=function(id,tab){const d=_su(id,tab);try{const P=$('cSet');const L=shipsOn().filter(s=>!s.state&&(s.from===id||s.to===id));if(P&&L.length){const box=document.createElement('div');box.style.cssText='margin:8px 0;padding:6px;border:1px dashed #b8862e';
+  box.innerHTML=`<div style="color:#ffd070">🐫 ${Ts('在途','In transit')}</div>`+L.map(s=>`<div style="font-size:13px">${s.to===id?'⬅ ':'➡ '}${shipLine(s)}</div>`).join('');const cl=[...P.querySelectorAll('.btn')].pop();P.insertBefore(box,cl||null);}}catch(e){}return d;};}
 // ===== debug / test hooks (used by playwright sims) =====
 let BOT=false,botS={};
 function w2s(x,y){return{x:(x-CAM.x)*CAM.z,y:(y-CAM.y)*CAM.z};}
