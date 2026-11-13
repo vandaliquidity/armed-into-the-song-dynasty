@@ -1,5 +1,6 @@
 <!DOCTYPE html><html lang="zh"><head><meta charset="utf-8"><title>Armed into the Song Dynasty · 持械入宋</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2210%22 fill=%22%23a3241c%22/%3E%3Ctext x=%2232%22 y=%2247%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22%23f3e3c0%22%3E%E5%AE%8B%3C/text%3E%3C/svg%3E">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="campaign-ui.css">
 <style>
 html,body{margin:0;height:100%;background:#120e0a;overflow:hidden;font-family:"Noto Serif SC","Songti SC","SimSun","PingFang SC","Microsoft YaHei",serif;color:#f0e2c4;user-select:none}
 canvas#cv{display:block;position:absolute;left:0;top:0;cursor:crosshair}
@@ -534,7 +535,7 @@ LORE.gfx={title:{zh:'画质',en:'Graphics'},auto:{zh:'自动',en:'Auto'},q:{high
   d:{zh:'高：原尺寸画卷、三人一伍、全部光影；中：标准画卷、两人一伍；低：小画卷、无投影雾霭（适合手机）',en:'High: full-size art, files of three, all lighting. Medium: standard art, files of two. Low: small art, no shadows or haze (phones).'}};
 // ===== 持械入宋 fan game — core =====
 'use strict';
-const VERSION='v0.6';
+const VERSION='v0.9 · Frontier';
 const TAU=Math.PI*2;
 const clamp=(v,a,b)=>v<a?a:v>b?b:v, lerp=(a,b,t)=>a+(b-a)*t, rnd=(a=1,b)=>b===undefined?Math.random()*a:a+Math.random()*(b-a), rint=(a,b)=>Math.floor(rnd(a,b+1));
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y), angTo=(a,b)=>Math.atan2(b.y-a.y,b.x-a.x);
@@ -1639,7 +1640,7 @@ function beginSkirm(q){const spec=battleSpec(q);SK_SNAP={roster:{...CAMP.roster}
   B=newBattle(-1);B.skirm=spec;B.eqMul=spec.eqMul;B.N=spec.N;B.members=spec.members;uidN=1;SETUP.skirm();B.ctrlBody=()=>B.truck&&B.truck.driver?B.truck:B.ctrl;
   for(const g of TROOP_ORDER)B.orders[g]={type:'follow'};B.form={};if(B.initOrders)for(const g in B.initOrders)B.orders[g]={...B.initOrders[g]};const L=B.camStart||B.ctrl;if(L.z)CAM.z=L.z;CAM.x=L.x-VW/2/CAM.z;CAM.y=L.y-VH/2/CAM.z;
   computeNarrow();renderTerrain();B.started=performance.now();B.init=countTroopsArmy();B.mkills={};B.mountedKills=0;abilInit();HELP_ON=false;setSel(B.squad.filter(selectable));
-  say(Tz(spec.hud.zh,spec.hud.en),'',2.5);sfx('drum');}
+  say(spec.hud.zh,spec.hud.en,2.5);sfx('drum');}
 function countTroopsArmy(){const c={};for(const t of TROOP_ORDER)c[t]=B.units.filter(u=>!u.dead&&u.kind==='troop'&&u.team===0&&u.type===t&&!u.garr&&!u.cart).length;return c;}
 function endSkirm(){const win=B.over.win,q=SK_SNAP.q,spec=B.skirm;const alive=countTroopsArmy(),lost={};for(const t of TROOP_ORDER)lost[t]=Math.max(0,(B.init[t]||0)-(alive[t]||0));
   CAMP.mod.ammo=Math.max(0,B.mod.ammo);CAMP.mod.gren=B.mod.gren;CAMP.mod.fuel=Math.max(0,B.mod.fuel);CAMP.kills+=B.kills;CAMP.roster=SK_SNAP.roster;
@@ -1761,13 +1762,13 @@ function renderBattle0(){const m=mouseWorld();
   if(!window.__noHud)drawHUD();}
 // ---------------------------------------------------------------- HUD
 function panel(x,y,w,h,a=.78){ctx.fillStyle=`rgba(28,16,8,${a})`;ctx.fillRect(x,y,w,h);ctx.strokeStyle='rgba(184,134,46,.8)';ctx.lineWidth=1.5;ctx.strokeRect(x+.5,y+.5,w-1,h-1);}
-function txt(s,x,y,sz=13,c='#f0e2c4',al='left',b=''){ctx.font=`${b}${sz}px "Noto Serif SC","Songti SC","Microsoft YaHei",serif`;ctx.textAlign=al;ctx.fillStyle=c;ctx.fillText(s,x,y);}
+function txt(s,x,y,sz=13,c='#f0e2c4',al='left',b=''){ctx.font=`${b}${sz}px "Segoe UI","Microsoft YaHei",sans-serif`;ctx.textAlign=al;ctx.fillStyle=c;ctx.fillText(s,x,y);}
 function dual(zh,en,x,y,sz=13,c='#f0e2c4',al='left'){if(LANG==='en'){txt(en,x,y,sz,c,al);return;}txt(zh,x,y,sz,c,al,'bold ');if(LANG==='both')txt(en,x,y+sz*.95,sz*.72,'rgba(240,226,196,.7)',al);}
 const ICON={};function unitIcon(spr,sz=34){const k=spr+sz;if(ICON[k])return ICON[k];const c=mkCanvas(sz,sz);propIcon(spr,c);if(SPR[spr])ICON[k]=c;return c;}
 function drawHUD(){const L=B.ctrlBody();
   // squad
   panel(8,8,236,24+B.squad.length*34);dual(LORE.team.zh,LORE.team.en,16,24,13,'#f4d27a');
-  B.squad.forEach((u,i)=>{const y=34+i*34;if(B.selU.has(u)){ctx.fillStyle='rgba(120,255,160,.2)';ctx.fillRect(10,y-2,232,32);ctx.strokeStyle='rgba(110,255,140,.7)';ctx.lineWidth=1;ctx.strokeRect(10.5,y-1.5,231,31);}const ot=u.ord&&u.ord.type;if(ot==='attack'){txt(u.ord.gun?'🔫':'⚔',236,y+28,10,'#fff','right');}ctx.drawImage(unitIcon(u.spr,30),14,y);txt(Tz(u.sd.zh,u.sd.en),48,y+12,13,u.dead?'#888':'#fff','left','bold ');txt(Tz(u.sd.rzh,u.sd.ren),120,y+12,11,'#cdb');
+  B.squad.forEach((u,i)=>{const y=34+i*34;if(B.selU.has(u)){ctx.fillStyle='rgba(120,255,160,.2)';ctx.fillRect(10,y-2,232,32);ctx.strokeStyle='rgba(110,255,140,.7)';ctx.lineWidth=1;ctx.strokeRect(10.5,y-1.5,231,31);}const ot=u.ord&&u.ord.type;if(ot==='attack'){txt(u.ord.gun?'🔫':'⚔',236,y+28,10,'#fff','right');}ctx.drawImage(unitIcon(u.spr,30),14,y);txt(Tz(u.sd.zh,u.sd.en),48,y+12,13,u.dead?'#888':'#fff','left','bold ');
     ctx.fillStyle='#3a1a10';ctx.fillRect(48,y+17,120,5);ctx.fillStyle=u.dead?'#555':'#5ae07a';ctx.fillRect(48,y+17,120*clamp(u.hp/u.maxhp,0,1),5);
     const cd=u.skE>0?u.skE/u.sd.skE.cd:0;ctx.fillStyle='#222';ctx.fillRect(176,y+15,60,8);ctx.fillStyle=cd>0?'#6a5a3a':'#e0b040';ctx.fillRect(176,y+15,60*(1-cd),8);txt(Tz(u.sd.skE.zh,u.sd.skE.en),206,y+11,10,'#ffe8b0','center');});
   // modern supplies
@@ -2572,8 +2573,8 @@ addEventListener('mousemove',e=>{if(MODE!=='camp')return;MOUSE.x=e.clientX;MOUSE
 addEventListener('mouseup',e=>{if(MODE==='cvil'&&CDRAG){CDRAG=null;return;}if(MODE!=='camp'||!CDRAG)return;const d=CDRAG;CDRAG=null;if(d.m)return;campClick(e.clientX,e.clientY,e.button);});
 cv.addEventListener('wheel',e=>{if(MODE!=='camp')return;e.preventDefault();const w=s2c(e.clientX,e.clientY);const z=clamp(CC.z*(e.deltaY>0?.88:1.14),campZmin(),3);CC.z=z;CC.tz=null;CC.tx=null;CC.x=w.x-e.clientX/z;CC.y=w.y-e.clientY/z;},{passive:false});
 function campClick(sx,sy,b){if(CG.queue.length&&CG.phase===3)return;const h=campPick(sx,sy);
-  if(b===2){if(CSEL&&CSEL.a&&h&&h.t&&CG.phase===2){const a=CG.armies.find(x=>x.id===CSEL.a);orderMarch(a,h.t);}campUI();return;}
-  if(CSEL&&CSEL.a&&h&&h.t&&CG.phase===2){const a=CG.armies.find(x=>x.id===CSEL.a);if(a&&(CADJ[a.loc].includes(h.t)||h.t===a.loc)){orderMarch(a,h.t);campUI();return;}}
+  if(b===2){if(CSEL&&CSEL.a&&h&&h.t&&CG.phase<=2){const a=CG.armies.find(x=>x.id===CSEL.a);orderMarch(a,h.t);}campUI();return;}
+  if(CSEL&&CSEL.a&&h&&h.t&&CG.phase<=2){const a=CG.armies.find(x=>x.id===CSEL.a);if(a&&(CADJ[a.loc].includes(h.t)||h.t===a.loc)){orderMarch(a,h.t);campUI();return;}}
   CSEL=h;if(h)sfx('click');if(h&&h.t&&CG.tut===1&&h.t===HOME){}campUI();}
 function campKey(k,e){if(MODE==='cvil'){if(k==='escape')showCamp();return;}if(k==='escape'){CSEL=null;campUI();}else if(k==='enter'||k===' '){const b=$('cNext');if(b&&!b.classList.contains('dis'))b.click();}
   else if(k==='o'){campOfficers();}else if(k==='w'||k==='arrowup')CC.y-=80/CC.z;else if(k==='s'||k==='arrowdown')CC.y+=80/CC.z;else if(k==='a'||k==='arrowleft')CC.x-=80/CC.z;else if(k==='d'||k==='arrowright')CC.x+=80/CC.z;}
@@ -2652,12 +2653,12 @@ function drawTerr(g,id){const t=CT[id],s=CG.T[id],p=tPos(id),q=c2s(p.x,p.y);if(q
   if(own==='qh'&&CC.z>.9){const st='★'.repeat(tier);g.font=`${10*sc}px sans-serif`;g.fillStyle='#b06010';g.fillText(st,q.x,ny+12*sc);}
   if(own==='xia'&&seen&&CC.z>.9){g.font=`${11*sc}px sans-serif`;g.fillStyle='#401010';g.fillText('⚔'+s.str,q.x,ny+12*sc);}
   if(sel){g.strokeStyle='rgba(255,220,120,.9)';g.lineWidth=2.5;g.beginPath();g.arc(q.x,q.y,34*sc+Math.sin(CTIME*4)*2,0,TAU);g.stroke();}
-  if(CSEL&&CSEL.a&&CG.phase===2){const a=CG.armies.find(x=>x.id===CSEL.a);if(a&&CADJ[a.loc].includes(id)){g.strokeStyle=own==='xia'?'rgba(230,60,40,.85)':'rgba(120,230,120,.8)';g.lineWidth=2;g.setLineDash([6,5]);g.beginPath();g.arc(q.x,q.y,30*sc,0,TAU);g.stroke();g.setLineDash([]);}}}
+  if(CSEL&&CSEL.a&&CG.phase<=2){const a=CG.armies.find(x=>x.id===CSEL.a);if(a&&CADJ[a.loc].includes(id)){g.strokeStyle=own==='xia'?'rgba(230,60,40,.85)':'rgba(120,230,120,.8)';g.lineWidth=2;g.setLineDash([6,5]);g.beginPath();g.arc(q.x,q.y,30*sc,0,TAU);g.stroke();g.setLineDash([]);}}}
 function arrow(g,s,e,col,w){const a=Math.atan2(e.y-s.y,e.x-s.x),d=Math.hypot(e.x-s.x,e.y-s.y);const ex=s.x+Math.cos(a)*(d-26),ey=s.y+Math.sin(a)*(d-26);g.strokeStyle=col;g.lineWidth=w;g.lineCap='round';g.beginPath();g.moveTo(s.x,s.y);g.quadraticCurveTo((s.x+ex)/2-Math.sin(a)*20,(s.y+ey)/2+Math.cos(a)*20,ex,ey);g.stroke();
   g.fillStyle=col;g.beginPath();g.moveTo(ex+Math.cos(a)*12,ey+Math.sin(a)*12);g.lineTo(ex+Math.cos(a+2.4)*12,ey+Math.sin(a+2.4)*12);g.lineTo(ex+Math.cos(a-2.4)*12,ey+Math.sin(a-2.4)*12);g.fill();}
 function drawMarch(g){for(const a of CG.armies){if(!a.dest)continue;const s=c2s(tPos(a.loc).x,tPos(a.loc).y),e=c2s(tPos(a.dest).x,tPos(a.dest).y);const col=CG.T[a.dest].own==='xia'?'rgba(200,30,20,.85)':'rgba(40,120,40,.85)';arrow(g,s,e,col,5*iconScale());}}
 function drawRaids(g){for(const x of CG.xa){if(!(SEEN.has(x.from)||SEEN.has(x.to)||x.story))continue;const s=c2s(tPos(x.from).x,tPos(x.from).y),e=c2s(tPos(x.to).x,tPos(x.to).y);const sc=iconScale();
-  g.globalAlpha=.55+.35*Math.sin(CTIME*5);arrow(g,s,e,'rgba(20,10,10,.9)',7*sc);g.globalAlpha=1;const m={x:lerp(s.x,e.x,.45),y:lerp(s.y,e.y,.45)};sprUnit(x.story?'xia_boss':'xia_raider',m.x,m.y,(x.story?12:9)*sc,Math.atan2(e.y-s.y,e.x-s.x),Math.floor(CTIME*8)%8);
+  g.globalAlpha=.55+.35*Math.sin(CTIME*5);arrow(g,s,e,'rgba(20,10,10,.9)',7*sc);g.globalAlpha=1;const m={x:lerp(s.x,e.x,.45),y:lerp(s.y,e.y,.45)};sprUnit(x.story?'xia_boss':'xia_raider',m.x,m.y,(x.story?12:9)*sc,Math.atan2(e.y-s.y,e.x-s.x),frontierWalkFrame(x.story?'xia_boss':'xia_raider',CTIME));
   banner(g,m.x-14*sc,m.y-6*sc,'#1a1c28','夏',sc,1);g.font=`bold ${12*sc}px sans-serif`;g.fillStyle='#600';g.textAlign='center';g.fillText('⚔'+x.str,m.x,m.y+16*sc);}}
 function drawFog(g,A){const sc=CC.z;for(const t of CL.terr){if(SEEN.has(t.id)||CG.T[t.id].own!=='xia')continue;const p=tPos(t.id),q=c2s(p.x,p.y);if(q.x<-200||q.x>VW+200||q.y<-200||q.y>VH+200)continue;
   for(let i=0;i<3;i++){const dx=Math.sin(CTIME*.15+i*2.1+p.x)*26*sc,w=200*sc*(1+i*.15);g.globalAlpha=.88;g.drawImage(A.cloud,q.x-w/2+dx+(i-1)*40*sc,q.y-w*.32+(i-1)*14*sc,w,w*.54);}g.globalAlpha=1;
@@ -2710,7 +2711,7 @@ function settleUI(id,tab){twCss();if(tab)SET_TAB=tab;const old=$('cSet');if(old)
    <div class="tip">${Ts(kindN[0],kindN[1])} · ${Ts(CL.tiers[tierOf(s.prosp)][0],CL.tiers[tierOf(s.prosp)][1])} · 👥 ${s.pop}/${popCap(id)} · ⚔ ${garrison(id)} ${Ts('人','men')} (${unitsAt(id).length}/${garrCap(id)} ${Ts('都','du')}) · 📦 ${used}/${storeCap(id)} · 🪙 ${Math.round(CAMP.res.silver)}</div></div>`;
   const tabs=document.createElement('div');tabs.className='tabs';const TB=[['over','概况','Overview'],['store','仓廒','Stores'],['wk','工坊','Workshops'],['yard','兵营','Barracks'],['garr','驻军','Garrison'],['mkt','集市','Market']];
   for(const[k,zh,en]of TB){const t=document.createElement('div');t.className='tab'+(SET_TAB===k?' on':'');t.dataset.tab=k;t.innerHTML=T(zh,en);t.onclick=()=>{sfx('click');settleUI(id,k);};tabs.appendChild(t);}d.appendChild(tabs);
-  const body=document.createElement('div');d.appendChild(body);const re=()=>{settleUI(id);campUI();reopenSet(id);};
+  const body=document.createElement('div');d.appendChild(body);const re=()=>{campUI();settleUI(id);};
   if(SET_TAB==='over'){const y=terrYield(id);body.insertAdjacentHTML('beforeend',`<div class="tip">${Ts('每季产出（入本村仓廒）','Per season (into this village\'s storehouses)')}: ${RAW.filter(k=>y[k]).map(k=>`${RAWN[k][2]}${y[k]}`).join(' ')} 🪙${y.silver}</div>`);
     const nd=NODES.filter(n=>n.terr===id);if(nd.length)body.insertAdjacentHTML('beforeend',`<div class="tip">${Ts('辖下资源点','Resource sites')}: ${nd.map(n=>`${NODEK[n.k].ic} ${Tz(n.zh,n.en)} ${CG.out[n.id]?(nodeOk(n)?'<span class="ok">✔</span>':'<span class="short">'+Ts('断供','cut off')+'</span>'):'<span class="short">'+Ts('未设哨堡','no outpost')+'</span>'}`).join(' · ')}</div>`);
     const bs=building(id);body.insertAdjacentHTML('beforeend',`<div style="color:#f4d27a;margin-top:6px">${T('营建','Buildings')} ${bs.length?'· 🔨 '+bs.map(b=>Ts(DEV[b.k].zh,DEV[b.k].en)).join('、')+' '+Ts('（下季完工）','(ready next season)'):''} <span class="tip">${Ts('每季可同时营建','projects at once')}: ${buildSlots(id)}</span></div>`);
@@ -2719,7 +2720,7 @@ function settleUI(id,tab){twCss();if(tab)SET_TAB=tab;const old=$('cSet');if(old)
       for(const k of DEV_GROUP[g]){const lv=s.bld[k]||0,mx=DEV[k].c.length,c=devCost(k,lv);const row=document.createElement('div');row.className='bl';row.title=Ts(DEV[k].d[0],DEV[k].d[1]);row.innerHTML=`<span>${Ts(DEV[k].zh,DEV[k].en)} <b>${'★'.repeat(lv)}${'☆'.repeat(mx-lv)}</b></span>`;
         if(c&&CG.phase===0&&own){const ok=bs.length<buildSlots(id)&&!bs.some(b=>b.k===k)&&canPayAt(id,c);const b=sbtn(costText(c),'',()=>{startBuild(id,k);re();},ok);b.dataset.b=k;row.appendChild(b);}col.appendChild(row);
         row.insertAdjacentHTML('afterend','');}grid.appendChild(col);}body.appendChild(grid);
-    if(CG.phase!==0)body.insertAdjacentHTML('beforeend',`<div class="tip">${T('营建只在“内政”阶段','Build only in the Administration phase')}</div>`);}
+    if(CG.phase!==0)body.insertAdjacentHTML('beforeend',`<div class="tip">${T('营建在筹划阶段进行','Build during Planning')}</div>`);}
   else if(SET_TAB==='store'){const cap=storeCap(id);const nd=needs(id);body.insertAdjacentHTML('beforeend',`<div class="tip">${T('敞顶仓廒：存货多少，进村便能看见。原料只能经商路、集市或攻占获得；兵器在补给网内通用。','Open-topped storehouses: what is stored here is what you see in the village. Raw materials arrive only by trade road, market or conquest; finished arms move freely inside the supply network.')}</div>`);
     const y=terrYield(id);let h='<div>';for(const k of RAW){const v=s.st[k]||0;const nk=nd[k]||0;h+=`<div class="res" data-r="${k}"><span class="ic">${RAWN[k][2]}</span>${Ts(RAWN[k][0],RAWN[k][1])}<br><b>${v}</b> <span class="${y[k]?'ok':''}">${y[k]?'+'+y[k]:''}</span>${nk?`<br><span class="${v<nk?'short':'tip'}">${Ts('工坊需','needs')} ${Math.round(nk)}</span>`:''}${k!=='horse'?`<div class="bar2"><i style="width:${clamp(v/cap,0,1)*100}%"></i></div>`:''}</div>`;}h+='</div><div style="color:#f4d27a;margin-top:8px">'+T('武库（本村 / 补给网合计）','Armoury (here / whole supply network)')+'</div><div>';
     for(const k of EQ){h+=`<div class="res" data-e="${k}"><span class="ic">${EQN[k][2]}</span>${Ts(EQN[k][0],EQN[k][1])}<br><b>${s.eq[k]||0}</b> <span class="tip">/ ${have(id,k)}</span></div>`;}body.insertAdjacentHTML('beforeend',h+'</div>');}
@@ -2736,7 +2737,7 @@ function settleUI(id,tab){twCss();if(tab)SET_TAB=tab;const old=$('cSet');if(old)
       const ic=document.createElement('td');ic.appendChild(unitIco({type:t},40));tr.appendChild(ic);
       tr.insertAdjacentHTML('beforeend',`<td><b>${Ts(UT[t].zh,UT[t].en)}</b><br><span class="tip">${Ts(ARMN[arm][0],ARMN[arm][1])} · ${Ts('战力','power')} ${UT[t].pow}</span></td><td>${Object.keys(c).map(k=>{const h=have(id,k==='horse'?'horse':k,true);return `<span class="${h<c[k]?'short':'ok'}">${(EQN[k]||RAWN[k]||['','',k==='silver'?'🪙':''])[2]}${c[k]} <span class="tip">(${h})</span></span>`;}).join(' ')}<br><span class="short" style="font-size:11px">${bad.join(' · ')}</span></td><td>${UT[t].t} ${Ts('季','s.')}</td>`);
       const td=document.createElement('td');const b=sbtn('训练','Train',()=>{train(id,t,arm);re();},!bad.length&&CG.phase<=1);b.dataset.t=t+arm;td.appendChild(b);tr.appendChild(td);tb.appendChild(tr);}}body.appendChild(tb);
-    if(CG.phase>1)body.insertAdjacentHTML('beforeend',`<div class="tip">${T('训练只在“内政”或“募兵”阶段','Train in the Administration or Muster phase')}</div>`);}
+    if(CG.phase>1)body.insertAdjacentHTML('beforeend',`<div class="tip">${T('训练在筹划阶段进行','Train during Planning')}</div>`);}
   else if(SET_TAB==='garr'){const us=unitsAt(id);body.insertAdjacentHTML('beforeend',`<div class="tip">${T('驻军守村，也是出征时可调的兵源（部曲所在地两程之内、补给相连的村寨都可调兵）。','The garrison defends the village and is the pool armies draw from (any supplied village within two links of an army).')} ${us.length}/${garrCap(id)} ${Ts('都','du')} · ${menOf(us)} ${Ts('人','men')}</div>`);
     const w=document.createElement('div');for(const u of us){const b1=u.arm<2?sbtn(u.arm?'换铁甲':'披皮甲',u.arm?'Iron':'Armour',()=>{reequip(u.id,u.arm+1);re();},have(id,u.arm?'armI':'armL')>=u.men):null;const b2=u.men<100?sbtn('补员','Refill',()=>{reinforce(u.id);re();},canPayAt(id,kitCost(u.type,100-u.men,u.arm))&&s.pop>=300):null;w.appendChild(unitCard(u,[b1,b2]));}
     if(!us.length)w.innerHTML=`<div class="tip">${T('无驻军','No garrison')}</div>`;body.appendChild(w);
@@ -2799,8 +2800,8 @@ function armyPanel(a){twCss();const w=document.createElement('div');const sup=ar
   const g=document.createElement('div');for(const u of us)g.appendChild(unitCard(u,[CG.phase<=2&&owned(a.loc)?sbtn('留守','Leave',()=>{detachUnit(a,u.id);campUI();},unitsAt(a.loc).length<garrCap(a.loc)):null],1));w.appendChild(g);
   if(CG.phase<=2){const rg=deployRange(a);const pool=rg.flatMap(id=>unitsAt(id));w.insertAdjacentHTML('beforeend',`<div style="color:#f4d27a;margin-top:6px">${T('可调驻军（两程内、补给相连）','Garrisons in reach (2 links, supplied)')}</div>`);
     const g2=document.createElement('div');for(const u of pool){const c=unitCard(u,[sbtn('调入','Draw',()=>{drawFromGarr(a,u.id);campUI();},canDraw(a,u.id))],1);c.insertAdjacentHTML('afterbegin',`<div class="tip" style="font-size:10px">${tName(u.loc.v)}</div>`);g2.appendChild(c);}if(!pool.length)g2.innerHTML=`<div class="tip">${T('无','none')}</div>`;w.appendChild(g2);}
-  if(CG.phase===1)w.insertAdjacentHTML('beforeend',`<div class="tip">${T('募兵：在村寨“治所 → 兵营”训练新的都，出营后在驻军中，再调入部曲。','Muster: train new 都 in a village (Settlement → Barracks); they join its garrison, then draw them into a band.')}</div>`);
-  if(CG.phase===2){w.insertAdjacentHTML('beforeend',`<div class="tip" style="margin-top:6px;color:#ffd8a0">${a.dest?Ts((a.raid?'劫营 → ':'进军 → ')+CT[a.dest].zh,(a.raid?'Raiding → ':'Marching → ')+CT[a.dest].en):T('点击相邻地块进军；再点本地取消','Click a neighbouring territory to march; click here to cancel')}</div>`);
+  if(CG.phase===0)w.insertAdjacentHTML('beforeend',`<div class="tip">${T('募兵：在村寨“治所 → 兵营”训练新的都，出营后在驻军中，再调入部曲。','Muster: train new 都 in a village (Settlement → Barracks); they join its garrison, then draw them into a band.')}</div>`);
+  if(CG.phase<=2){w.insertAdjacentHTML('beforeend',`<div class="tip" style="margin-top:6px;color:#ffd8a0">${a.dest?Ts((a.raid?'劫营 → ':'进军 → ')+CT[a.dest].zh,(a.raid?'Raiding → ':'Marching → ')+CT[a.dest].en):T('点击相邻地块进军；再点本地取消','Click a neighbouring territory to march; click here to cancel')}</div>`);
     const xs=CADJ[a.loc].filter(b=>CG.T[b].own==='xia'&&CG.T[b].stock&&SEEN.has(b));for(const b of xs){const bt=sbtn(`🐎 劫营：${CT[b].zh}`,`🐎 Raid ${CT[b].en}'s stockpile`,()=>{orderRaid(a,b);campUI();},us.length>0);bt.dataset.raid=b;w.appendChild(bt);}}
   if(a.cmd==='lead'&&CG.armies.length<armySlots()){const cands=a.mem.filter(m=>m!=='lead'&&CG.sq[m].rank>=2);for(const m of cands){const sd=SQUAD.find(q=>q.id===m);w.appendChild(btn(`分兵：${sd.zh}领一部`,`Detach a band under ${sd.en}`,()=>{const na=newArmy(a.loc,m);if(na){CSEL={a:na.id};}campUI();}));}}
   if(a.cmd!=='lead'){const L=CG.armies.find(x=>x.cmd==='lead');if(L&&L.loc===a.loc)w.appendChild(btn('并入林队部','Merge into the main band',()=>{mergeArmy(a);CSEL={a:L.id};campUI();}));}
@@ -2810,7 +2811,7 @@ function nodePanel(nid){const n=NODES.find(x=>x.id===nid);const w=document.creat
    <div class="tip">${Ts('每季','Per season')}: ${Object.keys(NODEK[n.k].y).map(k=>(RAWN[k]?RAWN[k][2]+Ts(RAWN[k][0],RAWN[k][1]):'🪙'+Ts('银','silver'))+' +'+NODEK[n.k].y[k]).join(' · ')}</div>
    <div class="tip">${T('开采条件：占领所属地块 + 立哨堡 + 补给相连','To work it: hold its territory + raise an outpost + keep it supplied')}</div>
    <div style="margin-top:6px">${CG.out[n.id]?(nodeOk(n)?'<span class="ok">✔ '+Ts('开采中','working')+'</span>':'<span class="short">'+Ts('哨堡已立，但未占领或断供','outpost raised but not held or not supplied')+'</span>'):''}</div>`;
-  if(own&&!CG.out[n.id]){const b=sbtn(`${Ts('立哨堡','Raise outpost')} · ${costText(OUTPOST_COST)}`,'',()=>{buildOutpost(n.id);campUI();},CG.phase===0&&canPayAt(n.terr,OUTPOST_COST));b.dataset.out=n.id;w.appendChild(b);if(CG.phase!==0)w.insertAdjacentHTML('beforeend',`<div class="tip">${T('“内政”阶段可立','Raise it in the Administration phase')}</div>`);}
+  if(own&&!CG.out[n.id]){const b=sbtn(`${Ts('立哨堡','Raise outpost')} · ${costText(OUTPOST_COST)}`,'',()=>{buildOutpost(n.id);campUI();},CG.phase===0&&canPayAt(n.terr,OUTPOST_COST));b.dataset.out=n.id;w.appendChild(b);if(CG.phase!==0)w.insertAdjacentHTML('beforeend',`<div class="tip">${T('筹划阶段可立','Raise it during Planning')}</div>`);}
   w.appendChild(btn('所属地块','Territory',()=>{CSEL={t:n.terr};campUI();}));return w;}
 // ---------------------------------------------------------------- story chapters use real units (1 figure = 10 men)
 function campStory(i,q){const L=CG.armies.find(a=>a.cmd==='lead');CG.pend={story:i,army:L.id,q:q||null};if(i===2&&L.loc!==HOME)L.loc=HOME;L.dest=null;
@@ -2978,7 +2979,7 @@ function cvilFrame(dt){if((SPR.store2&&SPR.vhouse)||SPR.vhouse8)return cvil7Fram
   if(s.st.horse>0||s.bld.stable){const P=VZ.pad;add(P[1]-4,()=>{g.strokeStyle='#6a4a20';g.lineWidth=3;g.strokeRect(P[0],P[1],P[2]-P[0],P[3]-P[1]);for(let x=P[0];x<=P[2];x+=26){g.beginPath();g.moveTo(x,P[1]-12);g.lineTo(x,P[1]);g.stroke();}txt(`${Tz('马厩','Paddock')} 🐎${s.st.horse}`,P[0]+6,P[1]-18,16,'#3a1a08','left','bold ');});
     if(s.bld.stable)add(P[1]+40,()=>sprProp('barracks',P[2]-70,P[1]+60,0,1.1));for(const h of CVIL.horses){vstep(h,20,dt,P[0]+20,P[1]+20,P[2]-20,P[3]-10);add(h.y,()=>sprProp('animal',h.x,h.y,4,1.15)||sprUnit('song_cav',h.x,h.y,12,h.f,Math.floor(h.ph*6)%4));}}
   // people on errands (some carry loads)
-  for(const p of CVIL.peo){const mv=walkTo(p,30,dt);add(p.y,()=>{sprUnit(p.spr,p.x,p.y,9,p.f,mv?Math.floor(p.ph*4)%4:0);if(p.load){g.fillStyle='#c8a868';g.strokeStyle='#5a3a14';g.lineWidth=1;g.beginPath();g.ellipse(p.x+4,p.y-24,6,4,0,0,TAU);g.fill();g.stroke();}});}
+  for(const p of CVIL.peo){const mv=walkTo(p,30,dt);add(p.y,()=>{sprUnit(p.spr,p.x,p.y,9,p.f,mv?frontierWalkFrame(sp,p.ph):0);if(p.load){g.fillStyle='#c8a868';g.strokeStyle='#5a3a14';g.lineWidth=1;g.beginPath();g.ellipse(p.x+4,p.y-24,6,4,0,0,TAU);g.fill();g.stroke();}});}
   Z.sort((a,b)=>a.y-b.y);for(const z of Z)z.fn();cvilArrows(g,dt);cvilBubbles(g,dt);
   if(tier>=2){const rows=Math.min(3,tier-1+(s.fest?1:0));for(let r=0;r<rows;r++){const y0=440+r*0,x0=640+r*0,x1=1180;g.strokeStyle='rgba(50,30,10,.6)';g.lineWidth=1.5;g.beginPath();for(let x=x0;x<=x1;x+=10){const y=y0+Math.sin((x-x0)/270*Math.PI)*18;x===x0?g.moveTo(x,y):g.lineTo(x,y);}g.stroke();
     for(let x=x0+30;x<x1;x+=60){const y=y0+Math.sin((x-x0)/270*Math.PI)*18+8;g.fillStyle='#d8301a';g.beginPath();g.ellipse(x,y,6,8,0,0,TAU);g.fill();const gr=g.createRadialGradient(x,y,0,x,y,22);gr.addColorStop(0,'rgba(255,180,60,.45)');gr.addColorStop(1,'rgba(255,120,40,0)');g.fillStyle=gr;g.fillRect(x-22,y-22,44,44);}}}
@@ -3018,10 +3019,10 @@ function stkGrid(n,x0,y0,x1,y1,it){const cols=Math.max(1,Math.floor((x1-x0)/it.c
   return {pts:out,over:Math.max(0,n-per*it.ly)};}
 function cvilStockPlan(s){const key=JSON.stringify(s.st)+s.bld.store;if(CVIL.sp&&CVIL.sp.key===key)return CVIL.sp;const st=s.st,W=192,D=70;const n=4,gap=(VZ.store[2]-VZ.store[0])/n,y=VZ.store[3];
   const P={key,bins:[],items:[],hot:[],pads:[]};const built=clamp(2+s.bld.store,2,4);
-  for(let i=0;i<n;i++){const x=VZ.store[0]+gap*(i+.5),ks=STK_BINS[i];const tot=ks.reduce((a,k)=>a+Math.max(30,st[k]||0),0);let cx=x-W/2+10;const inner=W-20;
+  for(let i=0;i<n;i++){const x=VZ.store[0]+gap*(i+.5),ks=STK_BINS[i];const tot=ks.reduce((a,k)=>a+Math.max(100,st[k]||0),0);let cx=x-W/2+10;const inner=W-20;
     P.bins.push({x,y,shell:i<built});const lines=[];let overAll=[];
-    for(const k of ks){const v=Math.max(0,Math.floor(st[k]||0)),full=Math.floor(v/100),rem=v%100,it=STK_IT[k];const w=inner*Math.max(30,v)/tot;
-      const g=stkGrid(full+(rem?1:0),cx,y-D+12,cx+w,y-14,it);if(full||rem)P.pads.push([cx+2,y-D+4,w-4,D-14]);g.pts.forEach((p,j)=>P.items.push({k,it,x:p.x,y:p.y,l:p.l,a:(j===full&&rem)?.45:1}));
+    for(const k of ks){const v=Math.max(0,Math.floor(st[k]||0)),full=Math.floor(v/50),rem=v%50,it=STK_IT[k];const w=inner*Math.max(100,v)/tot;
+      const g=stkGrid(full+(rem?1:0),cx,y-D+12,cx+w,y-14,it);if(full||rem)P.pads.push([cx+2,y-D+4,w-4,D-14]);g.pts.forEach((p,j)=>P.items.push({k,it,x:p.x,y:p.y,l:p.l,a:1,partial:j===full&&rem}));
       if(g.over){overAll.push([k,g.over]);}
       lines.push([k,v,full]);cx+=w;}
     // overflow yard behind the storehouse: neat stacks on straw mats
@@ -3038,8 +3039,8 @@ function cvilStores7(add,g,s){const P=cvilStockPlan(s);const W=192,D=70;
   add(VZ.store[1]+2,()=>{for(const it of P.items)if(it.mat){g.globalAlpha=it.a;sprProp('stk',it.x,it.y-it.l*it.it.lz,it.it.v,it.it.sc);}g.globalAlpha=1;});
   add(VZ.store[3]-D,()=>{g.fillStyle='rgba(214,190,128,.5)';for(const r of P.pads)g.fillRect(r[0],r[1],r[2],r[3]);for(const it of P.items)if(!it.mat){g.globalAlpha=it.a;sprProp('stk',it.x,it.y-it.l*it.it.lz,it.it.v,it.it.sc);}g.globalAlpha=1;});
   for(const b of P.bins){if(b.shell)add(b.y+1,()=>sprProp('store2',b.x,b.y,1,1));if(b.more)add(b.y+2,()=>txt('+'+b.more+'▣',b.x+W/2-30,VZ.store[1]+18,13,'#3a1a08','left','bold '));}
-  add(VZ.store[1]-30,()=>txt(Tz('仓廒','Storehouses')+` · ${Tz('库容','cap')} ${storeCap(CVIL.id)} · ${Tz('每件 = 100','each piece = 100')}`,VZ.store[0],VZ.store[1]-14,16,'#2a1406','left','bold '));
-  for(const h of P.hot)CVIL.hot.push({r:h.r,t:h.lines.map(([k,v,f])=>`${RAWN[k][2]} ${Tz(RAWN[k][0],RAWN[k][1])} ${v}  (${f}▣${v%100?' +'+(v%100):''})`).join('\n')});}
+  add(VZ.store[1]-30,()=>txt(Tz('仓廒','Storehouses')+` · ${Tz('库容','cap')} ${storeCap(CVIL.id)} · ${Tz('每件 = 50','each piece = 50')}`,VZ.store[0],VZ.store[1]-14,16,'#2a1406','left','bold '));
+  for(const h of P.hot)CVIL.hot.push({r:h.r,t:h.lines.map(([k,v,f])=>`${RAWN[k][2]} ${Tz(RAWN[k][0],RAWN[k][1])} ${v}  (${f}▣${v%50?' +'+(v%50):''})`).join('\n')});}
 // armoury: 1 rack = 100 pieces
 const RACK_V={spear:0,dao:1,bow:2,xbow:3,lance:4,shield:5,armL:6,armI:7,saddle:8};
 function cvilArmoury7(add,g,s){const e=s.eq;const items=EQ.filter(k=>e[k]>0).map(k=>[k,e[k]]);let k=0;const tot=items.reduce((a,[t,n])=>a+Math.ceil(n/100),0);
@@ -3095,7 +3096,7 @@ function cvil7Frame(dt){if(!CVIL.lay)cvilLayout();cvilPeople();CVIL.t+=dt;CVIL.h
   add(VZ.well.y,()=>sprProp('well',VZ.well.x,VZ.well.y,0,1.1));
   cvilStores7(add,g,s);cvilArmoury7(add,g,s);cvilYard7(add,g,s,t,dt);cvilMarket7(add,g,s,t,dt);cvilCaravans7(add,g,t,dt);cvilWorkshops7(add,g,s,t);cvilPaddock7(add,g,s,dt);
   for(let i=0;i<Math.min(8,s.bld.farm*3+(se===2?3:0));i++){const x=VZ.fld[0]+20+i*70,y=VZ.fld[3]+16;add(y,()=>sprProp('haystack',x,y,i%3,1));}
-  for(const p of CVIL.peo){const mv=walkTo(p,30,dt);if(p.load&&!p.spr0){p.spr0=p.spr;}const sp=p.load?'porter':(p.spr0||p.spr);add(p.y,()=>sprUnit(sp,p.x,p.y,9,p.f,mv?Math.floor(p.ph*4)%4:0));}
+  for(const p of CVIL.peo){const mv=walkTo(p,30,dt);if(p.load&&!p.spr0){p.spr0=p.spr;}const sp=p.load?'porter':(p.spr0||p.spr);add(p.y,()=>sprUnit(sp,p.x,p.y,9,p.f,mv?frontierWalkFrame(sp,p.ph):0));}
   if(typeof edictDraw==='function')edictDraw(add,g,t,dt);
   Z.sort((a,b)=>a.y-b.y);for(const zz of Z)zz.fn();cvilArrows(g,dt);cvilBubbles(g,dt);
   if(tier>=2){const rows=Math.min(3,tier-1+(s.fest?1:0));for(let r=0;r<rows;r++){const y0=440,x0=640,x1=1180;g.strokeStyle='rgba(50,30,10,.6)';g.lineWidth=1.2;g.beginPath();for(let x=x0;x<=x1;x+=10){const y=y0+Math.sin((x-x0)/270*Math.PI)*18;x===x0?g.moveTo(x,y):g.lineTo(x,y);}g.stroke();
@@ -3141,7 +3142,8 @@ function cvilStatic8(add,s,tier){
   for(let y=110;y<VWH-40;y+=98){add(y,()=>sprProp('vgate8',10,y,2,1));add(y,()=>sprProp('vgate8',VWW-10,y,2,1));}
   for(let x=96;x<VWW;x+=192){if(Math.abs(x-900)<150)continue;add(VWH-8,()=>sprProp('vgate8',x,VWH-6,1,1));}
   add(VWH-4,()=>sprProp('vgate8',900,VWH-4,0,1));
-  add(905,()=>sprProp('vcomp8',178,905,0,tier>=2?1:.92));add(900,()=>sprProp('vcomp8',432,902,1,.92));
+  // The west civic compound is now the official treasury; retain the eastern shrine.
+  add(900,()=>sprProp('vcomp8',500,902,1,.8));
   add(600,()=>sprProp('vgate8',1240,600,4,.72));
   for(const a of (CVIL.lay.alleys||[])){add(a.y,()=>{for(const dx of[-52,-24,24,52])sprProp('cwall',a.x+dx,a.y,0,1);sprProp('cgate',a.x,a.y+4,0,1);});}}
 {const _f=cvil7Frame;cvil7Frame=function(dt){if(!v8ok())return _f(dt);if(CVIL.lay&&!CVIL.lay.v8){CVIL.lay=null;CVIL.wp=null;}
@@ -3161,7 +3163,7 @@ function cvil8Frame(dt){if(!CVIL.lay)cvilLayout();cvilPeople();CVIL.t+=dt;CVIL.h
   cvilStores7(add,g,s);cvilArmoury7(add,g,s);cvilYard7(add,g,s,t,dt);cvilMarket7(add,g,s,t,dt);cvilCaravans7(add,g,t,dt);cvilWorkshops7(add,g,s,t);cvilPaddock7(add,g,s,dt);
   for(let i=0;i<Math.min(8,s.bld.farm*3+(se===2?3:0));i++){const x=VZ.fld[0]+20+i*70,y=VZ.fld[3]+16;add(y,()=>sprProp('haystack',x,y,i%3,1));}
   for(const p of CVIL.peo){const mv=walkTo8(p,p.spr==='vil_e'?18:p.spr==='vil_k'?38:30,dt);if(p.load&&!p.spr0){p.spr0=p.spr;}let sp=p.load?'porter':(p.spr0||p.spr);if(!SPR[sp])sp='villager';
-    const wk=!mv&&p.wk&&WORK8[p.wk];const fr=mv?Math.floor(p.ph*4)%4:wk?4+(Math.floor(t*1.3+p.ph*2)%2):0;const rr=sp==='vil_k'?7:9;add(p.y,()=>sprUnit(sp,p.x,p.y,rr,p.f,fr));}
+    const wk=!mv&&p.wk&&WORK8[p.wk];const fr=mv?frontierWalkFrame(sp,p.ph):wk?4+(Math.floor(t*1.3+p.ph*2)%2):0;const rr=sp==='vil_k'?7:9;add(p.y,()=>sprUnit(sp,p.x,p.y,rr,p.f,fr));}
   cvilWorkers8(add,s,tier,se,t);
   if(typeof edictDraw==='function')edictDraw(add,g,t,dt);
   Z.sort((a,b)=>a.y-b.y);for(const zz of Z)zz.fn();cvilArrows(g,dt);cvilBubbles(g,dt);
@@ -3430,7 +3432,7 @@ function cpTradeTab(body,re){const ps=['song','guild','xia'];const pl=document.c
   for(const k of RAW){if(k==='nitre'&&p!=='song')continue;const tr=document.createElement('tr');const cb=canDeal(p,k,'buy'),cs=canDeal(p,k,'sell');const pb=cpPrice(p,k,'buy'),ps2=cpPrice(p,k,'sell');const pr=mkP(p,k);
     tr.innerHTML=`<td>${RAWN[k][2]} ${Ts(RAWN[k][0],RAWN[k][1])} ×${lotN(k)}</td><td>${dep?have(dep,k,true):'—'}</td><td></td><td></td><td class="tip">${pr>0?'▲':pr<0?'▼':''}${(p==='xia'&&cs&&(k==='ore'))?' ⚠'+Ts('禁运','banned'):''}</td>`;
     if(cb)tr.children[2].appendChild(sbx(`🪙${pb}`,'',()=>{cpTrade(p,k,'buy');re();},!!dep&&CAMP.res.silver>=pb&&CG.phase<=1));if(cs)tr.children[3].appendChild(sbx(`🪙${ps2}`,'',()=>{cpTrade(p,k,'sell');re();},!!dep&&have(dep,k,true)>=lotN(k)&&CG.phase<=1));tb.appendChild(tr);}
-  body.appendChild(tb);if(CG.phase>1)body.insertAdjacentHTML('beforeend',`<div class="tip">${Ts('买卖只在前两个阶段','Trade only in the first two phases')}</div>`);
+  body.appendChild(tb);if(CG.phase>1)body.insertAdjacentHTML('beforeend',`<div class="tip">${Ts('买卖在筹划阶段进行','Trade during Planning')}</div>`);
   // barter and agreements
   const opt=(side)=>RAW.filter(k=>canDeal(p,k,side)).map(k=>`<option value="${k}">${RAWN[k][2]} ${Tz(RAWN[k][0],RAWN[k][1])}</option>`).join('');
   const bw=document.createElement('div');bw.className='wk';bw.style.marginTop='8px';bw.innerHTML=`<b style="color:#ffd070">${T(LCP.barter.zh,LCP.barter.en)} · ${T(LCP.deals.zh,LCP.deals.en)}</b><div>${Ts(LCP.give.zh,LCP.give.en)} <select id="cBG">${opt('sell')}</select> ×<select id="cBN"><option>1</option><option>2</option><option>4</option></select> → ${Ts(LCP.get.zh,LCP.get.en)} <select id="cBR">${opt('buy')}</select> <span id="cBX" class="tip"></span></div>`;
@@ -3729,7 +3731,7 @@ const CARRY_SOL=['song_spear','song_militia','song_shield','song_archer'],CARRY_
 function logvStep(id,dt){const V=LOGV[id];if(!V)return;logvPrune(V);const lane=503;
   // carts: one line of up to 4 oxcarts parked on the lane in front of the storehouses while work goes on
   const work=V.out.length+V.in.length+V.car.length;const wantC=work?clamp(Math.ceil((V.out.length+V.in.length+V.car.length)/6),2,4):0;
-  while(V.carts.filter(c=>!c.go).length<wantC){const i=V.carts.length;const inb=V.in.length>0&&!V.out.length;V.carts.push({x:inb?VZ.store[0]-160-i*90:VZ.store[0]+140+i*150,px:VZ.store[0]+140+(i%4)*150,y:lane,load:inb?6:0,arr:!inb,go:0,dir:1});}
+  while(V.carts.filter(c=>!c.go).length<wantC){const i=V.carts.length;const inb=V.in.length>0&&!V.out.length;V.carts.push({x:VZ.store[0]-160-i*90,px:VZ.store[0]+140+(i%4)*150,y:lane,load:inb?6:0,arr:0,go:0,dir:1});}
   for(const c of V.carts){if(c.go){c.x+=c.dir*60*dt;continue;}if(!c.arr){c.x=Math.min(c.px,c.x+120*dt);if(c.x>=c.px-1)c.arr=1;}}
   if(!work)for(const c of V.carts)if(!c.go&&c.arr){c.go=1;c.dir=c.x<VWW/2?-1:1;}
   V.carts=V.carts.filter(c=>c.x>-260&&c.x<VWW+260);
@@ -3739,6 +3741,7 @@ function logvStep(id,dt){const V=LOGV[id];if(!V)return;logvPrune(V);const lane=5
     const sp=sol?CARRY_SOL[i%CARRY_SOL.length]:CARRY_POR[i%CARRY_POR.length];V.car.push({sp,x:cart.x+rnd(-20,20),y:lane+rnd(-6,6),c:null,dir:null,ph:rnd(1),cart,wait:i*.35});}
   for(const r of V.car){if(r.wait>0){r.wait-=dt;continue;}
     if(!r.c){// pick up a job: out-crates are fetched from the store, in-crates from the cart
+      r.idle=0;
       const near=x=>parked.reduce((b,c)=>Math.abs(c.x-x)<Math.abs(b.x-x)?c:b,parked[0]);if(V.out.length){r.job=V.out[0];r.dir='out';r.tgt=logvSpot(r.job.k);r.cart=near(r.tgt.x);r.phase='fetch';V.out.shift();r.c=null;r.hold=null;r.c={k:r.job.k,n:r.job.n,pend:1};}
       else if(V.in.length){r.job=V.in.shift();r.dir='in';r.c=r.job;r.cart=near(logvSpot(r.job.k).x);r.tgt={x:r.cart.x,y:lane};r.phase='fetch';}
       else{r.tgt={x:r.cart.x+rnd(-30,30),y:lane+14};r.idle=1;r.phase=null;}}
@@ -3746,7 +3749,7 @@ function logvStep(id,dt){const V=LOGV[id];if(!V)return;logvPrune(V);const lane=5
     const d=Math.hypot(tx-r.x,ty-r.y);const spd=r.c&&r.phase==='carry'?72:92;
     if(d>3){const a=Math.atan2(ty-r.y,tx-r.x);r.x+=Math.cos(a)*Math.min(d,spd*dt);r.y+=Math.sin(a)*Math.min(d,spd*dt);r.f=a;r.ph+=dt*spd/30;r.mv=1;}
     else{r.mv=0;if(r.idle){r.idle=0;r.c=null;continue;}
-      if(r.phase==='fetch'){r.phase='carry';r.hold=r.c;if(r.dir==='out')r.c.pend=0;}
+      if(r.phase==='fetch'){r.phase='carry';r.hold=r.c;r.wait=.35;if(r.dir==='out')r.c.pend=0;}
       else{if(r.dir==='out'){r.cart.load=(r.cart.load||0)+1;}else{r.cart.load=Math.max(0,(r.cart.load||0)-1);}r.c=null;r.hold=null;r.phase=null;r.wait=.25;}}}
   if(!V.out.length&&!V.in.length&&V.car.every(r=>!r.c)){V.car=[];}}
 function chest(g,x,y,s){g.fillStyle='#5a2a14';g.fillRect(x-7*s,y-6*s,14*s,9*s);g.fillStyle='#7a3a1c';g.fillRect(x-7*s,y-8*s,14*s,3*s);g.fillStyle='#d8b050';g.fillRect(x-1.5*s,y-6*s,3*s,4*s);g.strokeStyle='#2a1208';g.lineWidth=1;g.strokeRect(x-7*s,y-8*s,14*s,11*s);}
@@ -3754,7 +3757,7 @@ function carryProp(g,k,x,y,sc=1){if(k==='silver')return chest(g,x,y,sc*.9);if(EQ
 function logvDraw(add,g,t,dt){const id=CVIL.id,V=LOGV[id];if(!V)return;logvStep(id,dt);
   for(const c of V.carts)add(c.y+20,()=>{sprUnit('oxcart',c.x,c.y+20,14,c.go?(c.dir>0?0:Math.PI):0,(c.go||!c.arr)?Math.floor(t*6)%4:0);const n=Math.min(6,c.load||0);
     for(let j=0;j<n;j++)sprProp('stk',c.x-14-(j%3)*8,c.y+8-Math.floor(j/3)*6,[0,3,5,6,9,0][j%6],.3);});
-  for(const r of V.car){if(r.wait>0&&!r.c)continue;const fr=r.mv?Math.floor(r.ph*4)%4:0;add(r.y,()=>{
+  for(const r of V.car){if(r.wait>0&&!r.c)continue;const fr=r.mv?frontierWalkFrame(r.sp,r.ph):0;add(r.y,()=>{
     if(r.hold&&r.hold.k==='horse'){sprProp('animal',r.x+12*Math.cos((r.f||0)+1.4),r.y+2,4,.55);}
     sprUnit(r.sp,r.x,r.y,9,r.f||0,fr);if(r.hold&&r.hold.k!=='horse')carryProp(g,r.hold.k,r.x,r.y-22);});}
   const n=V.out.length+V.in.length+V.car.filter(r=>r.c).length;if(n){const lab=V.out.length||V.car.some(r=>r.dir==='out'&&r.c)?Tz('装车外运','loading out'):Tz('卸货入库','unloading in');add(9999,()=>txt(''+lab+' · '+n+' '+Tz('件','loads'),(VZ.store[0]+VZ.store[2])/2,VZ.store[3]+122,15,'#2a1406','center','bold '));}}
@@ -3786,7 +3789,7 @@ function sceneStart(){const S=LOGI.scenes.shift();if(!S||!CG.T[S.id])return;LOGI
   const b=document.createElement('div');b.className='btn';b.style.cssText='display:inline-block;margin-top:6px;padding:3px 14px';b.textContent=Ts('跳过 ⏭','Skip ⏭');b.onclick=()=>sceneEnd(true);o.appendChild(b);document.body.appendChild(o);}
 function sceneEnd(skip){const S=LOGI.cur;LOGI.cur=null;const o=$('logiBar');if(o)o.remove();if(!S)return;const V=LOGV[S.id];if(V&&skip){V.out=[];V.in=[];V.car=[];V.carts=[];}
   if(MODE==='cvil'){showCamp();const sh=shipsOn().find(x=>x.id===S.sid);if(sh&&S.kind==='loot'){const p=tPos(sh.from);CC.tx=p.x-VW/2/CC.z;CC.ty=p.y-VH/2/CC.z;sh._a=0;}}}
-function sceneTick(dt){const S=LOGI.cur;if(!S)return;if(MODE!=='cvil'||CVIL.id!==S.id){sceneEnd(false);return;}if(!S.zoomed){S.zoomed=1;CVIL.z=2.3;CVIL.fx=VZ.store[0]+330;CVIL.fy=VZ.store[3]+30;}S.t+=dt;const V=LOGV[S.id];const busy=V&&(V.out.length||V.in.length||V.car.length||V.carts.some(c=>c.x>-200&&c.x<VWW+200));if(!busy&&S.t>2||S.t>60)sceneEnd(false);}
+function sceneTick(dt){const S=LOGI.cur;if(!S)return;if(MODE!=='cvil'||CVIL.id!==S.id){sceneEnd(false);return;}S.t+=dt;const V=LOGV[S.id];const busy=V&&(V.out.length||V.in.length||V.car.length||V.carts.some(c=>c.x>-200&&c.x<VWW+200));if(!busy&&S.t>2||S.t>60)sceneEnd(false);}
 {const _cfr=campFrame;campFrame=function(dt){_cfr(dt);if(sceneOk())sceneStart();};}
 function logiToggle(v){LOGI.on=v;try{localStorage.setItem('sw_logi',v?'1':'0');}catch(e){}}
 // ---------------------------------------------------------------- in-transit panel + map button + settlement lines
@@ -3820,9 +3823,6 @@ Object.assign(STK_V,{tea:11,silk:12,gold:13,silver:14});
 Object.assign(STK_IT,{tea:{v:11,sc:0.62,cw:17.6,ch:12.8,ly:2,lz:6.0},silk:{v:12,sc:0.66,cw:16.0,ch:12.8,ly:3,lz:5.0},gold:{v:13,sc:0.62,cw:17.6,ch:12.8,ly:2,lz:8.0},silver:{v:14,sc:0.62,cw:17.6,ch:12.8,ly:3,lz:5.0}});
 if(!STK_BINS[1].includes('tea')){STK_BINS[1].push('tea');STK_BINS[2].push('silk');STK_BINS[3].push('gold','silver');}
 Object.assign(CARGO_V,{tea:11,silk:12,gold:13,silver:14});
-// one gold block = 10 ounces (gold is scarce); hover lines keep the true figure
-{const _sp=cvilStockPlan;cvilStockPlan=function(s){if(!CG||!s||!s.st)return _sp(s);const st={...s.st};if(CVIL.id===HOME)st.silver=Math.round(CAMP.res.silver||0);const g=st.gold||0;st.gold=g*10;
-  const P=_sp({...s,st});if(!P._g){P._g=1;for(const h of P.hot)for(const l of h.lines)if(l[0]==='gold'){l[1]=g;}}return P;};}
 // stock hover lines also name silver
 if(!RAWN.silver)RAWN.silver=L235.res.silver;
 // ---------------------------------------------------------------- new territories in old saves
@@ -4336,4 +4336,4 @@ window.__sw={
   cstart(o={}){CAMP=newCampaign();CAMP.done=[0];CAMP.next=1;CAMP.roster.militia=22;CAMP.res={grain:270,iron:120,silver:230};if(o.res)Object.assign(CAMP.res,o.res);campStart();if(o.tut==null)CG.tut=6;showCamp();return true;},
   cturn:cbotTurn,cg(){return CG;},cbot:{develop:cbotDevelop,recruit:cbotRecruit,march:cbotMarch,promote:cbotPromote},
 };
-</script></body></html>
+</script><script src="frontier.js"></script><script src="campaign-ui.js"></script><script src="battlefields.js"></script></body></html>

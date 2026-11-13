@@ -1,0 +1,59 @@
+:root{--ink:#141d1c;--paper:#f2e8cd;--muted:#a9b6ab;--gold:#d7b778;--edge:#63715c;--red:#933c30}
+html body{font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+#campUI[data-view] .en{font-family:inherit}
+#campUI[data-view] .panel{background:linear-gradient(145deg,rgba(27,38,35,.97),rgba(14,24,23,.97));border:1px solid #73755a;border-radius:10px;box-shadow:0 8px 28px #0005,inset 0 1px #fff1;color:var(--paper)}
+#campUI[data-view] .btn{font-family:inherit;border:1px solid #67715a;border-radius:5px;background:linear-gradient(#334238,#202e28);color:#eee5cc;transition:background .15s,border-color .15s,transform .15s;text-shadow:none}
+#campUI[data-view] .btn:hover{background:#465642;border-color:#d7b778;transform:translateY(-1px)}
+#campUI[data-view] .btn:focus-visible{outline:2px solid #f1ce8b;outline-offset:3px}
+#campUI[data-view] .btn small{font-family:inherit;letter-spacing:.4px}
+#campUI .campaign-top{left:24px!important;right:24px!important;top:18px!important;padding:14px 18px!important;text-align:left!important;display:grid;grid-template-columns:220px minmax(0,1fr) 210px;gap:16px;align-items:center;box-sizing:border-box;min-height:112px}
+.campaign-brand{display:flex;align-items:center;gap:12px;border-right:1px solid #fff2;height:100%}
+.campaign-seal{display:grid;place-items:center;width:44px;height:54px;flex:none;border:1px solid #cfb780;background:#873b2e;color:#ffe3a9;font:28px "KaiTi",serif;box-shadow:inset 0 0 0 4px #873b2e,inset 0 0 0 5px #c09b68}
+.campaign-brand strong{font-family:Georgia,"Microsoft YaHei",serif;font-size:19px;letter-spacing:.4px;color:#f5dfb2;display:block}
+.campaign-eyebrow{font-size:10px;letter-spacing:1.7px;text-transform:uppercase;color:#b8c0a9;margin:5px 0}
+.campaign-resources{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.resource-tile{padding:6px 8px;border:1px solid #ffffff12;border-radius:5px;background:#0002;min-width:0}
+.resource-tile .label{display:flex;gap:5px;align-items:center;color:#c2c6b1;font-size:10px;white-space:nowrap}
+.resource-tile svg{width:13px;height:13px;stroke:#d5b879;fill:none;stroke-width:1.5;flex:none}
+.resource-tile b{font-size:20px;font-weight:600;color:#f2e6c7;display:block;margin:2px 0;line-height:1.1;font-variant-numeric:tabular-nums}
+.resource-tile .delta{font-size:10px;color:#99c7a3;white-space:nowrap}.resource-tile .delta.negative{color:#e7a28c}
+.campaign-date{display:flex;justify-content:space-between;align-items:center;margin-top:9px;font-size:12px;color:#c7c6ae;gap:6px}
+.campaign-date strong{color:#edd9ae;font-weight:500}.campaign-date .ph{padding:2px 7px!important;font-size:10px!important;background:none!important;border:0!important;margin:0!important}
+.campaign-date .ph.on{color:#f1d18f!important;background:#d9b46a18!important;border-radius:3px!important}
+.campaign-action{text-align:right;min-width:0}.campaign-action .turn-label{font-size:11px;color:#bdc8b9;margin-bottom:8px}
+#campUI .campaign-top #cNext{position:static!important;display:block!important;margin:0 0 0 auto!important;min-width:190px!important;padding:11px 12px!important;background:linear-gradient(#b79553,#7d5e30)!important;color:#fff3d0;border-color:#e2c17f;font-size:14px!important;box-shadow:inset 0 1px #fff3}
+.campaign-action .cadence{font-size:10px;color:#a9b4a4;margin-top:7px}
+#campUI .campaign-nav{left:24px!important;top:148px!important;width:176px!important;padding:12px 10px!important;box-sizing:border-box;max-height:calc(100vh - 360px);overflow-y:auto}
+#campUI .campaign-nav .btn{display:flex!important;align-items:center;text-align:left;margin:2px 0!important;padding:8px 9px!important;border:1px solid transparent;background:transparent;font-size:12px;gap:9px;box-sizing:border-box;width:100%}
+#campUI .campaign-nav .btn:hover{background:#e2c17f13;border-color:#d7b77866;transform:none}
+.nav-icon{width:17px;height:17px;fill:none;stroke:#bba879;stroke-width:1.5;flex:none}.nav-label{display:block;min-width:0}.nav-label small{font-size:9px!important}
+.nav-heading{font-size:9px;letter-spacing:1.8px;color:#8f9f8c;margin:12px 9px 5px;padding-top:9px;border-top:1px solid #ffffff12}.nav-heading:first-child{margin-top:0;border:0;padding-top:0}
+#campUI .realm-inspector{right:24px!important;top:148px!important;width:292px!important;box-sizing:border-box;max-height:calc(100vh - 380px)!important;padding:16px!important;overflow:auto;font-size:12px!important;line-height:1.6}
+#campUI .realm-inspector .tip{font-size:11px;color:#b6c1ac;opacity:1}
+#campUI .realm-inspector>.tip{border-bottom:1px solid #fff1;padding-bottom:12px;margin-bottom:12px}
+#campUI .campaign-log{left:24px!important;bottom:24px!important;width:290px!important;max-height:160px!important;box-sizing:border-box;padding:12px 14px!important;font-size:11px!important;line-height:1.7!important;color:#c3cab9}
+.campaign-section-title{font-size:10px;text-transform:uppercase;letter-spacing:1.6px;color:#d5bc83;margin-bottom:9px;display:flex;align-items:center;justify-content:space-between}
+#campUI .campaign-minimap{right:24px;bottom:24px;width:292px;padding:12px;box-sizing:border-box;pointer-events:auto}
+.campaign-minimap canvas{width:100%;height:128px;display:block;border-radius:4px;cursor:crosshair;background:#b8b192}
+.map-legend{display:flex;gap:12px;font-size:9px;color:#b5bfad;margin-top:8px}.map-legend i{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px}
+.chapter-strip{position:absolute;left:220px;top:147px;padding:7px 12px;max-width:calc(100vw - 560px);border-left:2px solid #c5a568;background:#17221ee6;color:#d8d4b9;font-size:11px;pointer-events:none;border-radius:0 4px 4px 0}
+.chapter-strip b{color:#e5c98d;font-weight:500}.chapter-strip span{color:#9fae9a;margin-left:14px}
+#campUI[data-view] .modal{background:linear-gradient(135deg,#27332d,#131e1b);border-color:#9c9c73;padding:22px;box-shadow:0 0 0 100vmax #06100d88,0 24px 90px #0008;border-radius:10px;font-family:"Segoe UI","Microsoft YaHei",sans-serif;line-height:1.6}
+#campUI[data-view] .tabs{border-color:#66765e;gap:5px;padding-bottom:7px;flex-wrap:wrap}
+#campUI[data-view] .tab{background:#18251e;border:1px solid #53644e;border-radius:5px;padding:7px 14px;color:#bdc5ac;transition:background .15s}
+#campUI[data-view] .tab.on{background:#887040;color:#fff0c9;border-color:#d4b778}
+#campUI[data-view] .res,#campUI[data-view] .wk,#campUI[data-view] .ucard{background:linear-gradient(#34423588,#202c2388);border-color:#58654d;border-radius:6px}
+#campUI[data-view] .bar2{background:#0b1711;border-color:#475c46;height:6px}#campUI[data-view] .bar2>i{background:linear-gradient(90deg,#8c9a6b,#d0b677)}
+#campUI[data-view] .chip{border-color:#657253;background:#1d2c23;color:#dfddc4;padding:3px 8px}
+#campUI[data-view="cvil"]>.panel:not(.modal){border-radius:9px;padding:16px!important;box-sizing:content-box;right:12px!important;top:12px!important;bottom:12px!important;width:310px!important}
+#campUI[data-view="cvil"] .res b{font-variant-numeric:tabular-nums}#campUI[data-view] h2{font-family:Georgia,"Microsoft YaHei",serif;font-weight:500;letter-spacing:.4px;font-size:24px;color:#eed3a0;margin-bottom:14px}
+#campUI[data-view] table td{padding:7px 5px;border-bottom:1px solid #ffffff0b}
+@media(max-width:1250px){#campUI .campaign-top{grid-template-columns:170px minmax(0,1fr) 170px;gap:9px;padding:10px!important}.campaign-brand strong{font-size:15px}.campaign-seal{width:32px;height:42px;font-size:24px}.campaign-eyebrow{font-size:8px;letter-spacing:1px}.resource-tile{padding:5px}.resource-tile b{font-size:17px}.resource-tile .label{font-size:9px}#campUI .campaign-top #cNext{min-width:160px!important;font-size:12px!important}.campaign-action .cadence{font-size:9px}.campaign-date{font-size:10px}.chapter-strip{display:none}}
+@media(max-height:800px){#campUI .campaign-nav{max-height:calc(100vh - 300px)}#campUI .campaign-nav .btn{padding:5px 7px!important}.nav-heading{margin-top:7px;padding-top:6px}#campUI .campaign-log{max-height:110px}.campaign-minimap canvas{height:100px}#campUI .realm-inspector{max-height:calc(100vh - 350px)!important}}
+@media(max-width:900px){#campUI .campaign-top{left:10px!important;right:10px!important;grid-template-columns:minmax(0,1fr) 150px;min-height:116px}.campaign-brand{display:none}.campaign-resources{gap:3px}.resource-tile b{font-size:15px}.resource-tile .delta{font-size:8px}.campaign-date{flex-wrap:wrap}.campaign-nav{left:10px!important}#campUI .realm-inspector{width:240px!important;right:10px!important}.campaign-minimap{display:none}.campaign-action .cadence{white-space:normal}.campaign-date .ph{font-size:8px!important}}
+#battleObjectiveCard{position:fixed;left:50%;top:8px;transform:translateX(-50%);width:min(560px,calc(100vw - 560px));padding:13px 16px;box-sizing:border-box;background:linear-gradient(135deg,#23332d,#101d18);border:1px solid #b3a773;border-radius:8px;color:#ede5cd;z-index:3;pointer-events:none;box-shadow:0 6px 25px #0005;font:12px "Segoe UI","Microsoft YaHei",sans-serif}
+#battleObjectiveCard strong{display:block;font:18px Georgia,"Microsoft YaHei",serif;margin:4px 0 8px;color:#f1dca7}
+#battleObjectiveCard .objective-summary{color:#b6c5b2;font-size:11px;line-height:1.5}
+.objective-rows{display:flex;gap:8px;margin-top:10px}.objective-row{flex:1;min-width:0}.objective-row span{display:block;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#d4ceb3}
+.objective-track{height:4px;background:#ffffff14;border-radius:4px;margin-top:6px;overflow:hidden}.objective-track i{height:100%;display:block;background:#d4b375;transition:width .2s}.objective-row.done .objective-track i{background:#a6c79a}.objective-row.contested .objective-track i{background:#d28c74}
+@media(max-height:800px){#campUI .campaign-nav{max-height:calc(100vh - 325px)!important}}
