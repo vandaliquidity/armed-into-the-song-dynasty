@@ -21,11 +21,15 @@ A browser strategy game.
 
 Edict acknowledgement accepts mouse and keyboard input and closes with one action; the ceremony waits for acknowledgement. Leaving the village preserves the pending edict. The treasury uses an open-roof cutaway with visible reserve trays. **Bianliang at Dusk** is a new original qin- and flute-inspired score, with music controls in the campaign navigation. Settlement overviews now explain resource-site development, costs, supply requirements, seasonal delivery and workshop consumption.
 
+### v0.9.2
+
+**Send wounded** in the campaign navigation and battle result popup consolidates wounded soldiers toward their nearest reachable owned hospital, measured by distance along friendly roads. Healthy troops, unit assignments and movement orders stay in place. Patients move one road segment each month, receive the existing seasonal treatment rates, and rejoin their original unit where possible; overflow or orphaned patients recover into the hospital garrison. Missing or captured routes pause or reroute patients without losing them. Evacuations persist in saves. Wounded already at a hospital are admitted there, so they remain when the healthy army marches away.
+
 ## Local preview
 
 Serve this folder with `python -m http.server 8766 --bind 127.0.0.1`, then open [the campaign preview](http://127.0.0.1:8766/?preview=frontier). The preview starts directly on the campaign map and uses a separate save slot. The normal URL keeps the story campaign and its existing saves.
 
-GitHub Pages serves the root files directly; no build step is required. Upload `index.html`, `frontier.js`, `campaign-ui.js`, `campaign-ui.css`, `battlefields.js` and `song-music.js` together with the existing `assets` folder.
+GitHub Pages serves the root files directly; no build step is required. Upload `index.html`, `frontier.js`, `campaign-ui.js`, `campaign-ui.css`, `battlefields.js`, `song-music.js` and `medical.js` together with the existing `assets` folder.
 
 ## Verification
 
