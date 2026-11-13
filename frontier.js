@@ -231,16 +231,38 @@ Object.assign(STK_IT,{
   hide:{v:6,sc:.92,cw:25,ch:17,ly:3,lz:4},
   leather:{v:7,sc:.9,cw:22,ch:17,ly:3,lz:6}
 });
+function treasuryContents(gold,silver){
+  const items=[];
+  for(const [k,value,unit,x0] of [['gold',gold,5,-104],['silver',silver,50,18]]){
+    const count=Math.min(48,Math.ceil(Math.max(0,value)/unit));
+    for(let i=0;i<count;i++){const level=Math.floor(i/24),slot=i%24;items.push({k,v:k==='gold'?13:14,x:x0+(slot%6)*17,y:-65+Math.floor(slot/6)*13-level*6,level});}
+  }
+  return items.sort((a,b)=>a.y-b.y||a.level-b.level);
+}
 function frontierTreasury(add,g,s) {
   const x=(VZ.treasury[0]+VZ.treasury[2])/2,y=VZ.treasury[3]-30;
-  const gold=s.st.gold||0,silver=CVIL.id===HOME?Math.round(CAMP.res.silver||0):s.stock?.silver||0;
-  add(y,()=>{sprProp('hall',x,y-4,2,1.25);
-    sprProp('banner',x-115,y-4,0,.8);sprProp('banner',x+115,y-4,0,.8);
-    g.fillStyle='#65251b';g.fillRect(x-49,y-43,98,19);g.strokeStyle='#c5a35a';g.lineWidth=1;g.strokeRect(x-49,y-43,98,19);
-    txt(Tz('大宋官库','SONG TREASURY'),x,y-29,11,'#f5d58d','center','bold ');
-    sprUnit('song_spear',x-86,y+6,9,Math.PI/2,0);sprUnit('song_spear',x+86,y+6,9,Math.PI/2,0);
-    stockLabel(g,x,y+37,[[Tz('金 ','Gold '),gold],[Tz('银 ','Silver '),silver]]);});
-  CVIL.hot.push({r:VZ.treasury,t:Tz('大宋官库 · 封存钱帛','Song treasury · sealed reserves')+'\n'+Tz('黄金 ','Gold ')+gold+'\n'+Tz('白银 ','Silver ')+silver+(CVIL.id===HOME?'\n'+Tz('全境公帑（不计入仓廒库容）','Realm silver reserve (separate from warehouse capacity)'):'')});
+  const enemy=s.own==='xia',gold=enemy?(s.stock?.gold||0):(s.st.gold||0),silver=CVIL.id===HOME?Math.round(CAMP.res.silver||0):s.stock?.silver||0;
+  const title=enemy?Tz('西夏军库','XIA TREASURY'):Tz('大宋官库','SONG TREASURY'),contents=treasuryContents(gold,silver);
+  add(y,()=>{
+    // Reuse the rendered open shell: roof lifted off, secure walls and front
+    // rail intact. Ingots remain inside the building rather than outdoors.
+    sprProp('store8',x,y-40,0,1.25);
+    for(const px of [x-133,x+133]){g.fillStyle='#7d3527';g.fillRect(px-3,y-118,6,115);g.fillStyle='#c2a46a';g.fillRect(px-5,y-9,10,7);}
+    g.fillStyle='#65251b';g.fillRect(x-53,y-124,106,19);g.strokeStyle='#c5a35a';g.lineWidth=1;g.strokeRect(x-53,y-124,106,19);
+    txt(title,x,y-110,11,'#f5d58d','center','bold ');
+    for(const it of contents){
+      sprProp('stk8',x+it.x,y+it.y,it.v,it.k==='gold'?.85:.68);
+      if(it.k==='gold'){
+        // Gold catches the light inside the tray; retain the rendered chest.
+        g.fillStyle='#f1ce64';for(let i=0;i<3;i++)g.fillRect(x+it.x-5+i*3.5,y+it.y-5,2.5,2);
+      }
+    }
+    sprProp('store8',x,y-40,1,1.25);
+    sprProp('banner',x-145,y+2,enemy?1:0,.8);sprProp('banner',x+145,y+2,enemy?1:0,.8);
+    sprUnit(enemy?'xia_foot':'song_spear',x-120,y+10,9,Math.PI/2,0);sprUnit(enemy?'xia_foot':'song_spear',x+120,y+10,9,Math.PI/2,0);
+    stockLabel(g,x,y+37,[[Tz('金 ','Gold '),gold],[Tz('银 ','Silver '),silver]]);
+  });
+  CVIL.hot.push({r:VZ.treasury,t:title+' · '+Tz('屋顶剖视','roof cutaway')+'\n'+Tz('黄金 ','Gold ')+gold+'\n'+Tz('白银 ','Silver ')+silver+'\n'+Tz('每盘：金5 / 银50（大量储备合并显示）','Each tray: 5 gold / 50 silver (large reserves grouped)')+(CVIL.id===HOME?'\n'+Tz('全境公帑（不计入仓廒库容）','Realm silver reserve (separate from warehouse capacity)'):'')});
 }
 {const old=cvilStores7;cvilStores7=function(add,g,s){old(add,g,s);frontierTreasury(add,g,s);};}
 {const old=logvSpot;logvSpot=function(k){if(k==='gold'||k==='silver')return{x:278,y:940};return old(k);};}

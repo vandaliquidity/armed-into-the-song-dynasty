@@ -535,7 +535,7 @@ LORE.gfx={title:{zh:'画质',en:'Graphics'},auto:{zh:'自动',en:'Auto'},q:{high
   d:{zh:'高：原尺寸画卷、三人一伍、全部光影；中：标准画卷、两人一伍；低：小画卷、无投影雾霭（适合手机）',en:'High: full-size art, files of three, all lighting. Medium: standard art, files of two. Low: small art, no shadows or haze (phones).'}};
 // ===== 持械入宋 fan game — core =====
 'use strict';
-const VERSION='v0.9 · Frontier';
+const VERSION='v0.9.1 · Frontier';
 const TAU=Math.PI*2;
 const clamp=(v,a,b)=>v<a?a:v>b?b:v, lerp=(a,b,t)=>a+(b-a)*t, rnd=(a=1,b)=>b===undefined?Math.random()*a:a+Math.random()*(b-a), rint=(a,b)=>Math.floor(rnd(a,b+1));
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y), angTo=(a,b)=>Math.atan2(b.y-a.y,b.x-a.x);
@@ -3485,7 +3485,7 @@ function edictCanopy(g,x,y){g.strokeStyle='#3a2410';g.lineWidth=2;g.beginPath();
 function edictChest(g,x,y,k){g.fillStyle='#7a1a10';g.fillRect(x-10,y-13,20,13);g.fillStyle='#c8a040';g.fillRect(x-10,y-9,20,2);g.fillRect(x-1,y-13,2,13);g.strokeStyle='#2a0a04';g.lineWidth=1;g.strokeRect(x-10,y-13,20,13);}
 function sycee(g,x,y){g.fillStyle='#d8dce0';g.strokeStyle='#5a5a60';g.lineWidth=.8;g.beginPath();g.ellipse(x,y,6,3,0,0,TAU);g.fill();g.stroke();g.fillStyle='#f4f6f8';g.beginPath();g.ellipse(x,y-2,3,2.2,0,0,TAU);g.fill();}
 function edictDraw(add,g,t,dt){if(!EDICT)return;if(CVIL.id!==HOME||MODE!=='cvil'){EDICT=null;return;}const E=EDICT;E.t+=dt;const T0=E.t;const lead=Math.min(880,-120+T0*112);const rec=E.rec;
-  if(T0>ED_END+6){edictEnd();return;}
+  // Remain at the presentation until the player acknowledges the edict.
   const parade=[['drum'],['drum'],['flag','敕'],['flag','宋'],['guard'],['guard'],['envoy'],['flag','诏'],['flag','忠'],['guard'],['guard']];for(const g2 of rec.gifts)parade.push(['chest',g2.k]);if(rec.gifts.some(g2=>g2.k==='troops'))for(let i=0;i<8;i++)parade.push(['troop']);
   const moving=lead<880;parade.forEach((p,i)=>{const x=lead-Math.floor(i/2)*44-(p[0]==='envoy'?0:0),y=i%2?522:492;if(x<-60)return;const fr=moving?Math.floor(T0*7+i)%4:0;
     if(p[0]==='drum')add(y,()=>{sprUnit('song_militia',x,y,10,0,moving?(Math.floor(T0*4)%2?4:5):(Math.floor(T0*3)%2?4:0));g.fillStyle='#8a2a10';g.beginPath();g.ellipse(x+8,y-12,6,5,0,0,TAU);g.fill();});
@@ -3520,7 +3520,7 @@ function edictOverlay(g,t){if(!EDICT)return;const T0=EDICT.t,aw=VW-360;if(T0<ED_
   // the seal
   if(shown>n-4){g.save();g.translate(cx-W/2+80,cy+H/2-90);g.rotate(-.05);g.fillStyle='rgba(176,24,16,.85)';g.fillRect(-34,-34,68,68);g.fillStyle='#ffe9a0';g.font='bold 22px "Noto Serif SC",serif';g.fillText('御',-12,-6);g.fillText('宝',12,-6);g.fillText('书',-12,22);g.fillText('诏',12,22);g.restore();}
   if(LANG!=='zh'){g.fillStyle='rgba(20,10,4,.82)';const ty=cy+H/2+34;g.fillRect(cx-W/2,ty,W,58);g.font='13px "Noto Serif SC",serif';g.fillStyle='#ffe7a0';g.textAlign='left';const words=TX.en.split(' ');let line='',ly=ty+18;for(const w of words){if(g.measureText(line+w).width>W-24){g.fillText(line,cx-W/2+12,ly);line='';ly+=17;if(ly>ty+56)break;}line+=w+' ';}if(ly<=ty+56)g.fillText(line,cx-W/2+12,ly);}}
-{const _cu=cvilUI;cvilUI=function(){_cu();if(!EDICT)return;const d=campEl();const b=btn(LC.thank.zh,LC.thank.en,()=>{if(EDICT.t<ED_GIFT)EDICT.t=ED_GIFT;else edictEnd();});b.id='cEdictB';b.style.cssText='position:absolute;left:calc(50% - 260px);bottom:90px;font-size:18px;background:linear-gradient(#d8a020,#8a5a08);z-index:5';d.appendChild(b);};}
+{const _cu=cvilUI;cvilUI=function(){_cu();if(!EDICT)return;const d=campEl();const b=btn('接旨谢恩 · 继续','Acknowledge edict · Continue',()=>edictEnd());b.id='cEdictB';b.style.cssText='position:fixed;left:calc((100vw - 360px)/2);transform:translateX(-50%);bottom:24px;max-width:calc(100vw - 390px);font-size:16px;background:linear-gradient(#d8a020,#8a5a08);color:#fff3cf;z-index:8;pointer-events:auto';d.appendChild(b);b.focus({preventScroll:true});};}
 // ---- campaign map: Commerce & Politics button, edict banner, intel panel
 {const _cm=campUI;campUI=function(){_cm();if(MODE!=='camp'||!CG)return;v7s();const sb=$('cSetB');const box=sb&&sb.parentNode;const n=(CG.xdem?1:0)+(CG.pet?1:0);
   if(box){const b=btn('⚖ 商贸与朝政'+(n?' ❗':''),'Commerce & Politics'+(n?' ❗':''),()=>cpUI());b.id='cCPB';b.style.cssText='display:block;margin:4px';box.insertBefore(b,sb.nextSibling);
@@ -4336,4 +4336,4 @@ window.__sw={
   cstart(o={}){CAMP=newCampaign();CAMP.done=[0];CAMP.next=1;CAMP.roster.militia=22;CAMP.res={grain:270,iron:120,silver:230};if(o.res)Object.assign(CAMP.res,o.res);campStart();if(o.tut==null)CG.tut=6;showCamp();return true;},
   cturn:cbotTurn,cg(){return CG;},cbot:{develop:cbotDevelop,recruit:cbotRecruit,march:cbotMarch,promote:cbotPromote},
 };
-</script><script src="frontier.js"></script><script src="campaign-ui.js"></script><script src="battlefields.js"></script></body></html>
+</script><script src="frontier.js"></script><script src="campaign-ui.js"></script><script src="battlefields.js"></script><script src="song-music.js"></script></body></html>

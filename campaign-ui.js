@@ -152,3 +152,44 @@ __sw.cturn=cbotTurn;
   b.onkeydown=e=>{if((e.key==='Enter'||e.key===' ')&&!b.classList.contains('dis')){e.preventDefault();e.stopPropagation();b.click();}};
   return b;
 };}
+
+// Pause tutorial popovers while the edict is being presented; they must not
+// cover the acknowledgement or change focus in the middle of the ceremony.
+{const old=coachTick;coachTick=function(){if(EDICT){coachHide();return;}return old();};}
+{const old=showCamp;showCamp=function(){
+  // Leaving the ceremony postpones it; only Acknowledge consumes the queue.
+  if(EDICT){EDICT=null;const b=$('cEdictB');if(b)b.remove();}
+  return old();
+};}
+
+function resourceSiteHelp(id,refresh){
+  const sites=NODES.filter(n=>n.terr===id),box=document.createElement('div');box.className='wk';box.id='cResourceSites';
+  box.innerHTML=`<b style="color:#e8ce98">${T('本村资源点','This settlement’s resource sites')}</b><p class="tip">${T('占领村寨 → 兴建哨堡 → 保持通往清河的补给线。每季第三个月结算时入本村仓廒，银矿收入进入公帑。','Own the settlement → build an outpost → keep a supply route to Qinghe. Output enters this settlement’s stores at the end of month 3 each season; silver goes to the realm treasury.')}</p>`;
+  for(const n of sites){
+    const row=document.createElement('div');row.className='wk';
+    const yieldText=Object.entries(NODEK[n.k].y).map(([k,v])=>`+${v} ${Tz(...(RAWN[k]||['银','silver']))}`).join(' · ');
+    const state=!owned(id)?T('须先取得所属村寨','Acquire this settlement first'):!CG.out[n.id]?T('未开发','Not developed'):nodeOk(n)?T('开采中 · 每季入库','Working · delivered each season'):T('断供 · 暂停产出','Cut off · production paused');
+    row.innerHTML=`<div><b>${T(n.zh,n.en)}</b></div><div class="tip">${yieldText} ${Tz('/季','/ season')} · ${state}</div>`;
+    if(owned(id)&&!CG.out[n.id]){
+      const ready=CG.phase===0&&canPayAt(id,OUTPOST_COST);
+      const develop=sbtn('开发：银40 · 木60','Develop: 40 silver · 60 timber',()=>{if(buildOutpost(n.id))refresh();},ready);develop.dataset.out=n.id;row.appendChild(develop);
+      if(!ready)row.insertAdjacentHTML('beforeend',`<div class="tip">${CG.phase!==0?T('在筹划阶段开发','Develop during Planning'):T('需银40及补给网内木料60','Requires 40 silver and 60 timber in the supply network')}</div>`);
+    }
+    box.appendChild(row);
+  }
+  if(!sites.length)box.insertAdjacentHTML('beforeend',`<div class="tip">${T('本村无地图资源点；可营建田庄、伐木场等生产建筑。','No map resource sites here. Build farms, lumber camps and other production works instead.')}</div>`);
+  box.insertAdjacentHTML('beforeend',`<p class="tip">${T('工坊会在收成后使用木、铁、皮等材料制造装备；库存净增量可能低于资源点产量，可在产业链查看。','Workshops use timber, ore and hides after the harvest to make equipment. Your net stock increase may be lower than the site yield; check Production for usage.')}</p>`);
+  return box;
+}
+{const old=settleUI;settleUI=function(id,tab){
+  old(id,tab);if(SET_TAB!=='over')return;
+  const body=$('cSet')?.children[2];if(body)body.prepend(resourceSiteHelp(id,()=>{campUI();settleUI(id,'over');}));
+};}
+{const old=nodePanel;nodePanel=function(nid){
+  const p=old(nid),n=NODES.find(n=>n.id===nid);if(!n)return p;
+  const treasury=!!NODEK[n.k].y.silver;
+  const help=document.createElement('p');help.className='tip';help.textContent=Tz(
+    `产出存入${treasury?'公帑':CT[n.terr].zh}；每季结算一次（三个月），并非点击后立即获得。`,
+    `Output enters ${treasury?'the realm treasury':CT[n.terr].en+' stores'} once per season (every three months), not immediately on clicking the site.`);
+  p.appendChild(help);return p;
+};}
