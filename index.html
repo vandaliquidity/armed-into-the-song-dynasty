@@ -511,6 +511,24 @@ LORE.coach={
   lessonWin:{zh:'兵少不怕：地利、齐射、技能、时机叠在一起，就能以少胜多。',en:'Few need not fear many: ground, volleys, skills and timing stacked together win the day.'},
   lessonLose:{zh:'光靠硬拼打不赢。按提示占土垒、结弩阵、守窄巷，在对的时候放技能，再来一次。',en:'Brute force will not do it. Take the earthwork, form the volley, hold the lanes and time the skills, then try again.'}},
 };
+// t241: RTS-style army orders on the campaign map
+LORE.coach.steps.move={n:['调兵如意','Moving armies'],p:[
+  {zh:'点一下地图上的军旗，选中这支兵马（按住 Shift 可多选，或 Shift 拖框）。',en:'Click an army banner on the map to select it (hold Shift to add more, or Shift-drag a box).'},
+  {zh:'右键点一个村寨：虚线会画出行军路线和所需回合。己方村寨即行军，敌寨会先问你是否进攻；右键辎重车队则派兵护送。触屏：点村寨再按“前往”。',en:'Right-click a village: a dashed line shows the route and the turns it takes. Your own villages mean march; an enemy village asks before you attack; right-click a convoy to escort it. On touch: tap the village, then press Move.'}]};
+LORE.rts={
+  turns:{zh:'{n} 回合',en:'{n} turn(s)'},days:{zh:'约 {d} 日行程',en:'~{d} days on the road'},here:{zh:'已在此地',en:'Already here'},
+  noRoute:{zh:'无路可达（须经己方村寨）',en:'No route (it must pass through villages you hold)'},
+  attack:{zh:'进攻',en:'Attack'},march:{zh:'行军',en:'March'},escort:{zh:'护送车队',en:'Escort convoy'},claim:{zh:'占领',en:'Claim'},
+  move:{zh:'前往',en:'Move here'},cancel:{zh:'取消',en:'Cancel'},
+  atkT:{zh:'进攻 {t}？',en:'Attack {t}?'},
+  atkD:{zh:'西夏守军约 {e} 人。我军 {n} 人，胜算约 {p}%。路程 {k}。',en:'About {e} Xia hold it. You bring {n} men; odds about {p}%. Route: {k}.'},
+  raid:{zh:'劫营（只抢不占）',en:'Raid (loot, do not hold)'},
+  setOut:{zh:'{a} 受命开往 {t}，行军阶段出发（{k}）',en:'{a} ordered to {t}; sets out in the March phase ({k})'},
+  marching:{zh:'{a} 开往 {t}（{k}）',en:'{a} marches on {t} ({k})'},
+  blocked:{zh:'{a} 的去路被阻，停在 {t}',en:'{a}\'s road is blocked; halting at {t}'},
+  escNo:{zh:'车队要从 {t} 出发时，护送兵马须在 {t}',en:'To escort, the army must be at {t} when the convoy leaves'},
+  escOk:{zh:'{a} 派 {u} 护送车队',en:'{a} sends {u} to escort the convoy'},
+  sel:{zh:'已选 {n} 支兵马',en:'{n} armies selected'},hint:{zh:'右键村寨 = 行军/进攻 · 右键车队 = 护送 · Esc 取消选择',en:'Right-click a village = march/attack · right-click a convoy = escort · Esc deselects'}};
 // ===== 持械入宋 fan game — core =====
 'use strict';
 const VERSION='v0.6';
@@ -3462,7 +3480,7 @@ function edictOverlay(g,t){if(!EDICT)return;const T0=EDICT.t,aw=VW-360;if(T0<ED_
 {const _cm=campUI;campUI=function(){_cm();if(MODE!=='camp'||!CG)return;v7s();const sb=$('cSetB');const box=sb&&sb.parentNode;const n=(CG.xdem?1:0)+(CG.pet?1:0);
   if(box){const b=btn('⚖ 商贸与朝政'+(n?' ❗':''),'Commerce & Politics'+(n?' ❗':''),()=>cpUI());b.id='cCPB';b.style.cssText='display:block;margin:4px';box.insertBefore(b,sb.nextSibling);
     if(typeof deepButtons==='function')deepButtons(box,sb);}
-  const d=campEl();if(CG.fav.q.length){const b=btn(LC.receive.zh,LC.receive.en,()=>edictStart());b.id='cEdictGo';b.style.cssText='position:absolute;left:50%;transform:translateX(-50%);top:92px;font-size:18px;background:linear-gradient(#f0c030,#9a6408);color:#3a1a04;z-index:4;box-shadow:0 0 18px #ffd060';d.appendChild(b);}
+  const d=campEl();if(CG.fav.q.length){const b=btn(LC.receive.zh,LC.receive.en,()=>edictStart());b.id='cEdictGo';b.style.cssText='position:absolute;left:50%;transform:translateX(-50%);top:92px;font-size:18px;background:linear-gradient(#f0c030,#9a6408);color:#3a1a04;z-index:4;pointer-events:auto;box-shadow:0 0 18px #ffd060';d.appendChild(b);}
   const xs=CG.xa.filter(x=>SEEN.has(x.from)||SEEN.has(x.to)||x.story);if(xs.length||CG.xdem){const p=document.createElement('div');p.className='panel';p.id='cIntel';p.style.cssText='left:220px;top:84px;width:330px;font-size:12px;line-height:1.45;border-color:#c04020';
     p.innerHTML=`<b style="color:#ff9a70">👁 ${T(LORE.intel.title.zh,LORE.intel.title.en)}</b><br>`+xs.map(x=>'⚔ '+intelLine(x)).join('<br>')+(CG.xdem?`<br>🏳 ${zx(LCP.xdemTxt,{t:{zh:CT[CG.xdem.terr].zh,en:CT[CG.xdem.terr].en},g:{zh:`银${CG.xdem.want.silver}、粮${CG.xdem.want.grain}`,en:`${CG.xdem.want.silver} silver, ${CG.xdem.want.grain} grain`}})}`:'')+(CG.xai&&CG.xai.length?`<div class="tip" style="margin-top:3px">${Ts('西夏军议所指','Xia war council eyes')}: ${CG.xai.slice(0,3).map(a=>`${tName(a.id)}${a.why.includes('weak')?'⚠':''}`).join(' › ')}</div>`:'');d.appendChild(p);}};}
 // ==== v0.7 (t226u): village events & the great arc · modern research & court suspicion · officers & chieftains · governors
@@ -4018,6 +4036,91 @@ function lesDebrief(L,win){const A=LLS.adv,U=LLS.units;const rows=[['cover',Math
   h+=`</table><div class="tip" style="margin-top:6px;text-align:center">${T(win?LLS.lessonWin.zh:LLS.lessonLose.zh,win?LLS.lessonWin.en:LLS.lessonLose.en)}</div></div>`;return h;}
 {const _eb=endBattle;endBattle=function(){if(CAMP&&CAMP.roster)for(const t of TROOP_ORDER)if(CAMP.roster[t]==null)CAMP.roster[t]=0;// fresh rosters lacked archer/fire -> 'Fallen NaN'
   const L=B&&B.les,win=B&&B.over&&B.over.win;if(L)L.rev=B.stats.revived||0;_eb();if(!L)return;try{const s=$('scrEnd'),w=s&&s.firstElementChild;if(w){const bt=w.lastElementChild;bt.insertAdjacentHTML('beforebegin',lesDebrief(L,win));}CAMP.lesson={win:!!win,adv:L.adv,t:Math.round(L.t)};}catch(e){console.warn(e);}};}
+// ================================================================ t241: RTS-style army orders on the campaign map
+// Left-click a banner = select (Shift-click / Shift-drag a box = several). Right-click a village = march there (multi-turn route through
+// villages you hold), an enemy village = attack after a confirm, a convoy = escort. Hover shows the route and the turns / days.
+// Esc or a left-click on empty ground deselects. Touch: tap a banner, tap the village, press Move. The old buttons still work.
+const LR=LORE.rts;
+let CSELM=new Set();const RTS={box:null,pend:null,touch:false,shift:false,hov:null};
+function rtsFill(o,m){let zh=o.zh,en=o.en;for(const k in m){const v=m[k],A=Array.isArray(v);zh=zh.split('{'+k+'}').join(A?v[0]:v);en=en.split('{'+k+'}').join(A?v[1]:v);}return[zh,en];}
+function rtsArmies(){if(!CG)return[];const ids=new Set(CSELM);if(CSEL&&CSEL.a!=null)ids.add(CSEL.a);return CG.armies.filter(a=>ids.has(a.id));}
+function rtsPass(id){const o=CG.T[id].own;return o==='qh'||o==='song';}
+// shortest route over the road graph; it may only pass through villages we (or the Song court) hold, and stops at the first other one
+function rtsPath(a,to){if(!CT[to]||!CADJ[a.loc])return null;if(to===a.loc)return[];const prev={[a.loc]:null},q=[a.loc];
+  while(q.length){const x=q.shift();for(const y of CADJ[x]||[]){if(y in prev)continue;prev[y]=x;if(y===to){const p=[y];let c=x;while(c!==a.loc){p.unshift(c);c=prev[c];}return p;}if(rtsPass(y))q.push(y);}}return null;}
+function rtsKm(a,b){const A=CT[a],Bq=CT[b];const k=Math.cos(36.3*Math.PI/180);return Math.hypot((A.lon-Bq.lon)*k*111,(A.lat-Bq.lat)*111);}
+// one hop per season-turn; ~25 km a day on the march (a loaded Song column with carts)
+function rtsEta(a,path){if(!path)return null;let km=0,c=a.loc;for(const p of path){km+=rtsKm(c,p);c=p;}const turns=path.length+(CG.phase>2?1:0)*(path.length?1:0);return{turns:Math.max(path.length?1:0,path.length),days:Math.max(1,Math.round(km*1.25/25)),km};}
+function rtsEtaTxt(e){if(!e)return[LR.noRoute.zh,LR.noRoute.en];if(!e.turns)return[LR.here.zh,LR.here.en];const t=rtsFill(LR.turns,{n:String(e.turns)}),d=rtsFill(LR.days,{d:String(e.days)});return[t[0]+' · '+d[0],t[1]+' · '+d[1]];}
+function rtsTake(a){// start the next hop of a planned route (March phase only)
+  if(!a.route||!a.route.length){a.route=null;return;}if(CG.phase!==2||a.dest)return;const nx=a.route[0];
+  if(CADJ[a.loc].includes(nx)&&orderMarch(a,nx)){a.raid=a.rtsRaid&&nx===a.route[a.route.length-1]&&CG.T[nx].own==='xia'?1:0;a.route.shift();if(!a.route.length)a.route=null;}
+  else{cgLog('⚠',Ts(...rtsFill(LR.blocked,{a:[armyName(a),armyName(a)],t:[CT[a.loc].zh,CT[a.loc].en]})));a.route=null;}}
+function rtsGo(as,to,raid){let n=0;for(const a of as){const p=rtsPath(a,to);if(!p){cgLog('⚠',armyName(a)+' · '+Ts(LR.noRoute.zh,LR.noRoute.en));continue;}
+    a.dest=null;a.raid=0;a.rtsRaid=raid?1:0;if(!p.length){a.route=null;n++;continue;}a.route=p.slice();const k=rtsEtaTxt(rtsEta(a,p));
+    if(CG.phase===2){rtsTake(a);if(a.dest||a.route)cgLog('⚑',Ts(...rtsFill(LR.marching,{a:[armyName(a),armyName(a)],t:[CT[to].zh,CT[to].en],k})));}
+    else cgLog('⚑',Ts(...rtsFill(LR.setOut,{a:[armyName(a),armyName(a)],t:[CT[to].zh,CT[to].en],k})));if(a.dest||a.route)n++;}
+  if(n){sfx('order');if(CG.tut===3)CG.tut=4;}return n;}
+function rtsCommand(as,to){if(!as.length)return false;const o=CG.T[to].own;if(o==='xia'){rtsConfirm(as,to);return true;}return rtsGo(as,to)>0;}
+function rtsConfirm(as,to){const old=$('cAtk');if(old)old.remove();const d=document.createElement('div');d.className='panel modal';d.id='cAtk';d.style.cssText='max-width:480px;text-align:center';
+  let E=0,P=0,men=0;for(const a of as){men+=armyN(a);try{const q={type:'atk',army:a.id,terr:to};E=Math.max(E,qEnemyStr(q));P+=powerOf(a,q);}catch(e){}}
+  const p=E?Math.round(clamp(P/(P+E*1.15),.05,.95)*100):50;const e=rtsEta(as[0],rtsPath(as[0],to));const k=rtsEtaTxt(e);const tt=rtsFill(LR.atkT,{t:[CT[to].zh,CT[to].en]});
+  const ds=rtsFill(LR.atkD,{e:String(Math.round(E)),n:String(men),p:String(p),k});d.innerHTML=`<h2>⚔ ${T(tt[0],tt[1])}</h2><div style="margin:6px 0 12px">${T(ds[0],ds[1])}</div>`;
+  const ok=btn(LR.attack.zh,LR.attack.en,()=>{d.remove();rtsGo(as,to,0);campUI();});ok.id='cAtkOK';const rd=btn(LR.raid.zh,LR.raid.en,()=>{d.remove();rtsGo(as,to,1);campUI();});rd.id='cAtkRaid';
+  const no=btn(LR.cancel.zh,LR.cancel.en,()=>{d.remove();campUI();});no.id='cAtkNo';d.append(ok,rd,no);setTimeout(()=>{if(MODE==='camp')campEl().appendChild(d);},0);sfx('ui');}
+function rtsShipAt(s){if(s.state||!s.path)return null;const a0=s._a;const P=pathAt(s.path,shipProg(s));s._a=a0;return c2s(P.x,P.y);}
+function rtsShipPick(sx,sy){const sc=iconScale();let best=null,bd=1e9;for(const s of shipsOn()){const q=rtsShipAt(s);if(!q)continue;const d=Math.hypot(q.x-sx,q.y-10*sc-sy);if(d<26*sc&&d<bd){bd=d;best=s;}}return best;}
+function rtsEscort(as,s){for(const a of as){const C=shipEscCands(s).filter(u=>armyUnits(a).includes(u));if(!C.length)continue;const u=C.sort((x,y)=>x.men-y.men)[0];if(shipEscort(s.id,u.id)){cgLog('🐫',Ts(...rtsFill(LR.escOk,{a:[armyName(a),armyName(a)],u:[UT[u.type].zh,UT[u.type].en]})));return true;}}
+  cgLog('⚠',Ts(...rtsFill(LR.escNo,{t:[CT[s.from].zh,CT[s.from].en]})));sfx('ui');return false;}
+function rtsNearT(sx,sy,R){let best=null,bd=R;for(const t of CL.terr){const p=tPos(t.id),s=c2s(p.x,p.y);const d=Math.hypot(s.x-sx,s.y-sy);if(d<bd){bd=d;best=t.id;}}return best;}
+function rtsClear(){CSELM.clear();RTS.pend=null;const m=$('cMoveGo');if(m)m.remove();}
+// ---- touch: tap the village, then press Move
+function rtsMoveBtn(to,sx,sy){const old=$('cMoveGo');if(old)old.remove();const as=rtsArmies();if(!as.length)return;const d=document.createElement('div');d.className='panel';d.id='cMoveGo';
+  d.style.cssText=`position:fixed;left:${Math.round(clamp(sx-90,8,innerWidth-200))}px;top:${Math.round(clamp(sy+24,8,innerHeight-120))}px;pointer-events:auto;z-index:6;text-align:center;padding:6px`;
+  const e=rtsEta(as[0],rtsPath(as[0],to));const k=rtsEtaTxt(e);d.innerHTML=`<div class="tip">${T(CT[to].zh,CT[to].en)} · ${T(k[0],k[1])}</div>`;const en=CG.T[to].own==='xia';
+  const go=btn(en?LR.attack.zh:LR.move.zh,en?LR.attack.en:LR.move.en,()=>{d.remove();RTS.pend=null;rtsCommand(as,to);campUI();});go.id='cMoveOK';if(!e||!e.turns)go.classList.add('dis');
+  const no=btn(LR.cancel.zh,LR.cancel.en,()=>{d.remove();RTS.pend=null;});no.id='cMoveNo';d.append(go,no);document.body.appendChild(d);RTS.pend={t:to};}
+// ---- input
+addEventListener('pointerdown',e=>{RTS.touch=e.pointerType==='touch';RTS.shift=e.shiftKey;},true);
+addEventListener('mousedown',e=>{if(MODE!=='camp'||!CG||e.target!==cv)return;RTS.shift=e.shiftKey;if(e.button===0&&e.shiftKey){RTS.box={x0:e.clientX,y0:e.clientY,x1:e.clientX,y1:e.clientY};e.stopImmediatePropagation();}},true);
+addEventListener('mousemove',e=>{if(RTS.box){RTS.box.x1=e.clientX;RTS.box.y1=e.clientY;return;}if(MODE==='camp'&&CG)RTS.hov={x:e.clientX,y:e.clientY};},true);
+addEventListener('mouseup',e=>{if(!RTS.box)return;const b=RTS.box;RTS.box=null;e.stopImmediatePropagation();const x0=Math.min(b.x0,b.x1),x1=Math.max(b.x0,b.x1),y0=Math.min(b.y0,b.y1),y1=Math.max(b.y0,b.y1);
+  if(x1-x0<6&&y1-y0<6){campClick(e.clientX,e.clientY,0);return;}const sc=iconScale();const hit=CG.armies.filter(a=>{const p=armyScreen(a);return p.x>=x0&&p.x<=x1&&p.y-18*sc>=y0-14&&p.y-18*sc<=y1+14;});
+  if(hit.length){if(!(CSEL&&CSEL.a!=null))CSEL={a:hit[0].id};for(const a of hit)if(a.id!==CSEL.a)CSELM.add(a.id);sfx('click');}campUI();},true);
+{const _cc=campClick;campClick=function(sx,sy,b){if(!CG||(CG.queue.length&&CG.phase===3))return _cc(sx,sy,b);const h=campPick(sx,sy);const as=rtsArmies();
+  if(b===2){if(!as.length)return _cc(sx,sy,b);const s=rtsShipPick(sx,sy);if(s){rtsEscort(as,s);campUI();return;}
+    const to=h&&h.t?h.t:rtsNearT(sx,sy,70*iconScale());if(to)rtsCommand(as,to);campUI();return;}
+  if(h&&h.a!=null){if(RTS.shift&&CSEL&&CSEL.a!=null&&CSEL.a!==h.a){if(CSELM.has(h.a))CSELM.delete(h.a);else CSELM.add(h.a);sfx('click');campUI();return;}rtsClear();CSEL=h;sfx('click');campUI();return;}
+  if(!h){rtsClear();}
+  if(h&&h.t&&as.length&&RTS.touch){rtsMoveBtn(h.t,sx,sy);return;}
+  if(h&&!h.a)CSELM.clear();return _cc(sx,sy,b);};}
+{const _ck=campKey;campKey=function(k,e){if(k==='escape'&&MODE==='camp'){rtsClear();const c=$('cAtk');if(c)c.remove();}return _ck(k,e);};}
+// planned routes continue each March phase
+{const _np=nextPhase;nextPhase=function(){const r=_np.apply(this,arguments);try{if(CG&&CG.phase===2)for(const a of CG.armies)if(a.route)rtsTake(a);}catch(e){console.warn('rts',e);}return r;};}
+// ---- drawing: selection rings, planned routes, hover preview, box
+function rtsLine(g,pts,col,w,dash){g.strokeStyle=col;g.lineWidth=w;g.setLineDash(dash);g.lineCap='round';g.beginPath();pts.forEach((p,i)=>i?g.lineTo(p.x,p.y):g.moveTo(p.x,p.y));g.stroke();g.setLineDash([]);}
+function rtsPts(a,path){return[a.loc,...path].map(id=>{const p=tPos(id);return c2s(p.x,p.y);});}
+{const _da=drawArmy;drawArmy=function(g,a){const sel=(CSEL&&CSEL.a===a.id)||CSELM.has(a.id);if(sel){const p=armyScreen(a),sc=iconScale();const k=.5+.5*Math.sin(CTIME*6);g.strokeStyle=`rgba(120,255,150,${.6+.4*k})`;g.lineWidth=3*sc;g.beginPath();g.ellipse(p.x+6*sc,p.y+3*sc,(28+3*k)*sc,(10+1.5*k)*sc,0,0,TAU);g.stroke();}
+  _da(g,a);};}
+{const _dm=drawMarch;drawMarch=function(g){_dm(g);if(!CG)return;const sc=iconScale();
+  for(const a of CG.armies)if(a.route&&a.route.length){const st=a.dest?[a.dest,...a.route]:a.route;const pts=[a.dest?tPos(a.dest):tPos(a.loc),...a.route.map(tPos)].map(p=>c2s(p.x,p.y));if(a.dest)pts.unshift(c2s(tPos(a.loc).x,tPos(a.loc).y));rtsLine(g,pts,'rgba(255,230,150,.55)',3*sc,[3*sc,6*sc]);}
+  const as=rtsArmies();const hv=RTS.hov;if(as.length&&hv&&!RTS.box&&MODE==='camp'&&!document.querySelector('#campUI .panel.modal')){const s=rtsShipPick(hv.x,hv.y);
+    if(s){const q=rtsShipAt(s);g.strokeStyle='rgba(120,255,150,.9)';g.lineWidth=2.5;g.setLineDash([5,4]);g.beginPath();g.arc(q.x,q.y-10*sc,22*sc,0,TAU);g.stroke();g.setLineDash([]);rtsTag(g,hv.x+16,hv.y-34,'🐫 '+Tz(LR.escort.zh,LR.escort.en),'#c8ffd0');}
+    else{const h=campPick(hv.x,hv.y);const to=h&&h.t?h.t:null;if(to){const en=CG.T[to].own==='xia';let lab=null;
+      for(const a of as){const p=rtsPath(a,to);if(!p||!p.length)continue;const pts=rtsPts(a,p);rtsLine(g,pts,'rgba(20,10,5,.6)',6*sc,[]);rtsLine(g,pts,en?'rgba(255,80,50,.95)':'rgba(140,255,150,.95)',3*sc,[9*sc,6*sc]);
+        const e=pts[pts.length-1];g.fillStyle=en?'rgba(255,80,50,.95)':'rgba(140,255,150,.95)';g.beginPath();g.arc(e.x,e.y,6*sc,0,TAU);g.fill();if(!lab)lab=rtsEtaTxt(rtsEta(a,p));}
+      if(!lab)lab=rtsEtaTxt(rtsEta(as[0],rtsPath(as[0],to)));const act=en?LR.attack:CG.T[to].own==='free'?LR.claim:LR.march;rtsTag(g,hv.x+16,hv.y-34,(en?'⚔ ':'⚑ ')+Tz(act.zh,act.en)+' '+Tz(CT[to].zh,CT[to].en)+' · '+Tz(lab[0],lab[1]),en?'#ffc0a8':'#d8ffd8');}}}
+  if(RTS.box){const b=RTS.box;g.fillStyle='rgba(120,255,150,.10)';g.strokeStyle='rgba(140,255,150,.9)';g.lineWidth=1.5;g.fillRect(Math.min(b.x0,b.x1),Math.min(b.y0,b.y1),Math.abs(b.x1-b.x0),Math.abs(b.y1-b.y0));g.strokeRect(Math.min(b.x0,b.x1),Math.min(b.y0,b.y1),Math.abs(b.x1-b.x0),Math.abs(b.y1-b.y0));}};}
+function rtsTag(g,x,y,s,c){g.font='bold 13px sans-serif';g.textAlign='left';const w=g.measureText(s).width+12;x=Math.min(x,VW-w-6);g.fillStyle='rgba(24,14,6,.88)';g.fillRect(x,y-14,w,20);g.strokeStyle='rgba(240,200,110,.8)';g.lineWidth=1;g.strokeRect(x+.5,y-13.5,w-1,19);g.fillStyle=c;g.fillText(s,x+6,y+1);}
+// ---- info: a chip listing the selected armies + the controls hint
+{const _cu=campUI;campUI=function(){const r=_cu.apply(this,arguments);try{for(const id of[...CSELM])if(!CG.armies.some(a=>a.id===id))CSELM.delete(id);const as=rtsArmies();const old=$('cRtsSel');if(old)old.remove();
+  if(as.length&&MODE==='camp'){const d=document.createElement('div');d.className='panel';d.id='cRtsSel';d.style.cssText='position:absolute;left:50%;transform:translateX(-50%);bottom:12px;pointer-events:auto;font-size:13px;text-align:center;max-width:620px;padding:5px 12px';
+    const n=rtsFill(LR.sel,{n:String(as.length)});d.innerHTML=`<b style="color:#a8ffb8">⚑ ${as.length>1?T(n[0],n[1]):armyName(as[0])}</b> ${as.map(a=>`<span class="chip">${armyName(a)} · ${armyN(a)}${a.route?' → '+tName(a.route[a.route.length-1]):a.dest?' → '+tName(a.dest):''}</span>`).join('')}<div class="tip">${T(LR.hint.zh,LR.hint.en)}</div>`;campEl().appendChild(d);}}catch(e){console.warn('rts',e);}return r;};}
+// ---- coach: taught the first time the map is in play
+COACH_DEF.splice(Math.max(0,COACH_DEF.findIndex(d=>d.id==='upkeep')+1),0,{id:'move',when:()=>CG.turn>=1&&CG.armies.length>0&&!document.querySelector('#campUI .panel.modal'),parts:[
+  {rect:()=>{const a=CG.armies[0];if(!a)return null;const q=armyScreen(a);const r=cv.getBoundingClientRect();return{x:r.left+q.x*r.width/VW-26,y:r.top+q.y*r.height/VH-50,w:52,h:60};},done:()=>rtsArmies().length>0},
+  {rect:()=>{const as=rtsArmies();const a=as[0];if(!a)return null;const to=CADJ[a.loc].find(id=>owned(id))||CADJ[a.loc][0];if(!to)return null;const p=tPos(to),s=c2s(p.x,p.y);const r=cv.getBoundingClientRect();return{x:r.left+s.x*r.width/VW-30,y:r.top+s.y*r.height/VH-30,w:60,h:60};},
+   done:()=>CG.armies.some(a=>a.route||a.dest)}]});
 // ===== debug / test hooks (used by playwright sims) =====
 let BOT=false,botS={};
 function w2s(x,y){return{x:(x-CAM.x)*CAM.z,y:(y-CAM.y)*CAM.z};}
