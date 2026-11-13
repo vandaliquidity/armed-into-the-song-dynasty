@@ -1,5 +1,5 @@
-# 持械入宋 / Chixie Rusong
+# Armed into the Song Dynasty (持械入宋)
 
 A browser strategy game.
 
-**Play:** [https://vandaliquidity.github.io/chixie-rusong/](https://vandaliquidity.github.io/chixie-rusong/)
+**Play:** [https://vandaliquidity.github.io/armed-into-the-song-dynasty/](https://vandaliquidity.github.io/armed-into-the-song-dynasty/)
