@@ -105,11 +105,21 @@ Banquet menus use varied foods for higher receipts; packaged beauty goods use cl
 
 Town shops now use the detailed building atlases instead of flat placeholder façades. Tiled shops, annexes, a courtyard restaurant, kiln fittings, paper-drying frames, textile rolls, fruit trees, crop beds and metalworking equipment distinguish industries. Models and activity follow actual buildings, upgrade levels, pauses and stock; UI cards use the same building models. Existing saves migrate without restarting or duplicating resource grants.
 
+### v0.18 — Works & Banners
+
+The Production tab uses the same model-backed card layout as commerce: **Resources**, **Workshops**, and **Civic & military**. Cards show the respective building model, level, state, output, local stock, staffing or workshop order, and build/upgrade cost. Construction queues, seasonal delivery timing and worker allocation are shown once above the grid. Realm production comparison is collapsed below it. Seasonal production and construction rules are unchanged.
+
+The UI audit removes repeated production/build editors from settlement summaries and routes Workshops and Production chain links to the shared card editor. Settlement actions use one footer; cards align their actions and costs. The council has one consistent title, while its compact production header leaves room for the cards. Village stock displays hide empty entries and show resource names on hover; garrison cards use an aligned grid. Redundant quick-armour buttons are removed where the full refit control already provides that action. New management actions use native buttons; focused controls accept normal keyboard navigation without triggering campaign shortcuts.
+
+The **Muster roll & banners** panel displays banner commanders and companion officers, location, healthy soldiers, wounded and company capacity. Filters show banners, garrisons or a selected location. Select compatible companies to merge, split companies in half, fill individual companies or an entire formation, assign companies between co-located banners/garrisons, recruit through one training form per settlement, and return from refitting to the muster roll. Qualified companions can detach banners within existing command-slot rules; eligible banners can merge into Lin Feng. Hired commanders from merged banners return to the officer roster.
+
+Company merges require the same formation, troop type, armour, weapon quality and rank. They conserve healthy and wounded soldiers. Splits retain experience/quality, conserve wounded and require another company slot. Filling consumes local equipment, silver and manpower, preserves the unit's rank and reserves recovering soldiers' places; 300 civilians remain at the settlement. March orders, battle phases and hospital transfers block reorganisation. Recruitment uses the existing training queue and supply delivery rules rather than creating troops immediately. The settlement's refill shortcut uses the same replacement rules as Muster.
+
 ## Local preview
 
 Serve this folder with `python -m http.server 8766 --bind 127.0.0.1`, then open [the campaign preview](http://127.0.0.1:8766/?preview=frontier). The preview starts directly on the campaign map and uses a separate save slot. The normal URL keeps the story campaign and its existing saves.
 
-GitHub Pages serves the root files directly; no build step is required. Upload `index.html`, `frontier.js`, `campaign-ui.js`, `campaign-ui.css`, `battlefields.js`, `song-music.js`, `medical.js`, `journey.js`, `supply.js`, `companions.js`, `refit.js`, `missions.js`, `frontier-war.js`, `production.js`, `spoils.js`, `history.js`, `jin-campaign.js`, `field-command.js`, `dynasty.js`, `realm-resources.js`, `dynasty-ui.js`, `council.js`, `town-models.js` and `dynasty.css` together with the existing `assets` folder.
+GitHub Pages serves the root files directly; no build step is required. Upload `index.html`, `frontier.js`, `campaign-ui.js`, `campaign-ui.css`, `battlefields.js`, `song-music.js`, `medical.js`, `journey.js`, `supply.js`, `companions.js`, `refit.js`, `missions.js`, `frontier-war.js`, `production.js`, `spoils.js`, `history.js`, `jin-campaign.js`, `field-command.js`, `dynasty.js`, `realm-resources.js`, `dynasty-ui.js`, `council.js`, `town-models.js`, `production-cards.js`, `muster.js`, `dynasty.css` and `management.css` together with the existing `assets` folder.
 
 ## Verification
 
