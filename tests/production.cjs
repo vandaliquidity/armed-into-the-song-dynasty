@@ -1,0 +1,26 @@
+const {chromium}=require('playwright'),fs=require('node:fs');const {startServer,browserOptions}=require('./server.cjs');
+(async()=>{const {server,url}=await startServer();let browser;try{browser=await chromium.launch(browserOptions());const p=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];p.on('pageerror',e=>errors.push(e.stack));await p.goto(url,{waitUntil:'networkidle'});
+const checks=await p.evaluate(()=>{const out=[],ok=(v,m)=>{if(!v)throw Error(m);out.push(m);};coachSave({off:1,seen:{}});LOGI.on=false;setLang('en');__sw.cstart();CG.supplyAuto=false;const s=CG.T[HOME];
+ s.pop=1800;s.staff={};s.staffManual={};for(const k of PROD_ORDER){s.bld[k]=1;s.staff[k]=0;}delete s.productionVersion;
+ const recovered=prodBreak(HOME);ok(recovered.rows.every(r=>r.w>0&&r.amt>0)&&s.staffRecovered,'older all-zero staffing is repaired despite an otherwise healthy population');
+ const state=JSON.stringify(s.staff);prodBreak(HOME);ok(JSON.stringify(s.staff)===state,'staff recovery is idempotent');
+ s.pop=1000;for(const k of PROD_ORDER){s.bld[k]=Math.min(3,DEV[k].c.length);s.staff[k]=1;}const scarce=prodBreak(HOME);
+ ok(scarce.rows.every(r=>r.w>0&&r.amt>0),'limited workforce is shared across all active improvements instead of starving later rows');
+ ok(scarce.rows.reduce((n,r)=>n+r.w,0)===500&&scarce.lab===0,'allocation conserves the actual available workforce');
+ s.pop=4000;const full=prodBreak(HOME);ok(full.rows.every(r=>r.w===r.need)&&full.lab>0,'sufficient population fully staffs every active improvement');
+ s.staff.mine=100;s.staff.lumber='50';s.staff.stable='corrupt';productionMigrate(HOME);ok(s.staff.mine===1&&s.staff.lumber===.5&&s.staff.stable===undefined,'legacy percentage and invalid staffing values are normalised');
+ productionAuto(HOME);s.bld.bowyer=1;s.ord.bowyer='bow';s.st.timber=0;s.st.hide=0;
+ const halted=wkPlan(HOME,'bowyer');ok(halted.n===0&&productionInputStatus(HOME,halted).includes('Waiting for materials'),'workshop reports missing materials separately from population');
+ s.st.timber=200;s.st.hide=200;ok(wkPlan(HOME,'bowyer').n>0,'workshop becomes productive when actual inputs exist');
+ settleUI(HOME,'over');return out;});
+await p.locator('#cProdBreak .stf[data-k="mine"] [data-v="0"]').click();checks.push(...await p.evaluate(()=>{if(CG.T[HOME].staff.mine!==0||!CG.T[HOME].staffManual.mine)throw Error('Manual pause did not apply');const b=prodBreak(HOME);if(b.rows.find(r=>r.k==='mine').w!==0)throw Error('Manual pause overridden');saveGame();CAMP=loadGame();campLoad();if(CG.T[HOME].staff.mine!==0)throw Error('Pause lost on load');settleUI(HOME,'over');return ['explicit manual pauses are retained and saved'];}));
+const turn=await p.evaluate(()=>campaignMonth());await p.locator('#cProdBreak [data-auto-workers]').focus();await p.keyboard.press('Enter');
+checks.push(...await p.evaluate(t=>{const b=prodBreak(HOME);if(!b.rows.every(r=>r.w>0)||campaignMonth()!==t)throw Error('Auto workers failed or advanced the campaign');return ['one keyboard action restores staffing without ending a month'];},turn));
+fs.mkdirSync('test-results',{recursive:true});await p.screenshot({path:'test-results/production-recovered.png'});
+checks.push(...await p.evaluate(()=>{const out=[],ok=(v,m)=>{if(!v)throw Error(m);out.push(m);};CG.U={};for(const a of CG.armies)a.units=[];CG.supplyAuto=false;const s=CG.T[HOME];for(const k of PROD_ORDER){s.bld[k]=1;s.staff[k]=1;}s.pop=4000;s.st.timber=500;s.st.hide=500;s.eq.bow=0;
+ const oldAI=xiaAI;xiaAI=()=>{};const grain=s.st.grain,bows=s.eq.bow;
+ try{CG.phase=3;endTurn();ok(s.st.grain===grain&&s.eq.bow===bows,'months one and two do not silently grant seasonal production');CG.phase=3;endTurn();ok(s.st.grain===grain&&s.eq.bow===bows,'second monthly round preserves season settlement');const grainYield=terrYield(HOME).grain;CG.phase=3;endTurn();ok(s.st.grain===grain+grainYield-vilUpkeep(HOME).grain&&s.eq.bow>bows,'season end actually deposits staffed raw production and manufactured bows after upkeep');}finally{xiaAI=oldAI;}
+ cpUI('prod');return out;}));
+await p.locator('#cProdOne .stf[data-k="lumber"] [data-v="0"]').click();checks.push(...await p.evaluate(()=>{const b=prodBreak(HOME),cell=document.querySelector('#cProdAll tr[data-v="'+HOME+'"] td:nth-child(2)');if(cell.textContent!==(b.lab0-b.lab)+'/'+b.lab0)throw Error('Overview stayed stale');return ['changing staffing refreshes overview totals as well as the detail table'];}));
+await p.screenshot({path:'test-results/production-overview.png'});console.log(JSON.stringify({checks,errors},null,2));if(errors.length)throw Error('Browser errors');
+}finally{if(browser)await browser.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});

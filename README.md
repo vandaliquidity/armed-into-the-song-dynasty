@@ -53,11 +53,15 @@ Every campaign unit card has **Re-equip / upgrade**. During Planning, at an owne
 
 Song and Xia field independent columns, reinforce frontier garrisons, fight at enemy settlements, retreat after defeats and capture territory after victories. Troops are deducted from their actual source garrison and survivors arrive at their destination; garrisons replenish gradually each month. Marches take one road link per month, with a visible battle phase before results settle. Animated columns show faction, headcount and their current task. The **Missions** board lists current movements and recent battle reports, with the latest relevant result also shown in settlement inspection. Armies, cooldowns, progress and bounded report history persist in saves. This is a fictional gameplay simulation, not a replay of historical campaign outcomes. NPC war changes only Song/Xia territory and garrisons; player troops and settlements remain in the normal campaign battle system.
 
+### v0.13.1 — Production Recovery
+
+Repairs older all-zero staffing states, normalises invalid and percentage-form staffing values, and distributes scarce labour proportionally across active raw-resource improvements. Explicit manual pauses set in the repaired interface persist in saves. **Auto-assign workers / resume production** restores full staffing requests in either the settlement breakdown or production overview. Both displays explain population versus available labour, assigned workers, manual pauses, shortages, workshop material requirements and the next seasonal delivery. Staffing edits immediately refresh summary totals and save their settings. Production continues to settle once per season (every third month); regression checks verify both raw materials and workshop outputs reach actual local inventories.
+
 ## Local preview
 
 Serve this folder with `python -m http.server 8766 --bind 127.0.0.1`, then open [the campaign preview](http://127.0.0.1:8766/?preview=frontier). The preview starts directly on the campaign map and uses a separate save slot. The normal URL keeps the story campaign and its existing saves.
 
-GitHub Pages serves the root files directly; no build step is required. Upload `index.html`, `frontier.js`, `campaign-ui.js`, `campaign-ui.css`, `battlefields.js`, `song-music.js`, `medical.js`, `journey.js`, `supply.js`, `companions.js`, `refit.js`, `missions.js` and `frontier-war.js` together with the existing `assets` folder.
+GitHub Pages serves the root files directly; no build step is required. Upload `index.html`, `frontier.js`, `campaign-ui.js`, `campaign-ui.css`, `battlefields.js`, `song-music.js`, `medical.js`, `journey.js`, `supply.js`, `companions.js`, `refit.js`, `missions.js`, `frontier-war.js` and `production.js` together with the existing `assets` folder.
 
 ## Verification
 
