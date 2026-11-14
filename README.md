@@ -35,11 +35,19 @@ At Qinzhou, choose fair trade or higher cash returns. Lu Wan, a fictional mercha
 
 The setting draws on Song frontier horse trade and established local craftsmanship; this expedition, its characters and its schematic routes are fictional. This is one connected narrative arc, rather than a rewrite of every campaign encounter.
 
+### v0.11 — Roads and Companions
+
+**Supply network** automatically requests workshop inputs and basic reserves from connected owned settlements. Carts use owned or allied Song roads, load visibly at the origin, travel one road link per month and unload at the destination. Materials and equipment are local: remote stocks cannot be spent instantly. Recruitment can order available remote equipment and waits for delivery before consuming manpower, silver and kit. Orders and shipments persist; incoming goods prevent duplicate requests. Closed roads reroute or pause cargo, and existing convoy raid/escort rules apply. Donors retain workshop inputs and baseline stocks (150 grain, 60 timber, 40 stone). The panel also supports manual stock targets and cancellation of waiting recruitment; dispatched cargo still belongs to its destination.
+
+The five companions have larger base health pools (600/380/480/400/420), 20% additional damage reduction and one emergency survival window per battle. Numeric health bars and an E/R skill card make their condition and abilities clearer. Existing E skills remain; R provides Captain's Whirlwind, Marksman's Pinning Shot, Engineer's Field Repairs, Medic's Emergency Cover and Comms' Regroup. Select the relevant companion and press R; cooldowns and ammunition costs apply.
+
+While their army is at an owned village, companions grant local passives: Captain shortens recruitment by one season (minimum one) and improves seasonal morale; Marksman reveals an additional road link; Engineer raises workshop capacity by 25% with full material costs; Medic supplies the existing +15 percentage-point recovery bonus; Comms doubles departing internal carts' monthly travel distance. Settlement panels show the effects and let non-commanding companions stay behind and rejoin a physically present army. Posted companions can defend that village. Passive effects follow actual location and do not stack with the same existing bonus.
+
 ## Local preview
 
 Serve this folder with `python -m http.server 8766 --bind 127.0.0.1`, then open [the campaign preview](http://127.0.0.1:8766/?preview=frontier). The preview starts directly on the campaign map and uses a separate save slot. The normal URL keeps the story campaign and its existing saves.
 
-GitHub Pages serves the root files directly; no build step is required. Upload `index.html`, `frontier.js`, `campaign-ui.js`, `campaign-ui.css`, `battlefields.js`, `song-music.js`, `medical.js` and `journey.js` together with the existing `assets` folder.
+GitHub Pages serves the root files directly; no build step is required. Upload `index.html`, `frontier.js`, `campaign-ui.js`, `campaign-ui.css`, `battlefields.js`, `song-music.js`, `medical.js`, `journey.js`, `supply.js` and `companions.js` together with the existing `assets` folder.
 
 ## Verification
 
