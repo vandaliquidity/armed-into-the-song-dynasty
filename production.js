@@ -16,7 +16,7 @@ function productionAuto(id){
   if(typeof govNote==='function')govNote(id,'staff');syncRes();saveGame();return true;
 }
 function productionWorkers(id){
-  const s=CG.T[id],available=Math.max(0,Math.round(s.pop*.5));
+  const s=CG.T[id],available=Math.max(0,Math.round(s.pop*.5)-(typeof dynastyWorkforce==='function'?dynastyWorkforce(id):0));
   const rows=PROD_ORDER.map(k=>({k,need:Math.max(0,Math.round((s.bld[k]||0)*JOBS[k]*(s.staff[k]??1))),w:0}));
   const total=rows.reduce((n,r)=>n+r.need,0);let remaining=available;
   if(total<=available){for(const r of rows){r.w=r.need;remaining-=r.w;}}

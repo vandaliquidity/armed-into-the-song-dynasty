@@ -29,7 +29,7 @@ const {startServer,browserOptions}=require('./server.cjs');
    }
    ok(new Set(maps.map(x=>x.width+'|'+x.props+'|'+x.blocked)).size===7,'all seven map archetypes have distinct geometry');
    for(const t of CL.terr){build(t.id);if(!reachable())throw Error('Inaccessible objective at '+t.id);}
-   ok(true,'all 100 settlements have reachable assault objectives');
+   ok(true,'all 118 settlements have reachable assault objectives');
    build('qinghe');
    const p=B.frontier.points[0];
    B.units.forEach(u=>{u.x=100;u.y=100;});const ally=B.squad[0];ally.x=p.x;ally.y=p.y;
