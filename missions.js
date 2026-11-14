@@ -1,6 +1,7 @@
 'use strict';
 
 let missionBriefRoster=null;
+function missionChapterDone(i){return CAMP.done.includes(i)||(i===1&&CG.journey?.stage==='complete');}
 function missionCancelBrief(){if(MODE==='brief'&&CG?.pend?.story===2){CG.pend=null;if(missionBriefRoster)CAMP.roster=missionBriefRoster;missionBriefRoster=null;saveGame();}}
 
 function missionsInit(){
@@ -15,16 +16,15 @@ function missionReady(){
   const a=journeyLeader();return MODE==='camp'&&!CG.over&&!CG.pend&&CG.phase===0&&!CG.queue.length&&a&&a.loc===HOME&&!a.dest&&a.mem.length&&armyUnits(a).some(u=>u.men>0);
 }
 function missionQinghe(){
-  if(!CAMP.done.includes(1)||CAMP.done.includes(2)||!missionReady())return false;
+  if(!missionChapterDone(1)||missionChapterDone(2)||!missionReady())return false;
   CG.story.ch3warn=1;CG.story.qingheHeld=0;CG.story.qingheAttempts=(CG.story.qingheAttempts||0)+1;
   $('cMissions')?.remove();missionBriefRoster={...CAMP.roster};saveGame();campStory(2);return true;
 }
 function missionNext(){
   if(MODE!=='camp'||!CG||CG.over||CG.pend)return false;
   if(CG.phase===3&&CG.queue.length){$('cMissions')?.remove();showCamp();if(!$('cBattle'))campEl().appendChild(battleCard());return true;}
-  if(!CAMP.done.includes(1)){$('cMissions')?.remove();journeyUI();return true;}
-  if(!CAMP.done.includes(2))return missionQinghe();
-  if(journeyState().stage!=='complete'){$('cMissions')?.remove();journeyUI();return true;}
+  if(!missionChapterDone(1)){$('cMissions')?.remove();journeyUI();return true;}
+  if(!missionChapterDone(2))return missionQinghe();
   missionsUI();return false;
 }
 function missionOperations(){
@@ -44,14 +44,15 @@ function missionsUI(message=''){
   d.innerHTML=`<div class="campaign-eyebrow">${Tz('战役任务总览','CAMPAIGN MISSION BOARD')}</div><h2>${Tz('边地纪事与军务','Missions and frontier operations')}</h2><p>${Tz('剧情任务集中在此。准备好后点击开始或继续；未开始的清河剧情战不会自动倒计时。普通敌军进攻仍按战役时间推进。','Story missions live here. Start or continue when you are ready; the scripted Qinghe battle has no countdown before you launch it. Ordinary enemy attacks still follow the campaign clock.')}</p>${message?'<p class="ok">'+message+'</p>':''}`;
   const active=CG.phase===3&&CG.queue.length;
   const ready=missionReady();const next=btn(active?'处理当前战事':'开始 / 继续下一任务',active?'Command current battle':'Start / continue next mission',missionNext);next.id='missionNext';
-  if(!active&&CAMP.done.includes(1)&&!CAMP.done.includes(2)&&!ready){next.classList.add('dis');next.style.pointerEvents='none';next.setAttribute('aria-disabled','true');}
-  if(!active&&CAMP.done.includes(2)&&journeyState().stage==='complete'){next.innerHTML=T('剧情已完成 · 下方可安排边地行动','Story complete · choose a frontier operation below');next.classList.add('dis');next.style.pointerEvents='none';}
+  if(!active&&missionChapterDone(1)&&!missionChapterDone(2)&&!ready){next.classList.add('dis');next.style.pointerEvents='none';next.setAttribute('aria-disabled','true');}
+  if(!active&&missionChapterDone(1)&&missionChapterDone(2)){next.innerHTML=T('剧情已完成 · 下方可安排边地行动','Story complete · choose a frontier operation below');next.classList.add('dis');next.style.pointerEvents='none';}
   d.appendChild(next);
   function row(title,tag,desc,label,fn,enabled=true){const r=document.createElement('div');r.className='wk mission-row';r.innerHTML=`<div><b>${title}</b><span class="chip">${tag}</span></div><p>${desc}</p>`;if(fn){const b=btn(label[0],label[1],fn);if(!enabled){b.classList.add('dis');b.style.pointerEvents='none';b.setAttribute('aria-disabled','true');}r.appendChild(b);}d.appendChild(r);return r;}
   row(Tz('第一章 · 保卫清河','I · Defend Qinghe'),CAMP.done.includes(0)?Tz('已完成','Completed'):Tz('开篇','Prologue'),Tz('初到宋境的清河保卫战。','Your first defence after arriving in the Song frontier.'),null,null);
-  const j=journeyState(),finished=j.stage==='complete';
-  const journey=row(Tz('第二章 · 秦州之旅','II · The Qinzhou Journey'),finished?Tz('已完成','Completed'):j.stage==='prepare'?Tz('可准备','Available'):Tz('进行中','In progress'),Tz('重建清河、择路押运、解救乡人、在秦州交易，再带着人才与物资归来。','Prepare Qinghe, escort a convoy, rescue villagers, trade in Qinzhou, and bring people and supplies home.'),finished?['查看行旅记事','View journey journal']:['准备 / 继续行旅','Prepare / continue journey'],()=>{d.remove();journeyUI();});journey.querySelector('.btn').id='missionJourney';
-  const won=CAMP.done.includes(2),unlocked=CAMP.done.includes(1);
+  const j=journeyState(),finished=missionChapterDone(1),expandedDone=j.stage==='complete',escortWon=j.result?.win&&['market','homeward'].includes(j.stage);
+  const journey=row(Tz('第二章 · 秦州押运','II · Escort to Qinzhou'),finished?Tz('已完成','Completed'):escortWon?Tz('押运已完成 · 待交易与归乡','Escort completed · trade and homecoming remain'):j.stage==='prepare'?Tz('可准备','Available'):Tz('进行中','In progress'),finished&&!expandedDone?Tz('存档已记录原版秦州押运任务完成。无需重新押运，第三章已解锁。','Your save records the original Qinzhou escort as complete. No replay is required; Chapter III is unlocked.'):Tz('重建清河、择路押运、解救乡人、在秦州交易，再带着人才与物资归来。','Prepare Qinghe, escort a convoy, rescue villagers, trade in Qinzhou, and bring people and supplies home.'),finished&&!expandedDone?null:expandedDone?['查看行旅记事','View journey journal']:escortWon?['完成交易与归乡','Finish trade and homecoming']:['准备 / 继续行旅','Prepare / continue journey'],finished&&!expandedDone?null:()=>{d.remove();journeyUI();});journey.dataset.mission='qinzhou';const jb=journey.querySelector('.btn');if(jb)jb.id='missionJourney';
+  if(finished&&!expandedDone){const optional=row(Tz('可选 · 再访秦州','Optional · Return to Qinzhou'),j.stage==='prepare'?Tz('支线扩展','Optional expansion'):Tz('支线进行中','Optional expedition in progress'),Tz('新增行旅支线，可结识陆婉并改善清河。它不影响第二章的已完成状态，也不是推进主线的要求。','An expanded expedition to meet Lu Wan and improve Qinghe. It does not change your completed escort record and is not required for the main story.'),['游玩 / 继续可选支线','Play / continue optional expedition'],()=>{d.remove();journeyUI();});optional.dataset.mission='qinzhou-return';optional.querySelector('.btn').id='missionJourney';}
+  const won=missionChapterDone(2),unlocked=missionChapterDone(1);
   const q=row(Tz('第三章 · 清河血战','III · The Battle of Qinghe'),won?Tz('已完成','Completed'):!unlocked?Tz('秦州商路开通后解锁','Unlock by opening Qinzhou trade'):ready?Tz('等你准备好','Ready when you are'):Tz('待整军','Prepare your army'),Tz('西夏三千大军。保住粮仓并击杀敌军统领即可获胜，无须杀尽敌军。开战后有35秒布防；秦州援军在进攻开始45秒后出现。','A 3,000-strong Xia host. Protect the granary and kill its commander to win. You have 35 seconds to prepare; unlocked Qinzhou riders arrive 45 seconds after the assault begins.'),won?null:['我已准备好，开始清河战役','I am ready: start Qinghe'],won?null:missionQinghe,unlocked&&ready);const qb=q.querySelector('.btn');if(qb)qb.id='missionQinghe';
   if(!won&&!ready)q.insertAdjacentHTML('beforeend',`<div class="tip">${Tz('在筹划阶段，让林队部、队员与至少一支部队回到清河，取消其行军令，并先处理当前战事。','During Planning, bring Captain Lin’s band, companions and at least one troop unit to Qinghe, cancel its march order, and resolve any current battles.')}</div>`);
   d.insertAdjacentHTML('beforeend',`<h2 style="margin-top:20px">${Tz('持续军务','Ongoing frontier operations')}</h2><p class="tip">${Tz('主线目前是以上三章。边地行动可持续进行，目标随疆界与部队位置变化；它们使用真实行军、占领与劫营规则。','The current main story has the three chapters above. Frontier operations continue with targets based on borders and army positions, using the normal march, occupation and raid rules.')}</p>`);

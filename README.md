@@ -57,6 +57,10 @@ Song and Xia field independent columns, reinforce frontier garrisons, fight at e
 
 Repairs older all-zero staffing states, normalises invalid and percentage-form staffing values, and distributes scarce labour proportionally across active raw-resource improvements. Explicit manual pauses set in the repaired interface persist in saves. **Auto-assign workers / resume production** restores full staffing requests in either the settlement breakdown or production overview. Both displays explain population versus available labour, assigned workers, manual pauses, shortages, workshop material requirements and the next seasonal delivery. Staffing edits immediately refresh summary totals and save their settings. Production continues to settle once per season (every third month); regression checks verify both raw materials and workshop outputs reach actual local inventories.
 
+### v0.13.2 — Mission Records
+
+The Missions board recognises the original escort's saved chapter-completion flag independently of the expanded Qinzhou expedition. Completed escorts remain completed, Chapter III stays unlocked, and the expanded return expedition is explicitly optional. The next-mission button no longer sends a completed original campaign into that optional expedition. A new journey that has won its escort battle but still needs trade/homecoming shows that specific progress. Recognition grants no duplicate rewards and preserves optional expedition choices and saves.
+
 ## Local preview
 
 Serve this folder with `python -m http.server 8766 --bind 127.0.0.1`, then open [the campaign preview](http://127.0.0.1:8766/?preview=frontier). The preview starts directly on the campaign map and uses a separate save slot. The normal URL keeps the story campaign and its existing saves.
