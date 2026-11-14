@@ -105,7 +105,7 @@ function campaignMinimap(){
   bg.lineWidth=1;bg.strokeStyle='#7f806a77';
   for(const [a,b] of CL.links){const p=tPos(a),q=tPos(b);bg.beginPath();bg.moveTo(p.x*sx,p.y*sy);bg.lineTo(q.x*sx,q.y*sy);bg.stroke();}
   for(const river of RIVERS){bg.strokeStyle='#6c8a86';bg.lineWidth=2;bg.beginPath();river.pts.forEach((p,i)=>{const q=cwp(...p);i?bg.lineTo(q.x*sx,q.y*sy):bg.moveTo(q.x*sx,q.y*sy);});bg.stroke();}
-  for(const t of CL.terr){const s=CG.T[t.id],p=tPos(t.id);bg.fillStyle={qh:'#d9ab47',song:'#a44031',xia:'#354150',free:'#f5eccd'}[s.own];bg.beginPath();bg.arc(p.x*sx,p.y*sy,t.kind==='city'?3:2,0,TAU);bg.fill();}
+  for(const t of CL.terr){const s=CG.T[t.id],p=tPos(t.id);bg.fillStyle={qh:'#d9ab47',song:'#a44031',xia:'#354150',jin:'#8d83ba',free:'#f5eccd'}[s.own];bg.beginPath();bg.arc(p.x*sx,p.y*sy,t.kind==='city'?3:2,0,TAU);bg.fill();}
   const draw=()=>{g.drawImage(base,0,0);g.strokeStyle='#fff4c9';g.lineWidth=2;g.strokeRect(CC.x*sx,CC.y*sy,VW/CC.z*sx,VH/CC.z*sy);};
   box._draw=draw;draw();
   canvas.onclick=e=>{const r=canvas.getBoundingClientRect();CC.tx=(e.clientX-r.left)/r.width*CMW-VW/2/CC.z;CC.ty=(e.clientY-r.top)/r.height*CMH-VH/2/CC.z;};

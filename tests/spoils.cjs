@@ -1,0 +1,36 @@
+const {chromium}=require('playwright'),fs=require('node:fs');const {startServer,browserOptions}=require('./server.cjs');
+(async()=>{const {server,url}=await startServer();let browser;try{browser=await chromium.launch(browserOptions());const p=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];p.on('pageerror',e=>errors.push(e.stack));await p.goto(url,{waitUntil:'networkidle'});
+const checks=await p.evaluate(()=>{const checks=[],ok=(v,m)=>{if(!v)throw Error(m);checks.push(m);};coachSave({off:1,seen:{}});LOGI.on=false;setLang('en');__sw.cstart();CG.supplyAuto=false;
+ const minimum=r=>Object.entries(r.inventory).every(([k,n])=>r.goods[k]>=Math.ceil(n*.3));
+ const id=Object.keys(CG.T).find(id=>CG.T[id].own==='xia'),s=CG.T[id],a=CG.armies[0];s.str=1000;s.stock=null;
+ const q={type:'atk',terr:id,army:a.id};CG.queue=[q];const before={...s.eq},r=resolveBattle(q,true,{frac:()=>0,kills:0,mounted:0,t:200,mkills:{}});
+ ok(r.capturedEquipment&&minimum(r.capturedEquipment),'attack victory grants at least 30% of every modeled enemy equipment type');
+ ok(r.capturedEquipment.inventory.bow>0&&r.capturedEquipment.goods.armL>0&&r.capturedEquipment.goods.spear>0,'victory produces actual bows, armour and weapons instead of only ore');
+ ok(Object.entries(r.capturedEquipment.goods).filter(([k])=>EQ.includes(k)).every(([k,n])=>s.eq[k]===(before[k]||0)+n),'captured settlement armoury contains the awarded gear');
+ ok(r.capturedEquipment.rate>=.3&&r.kills===0,'minimum recovery is based on opposing strength rather than kill count');
+ const kit=JSON.stringify(s.eq);resolveBattle(q,true,{frac:()=>0,kills:0,mounted:0,mkills:{}});ok(JSON.stringify(s.eq)===kit,'same battle resolution cannot grant the new equipment reward twice');
+ a.loc=HOME;const h=CG.T[HOME],start={...h.eq};const x={id:CG.xid++,from:id,to:HOME,str:2000,eta:0};CG.xa.push(x);const def={type:'def',terr:HOME,army:a.id,xa:x.id,spoilsForce:{strength:2000,mix:{xfoot:50,xarch:30,xraid:10,xiron:10}}};CG.queue=[def];
+ const d=resolveBattle(def,true,{frac:()=>0,kills:0,mounted:0,mkills:{}});ok(minimum(d.capturedEquipment)&&d.capturedEquipment.inventory.saddle>0,'successful defence recovers heavy cavalry equipment at the same minimum rate');
+ ok(h.eq.armI>(start.armI||0)&&h.eq.saddle>(start.saddle||0),'defending settlement receives iron armour and saddles');
+ campBattleToast(d);ok(!!document.querySelector('.captured-equipment'),'campaign victory popup lists recovered equipment');
+ const loser={id:CG.xid++,from:id,to:HOME,str:100,eta:0};CG.xa.push(loser);const dq={type:'def',terr:HOME,army:a.id,xa:loser.id};CG.queue=[dq];const prior={...h.eq};const loss=resolveBattle(dq,false,{frac:()=>0,kills:0,mounted:0,mkills:{}});
+ ok(!loss.capturedEquipment&&JSON.stringify(h.eq)===JSON.stringify(prior),'defeats do not award captured equipment');
+ const raidId=Object.keys(CG.T).find(v=>CG.T[v].own==='xia');CG.T[raidId].str=800;CG.T[raidId].stock=null;const raid={type:'raid',terr:raidId,army:a.id};CG.queue=[raid];const raidBows=h.eq.bow,rr=resolveBattle(raid,true,{frac:()=>0,kills:0,mounted:0,mkills:{}});
+ ok(rr.capturedEquipment.shipment&&h.eq.bow===raidBows&&shipsOn().some(sh=>sh.id===rr.capturedEquipment.shipment),'remote raid equipment uses a real convoy instead of teleporting home');
+ const sh=shipsOn().find(sh=>sh.id===rr.capturedEquipment.shipment);shipDeliver(sh,[]);ok(h.eq.bow===raidBows+(rr.capturedEquipment.goods.bow||0),'raid gear becomes usable when its convoy delivers');
+ // Auto-resolve snapshots the same full opposing force before casualties or capture.
+ CG.T[raidId].str=100;const auto={type:'atk',terr:raidId,army:a.id};CG.queue=[auto];const ar=autoResolve(auto);
+ ok(ar.win&&ar.auto&&minimum(ar.capturedEquipment),'auto-resolved victories receive the same equipment recovery floor');
+ // Tactical ledger survives dead-unit pruning, and weights each figure by its battle ratio.
+ beginSkirm({type:'atk',terr:Object.keys(CG.T).find(v=>CG.T[v].own==='xia'),army:a.id});B.paused=true;
+ const ledger=Object.values(B.spoilsLedger).reduce((n,v)=>n+v,0);B.units=B.units.filter(u=>u.team!==1);const tactical=spoilsEquipment(SK_SNAP.q);
+ ok(ledger>0&&Object.values(tactical).some(n=>n>0),'enemy equipment remains recorded after dead enemy figures are pruned');
+ const small=spoilsInventory({xarch:10},1000,10),large=spoilsInventory({xarch:100},1000,1);ok(JSON.stringify(small)===JSON.stringify(large)&&small.bow===1000,'loot uses real enemy headcount rather than visible figure count');
+ const force=spoilsInventory({xfoot:1,xarch:1,xraid:1,xiron:1,xcamel:1,xboss:1},3000);ok(force.armI>0&&force.horse>0&&force.bow>0&&force.shield>0,'enemy troop composition determines the types of recoverable equipment');
+ B=null;MODE='camp';CG.pend=null;CAMP.done=[0,1];a.loc=HOME;campStory(2);beginBattle(2);B.paused=true;B.over={win:true};B.wave=0;for(const wave of B.waves)runWave(wave);
+ const armour=h.eq.armI;campAfterStory(2,true,{});ok(B.spoilsOutcome&&minimum(B.spoilsOutcome)&&['dao','spear','bow','xbow','lance'].reduce((n,k)=>n+(B.spoilsOutcome.inventory[k]||0),0)>=3000,'Qinghe story defence recovers gear against its full 3000-man force');
+ ok(h.eq.armI>armour,'story battle gear reaches Qinghe’s actual armoury');const paid=JSON.stringify(h.eq);campAfterStory(2,true,{});ok(JSON.stringify(h.eq)===paid,'story reward cannot be duplicated by repeated completion callbacks');
+ saveGame();CAMP=loadGame();campLoad();ok(JSON.stringify(CG.T[HOME].eq)===paid,'recovered equipment persists in the saved campaign');
+ B=null;showCamp();campBattleToast(d);return checks;});
+fs.mkdirSync('test-results',{recursive:true});await p.screenshot({path:'test-results/victory-equipment.png'});console.log(JSON.stringify({checks,errors},null,2));if(errors.length)throw Error('Browser errors');
+}finally{if(browser)await browser.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});

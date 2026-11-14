@@ -57,7 +57,7 @@ html body{font-family:"Segoe UI","Microsoft YaHei",sans-serif}
 .objective-rows{display:flex;gap:8px;margin-top:10px}.objective-row{flex:1;min-width:0}.objective-row span{display:block;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#d4ceb3}
 .objective-track{height:4px;background:#ffffff14;border-radius:4px;margin-top:6px;overflow:hidden}.objective-track i{height:100%;display:block;background:#d4b375;transition:width .2s}.objective-row.done .objective-track i{background:#a6c79a}.objective-row.contested .objective-track i{background:#d28c74}
 #campUI[data-view="camp"] #cEdictGo{top:190px!important;left:220px!important;transform:none!important;max-width:320px;font-size:14px!important;padding:10px 16px!important}
-@media(max-height:800px){#campUI .campaign-nav{max-height:calc(100vh - 325px)!important}}
+@media(max-height:800px){#campUI .campaign-nav{max-height:calc(100vh - 325px)!important}#campUI .campaign-log{max-height:110px!important;overflow-y:auto}}
 .journey-panel{width:min(860px,94vw)!important;max-width:860px!important;max-height:90vh!important;overflow:auto!important;padding:0!important;background:#1b2b25!important;color:#eee4cb}
 .journey-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 24px 6px}.journey-top h2{margin:3px 0 10px!important}.journey-top .btn{padding:6px 14px!important}
 .journey-scene{position:relative;line-height:0;border-block:1px solid #9e9e6b66;overflow:hidden}.journey-scene svg{width:100%;height:auto;max-height:220px;display:block}.journey-scene>span{position:absolute;bottom:12px;left:20px;color:#fff2cb;background:#12271ed9;border:1px solid #b8ac7466;padding:8px 12px;font:11px Georgia,"Microsoft YaHei",serif;letter-spacing:1px}

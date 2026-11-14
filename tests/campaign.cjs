@@ -21,9 +21,9 @@ const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
   const results=await page.evaluate(()=>{
    const checks=[];const ok=(c,m)=>{if(!c)throw Error(m);checks.push(m);};
    coachSave({off:1,seen:{}});LOGI.on=false;__sw.cstart();
-   ok(CL.terr.length===95,'95 unique settlements');
-   ok(new Set(CL.terr.map(t=>t.id)).size===95,'settlement IDs unique');
-   ok(Object.keys(bfsDist(HOME,100)).length===95,'every settlement reachable by road');
+   ok(CL.terr.length===100,'100 unique settlements including the northern invasion corridors');
+   ok(new Set(CL.terr.map(t=>t.id)).size===100,'settlement IDs unique');
+   ok(Object.keys(bfsDist(HOME,100)).length===100,'every settlement reachable by road');
    ok(NODES.every(n=>CT[n.terr]&&NODEK[n.k]),'every resource site has a valid owner and type');
    ok(CL.links.every(([a,b])=>CADJ[a].includes(b)&&CADJ[b].includes(a)),'roads bidirectional');
    ok(garrison('qinzhou')===1200&&CG.T.liulin.str>0,'Song and Xia settlements have garrisons');
@@ -40,7 +40,7 @@ const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
    for(const t of CL.terr)if(t.id.includes('_district_')||FRONTIER_CENTRES.some(c=>c[0]===t.id))delete CG.T[t.id];
    CG.phase=2;const turn=CG.turn,men=armyN(CG.armies[0]);
    campLoad();
-   ok(Object.keys(CG.T).length===95&&CG.phase===0&&CG.turn===turn&&armyN(CG.armies[0])===men,'legacy March save migrates without losing progress');
+   ok(Object.keys(CG.T).length===100&&CG.phase===0&&CG.turn===turn&&armyN(CG.armies[0])===men,'legacy March save migrates without losing progress');
    ok(JSON.stringify(CG.T[HOME].st)===state&&CAMP.res.silver===silver,'loading migrated save preserves inventory');
    // Exercise actual actions in the same planning stage.
    CG.T[HOME].bld.yard=1;CG.T[HOME].eq.spear+=100;CG.T[HOME].bld.market=1;
@@ -74,8 +74,8 @@ const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
    ok(shipProg(sh)===a&&sh._a===.4,'drawing/hit testing cannot advance convoys');
    const beforeMonth=campaignMonth(),oldAI=xiaAI;
    xiaAI=()=>{};
-   try{for(let i=0;i<75;i++){CG.phase=3;CG.queue=[];endTurn();}}finally{xiaAI=oldAI;}
-   ok(campaignMonth()===beforeMonth+75,'75 further monthly turns advance the calendar exactly');
+   try{for(let i=0;i<90;i++){CG.phase=3;CG.queue=[];endTurn();}}finally{xiaAI=oldAI;}
+   ok(campaignMonth()===beforeMonth+90,'90 further monthly turns advance the calendar exactly');
    ok(CG.turn>20&&!CG.over,'campaign remains playable beyond Jingkang');
    ok(CG.arcDone.fall,'historical crisis still occurs on the seasonal timeline');
    CG.won=1;CG.victoryContinued=0;

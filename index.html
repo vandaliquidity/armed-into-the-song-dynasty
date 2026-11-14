@@ -535,7 +535,7 @@ LORE.gfx={title:{zh:'画质',en:'Graphics'},auto:{zh:'自动',en:'Auto'},q:{high
   d:{zh:'高：原尺寸画卷、三人一伍、全部光影；中：标准画卷、两人一伍；低：小画卷、无投影雾霭（适合手机）',en:'High: full-size art, files of three, all lighting. Medium: standard art, files of two. Low: small art, no shadows or haze (phones).'}};
 // ===== 持械入宋 fan game — core =====
 'use strict';
-const VERSION='v0.13.2 · Mission Records';
+const VERSION='v0.15 · Change the Course of History';
 const TAU=Math.PI*2;
 const clamp=(v,a,b)=>v<a?a:v>b?b:v, lerp=(a,b,t)=>a+(b-a)*t, rnd=(a=1,b)=>b===undefined?Math.random()*a:a+Math.random()*(b-a), rint=(a,b)=>Math.floor(rnd(a,b+1));
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y), angTo=(a,b)=>Math.atan2(b.y-a.y,b.x-a.x);
@@ -2215,14 +2215,14 @@ function newArmy(id,cmd){if(CG.armies.length>=armySlots()||!owned(id)||CG.armies
   a0.mem=a0.mem.filter(m=>m!==cmd);const a={id:CG.nid++,cmd,loc:id,units:[],mem:[cmd],dest:null,from:null,morale:100};CG.armies.push(a);campRefresh();return a;}
 function mergeArmy(a){if(a.cmd==='lead')return;const L=CG.armies.find(x=>x.cmd==='lead');if(!L||L.loc!==a.loc)return;for(const i of a.units){CG.U[i].loc={a:L.id};L.units.push(i);}L.mem.push(...a.mem);CG.armies=CG.armies.filter(x=>x!==a);campRefresh();}
 function orderMarch(a,to){if(CG.phase!==2)return false;if(to===a.loc){a.dest=null;return true;}if(!CADJ[a.loc].includes(to))return false;
-  const o=CG.T[to].own;if((o==='xia'||o==='free')&&!armySupplied(a)&&!SUPP.has(to)){cgLog('⚠',Ts('补给线过长，无法进攻','Supply lines too long to attack from here'));return false;}
+  const o=CG.T[to].own;if((o==='xia'||o==='jin'||o==='free')&&!armySupplied(a)&&!SUPP.has(to)){cgLog('⚠',Ts('补给线过长，无法进攻','Supply lines too long to attack from here'));return false;}
   a.dest=to;a.raid=0;sfx('order');if(CG.tut===3)CG.tut=4;return true;}
-function orderRaid(a,to){if(!orderMarch(a,to)||CG.T[to].own!=='xia'){a.dest=null;return false;}a.raid=1;return true;}
+function orderRaid(a,to){if(!orderMarch(a,to)||!['xia','jin'].includes(CG.T[to].own)){a.dest=null;return false;}a.raid=1;return true;}
 // ---- phases
 function nextPhase(){if(!CG||CG.pend)return;if(CG.phase===2){beginBattlePhase();return;}if(CG.phase===3){if(CG.queue.length)return;endTurn();return;}CG.phase++;sfx('drum');campRefresh();}
 function beginBattlePhase(){CG.phase=3;CG.queue=[];const moves=[];
   for(const a of CG.armies){if(!a.dest)continue;const to=a.dest,o=CG.T[to].own;a.from=a.loc;
-    if(o==='xia')CG.queue.push({type:a.raid?'raid':'atk',army:a.id,terr:to});else if(o==='free'){if(Math.random()<.5)CG.queue.push({type:'claim',army:a.id,terr:to});else{moves.push([a,to]);claimTerr(to);}}else moves.push([a,to]);a.dest=null;}
+    if(o==='xia'||o==='jin')CG.queue.push({type:a.raid?'raid':'atk',army:a.id,terr:to});else if(o==='free'){if(Math.random()<.5)CG.queue.push({type:'claim',army:a.id,terr:to});else{moves.push([a,to]);claimTerr(to);}}else moves.push([a,to]);a.dest=null;}
   for(const[a,to]of moves){CG.anim.push({a:a.id,from:a.loc,to,t:0});a.loc=to;}
   for(const x of CG.xa)if(x.eta<=0)CG.queue.push({type:'def',xa:x.id,terr:x.to,story:x.story});
   sfx('drum');campRefresh();if(CG.tut===4&&!CG.queue.length)CG.tut=5;}
@@ -2623,7 +2623,7 @@ function banner(g,x,y,col,ch,sc,dark){const h=34*sc;g.strokeStyle='#2a1a0e';g.li
   const w=18*sc,fh=14*sc;g.fillStyle=col;g.beginPath();g.moveTo(x,y-h);for(let i=0;i<=6;i++){const k=i/6;g.lineTo(x+w*k,y-h+Math.sin(CTIME*4+k*3+x*.01)*2.4*sc*k);}for(let i=6;i>=0;i--){const k=i/6;g.lineTo(x+w*k,y-h+fh+Math.sin(CTIME*4+k*3+x*.01)*2.4*sc*k);}g.closePath();g.fill();
   g.strokeStyle=dark?'#000':'rgba(60,20,10,.8)';g.lineWidth=1;g.stroke();g.fillStyle=dark?'#e8e0d0':'#fff2c0';g.font=`bold ${Math.round(11*sc)}px "Noto Serif SC",serif`;g.textAlign='center';g.fillText(ch,x+w*.48,y-h+fh*.78+Math.sin(CTIME*4+1.5+x*.01)*1.2*sc);}
 function drawTerr(g,id){const t=CT[id],s=CG.T[id],p=tPos(id),q=c2s(p.x,p.y);if(q.x<-80||q.x>VW+80||q.y<-80||q.y>VH+80)return;const sc=iconScale(),tier=tierOf(s.prosp),seen=SEEN.has(id)||s.own!=='xia';
-  const own=s.own,fc={qh:'#d89a20',song:'#b0281a',xia:'#1a1c28',free:'#7a7060'}[own];const sel=CSEL&&CSEL.t===id,hov=CHOV&&CHOV.t===id;
+  const own=s.own,fc={qh:'#d89a20',song:'#b0281a',xia:'#1a1c28',jin:'#514777',free:'#7a7060'}[own];const sel=CSEL&&CSEL.t===id,hov=CHOV&&CHOV.t===id;
   // ground blot
   g.fillStyle=own==='qh'?'rgba(216,160,40,.20)':own==='xia'?'rgba(20,20,40,.18)':own==='song'?'rgba(170,40,20,.14)':'rgba(90,80,60,.12)';g.beginPath();g.ellipse(q.x,q.y+6*sc,30*sc,16*sc,0,0,TAU);g.fill();
   if(own==='qh'&&tier>=2){const gl=g.createRadialGradient(q.x,q.y,0,q.x,q.y,46*sc);gl.addColorStop(0,`rgba(255,200,90,${.12+.07*tier+.05*Math.sin(CTIME*2)})`);gl.addColorStop(1,'rgba(255,200,90,0)');g.fillStyle=gl;g.fillRect(q.x-50*sc,q.y-50*sc,100*sc,100*sc);}
@@ -3542,7 +3542,7 @@ function evApply(fx,id,rep){const s=CG.T[id]||CG.T[HOME],F=CG.fac;const lines=[]
 function evCanPay(fx,id){if(fx.need&&garrison(id)<fx.need)return false;for(const k of['silver','rep'])if(fx[k]<0&&(CAMP.res[k]||0)<-fx[k])return false;for(const k of['grain','timber','stone'])if(fx[k]<0&&have(id,k,true)<-fx[k])return false;if(fx.loseDu&&Object.keys(CG.U).length<=fx.loseDu)return false;return true;}
 function evRoll(rep){deepS();CG.evQ=CG.evQ||[];const tn=CG.turn+1;// events for the coming season
   for(const A of LORE.arc.list)if(A.turn===tn&&!CG.arcDone[A.id]){CG.arcDone[A.id]=1;CG.evQ.push({arc:A.id,t:HOME});}
-  if(tn===20&&!CG.arcDone.fall){CG.arcDone.fall=1;CG.evQ.push({fall:1,t:HOME});}
+  if(tn===jingkangTurn()&&!CG.arcDone.fall){CG.arcDone.fall=1;CG.evQ.push({fall:1,t:HOME});}
   if(Math.random()<.38){const own=Object.keys(CG.T).filter(owned);const sea=seasonOf(tn);let pool=LORE.ev.list.filter(e=>!(e.id==='fest'&&sea!==0)&&!(e.id==='drought'&&sea!==0&&sea!==1)&&!(e.id==='locust'&&sea!==1&&sea!==2)&&!(e.id==='flood'&&sea!==1));
     if(techOn('sanit'))pool=pool.filter(e=>e.id!=='plague'||Math.random()<.4);if(pool.length)CG.evQ.push({id:pick(pool).id,t:pick(own)});}
   if(CG.susp>70&&!CG.evQ.some(e=>e.imp)&&Math.random()<.5)CG.evQ.push({imp:1,t:HOME});}
@@ -3560,7 +3560,7 @@ function techPick(id){deepS();const T=LORE.tech.list.find(x=>x.id===id);if(!T||!
 function techTick(rep){deepS();const C=CG.tech;if(C.cur){C.prog+=techPts();const T=LORE.tech.list.find(x=>x.id===C.cur);if(C.prog>=T.c){C.done[T.id]=CG.turn;C.cur=null;C.prog=0;CG.susp=clamp(CG.susp+T.s,0,100);const m=Ts(`格物有成：${T.zh}`,`Research complete: ${T.en}`);rep.lines.push(['🔬',m]);cgLog('🔬',m);}}
   if(C.done.powder)CAMP.res.powder=(CAMP.res.powder||0)+2;CG.susp=clamp(CG.susp-1.5,0,100);if(CG.susp>40)CG.fac.court=clamp(CG.fac.court-1,0,100);
   if(C.done.sanit)for(const id in CG.T)if(owned(id)){const s=CG.T[id];s.pop=Math.round(Math.min(popCap(id),s.pop*1.007));}}
-{const _fa=favAdd;favAdd=function(n,why,rep){if(n>0&&CG&&CG.susp>40)n*=.8;if(n>0&&CG&&CG.fallK&&CG.fallK!=='good')n*=.6;return _fa(n,why,rep);};}
+{const _fa=favAdd;favAdd=function(n,why,rep){if(n>0&&CG&&CG.susp>40)n*=.8;if(n>0&&CG&&CG.fallK&&CG.fallK!=='good'&&CG.fallK!=='averted')n*=.6;return _fa(n,why,rep);};}
 function techUI(){deepS();const old=$('cTech');if(old)old.remove();twCss();const d=document.createElement('div');d.className='panel modal tw';d.id='cTech';d.style.maxWidth='1000px';d.style.width='92%';const C=CG.tech;
   d.innerHTML=`<div style="font-size:24px;color:#ffe7a0;font-weight:bold">🔬 ${T(LORE.tech.hdr.zh,LORE.tech.hdr.en)}</div><div class="tip">${Ts(LORE.tech.pts.zh,LORE.tech.pts.en)} ${techPts()} · ${Ts(LORE.tech.susp.zh,LORE.tech.susp.en)} <span class="bar2" style="display:inline-block;width:140px"><i style="width:${CG.susp}%;background:${CG.susp>70?'#e03020':CG.susp>40?'#e0a020':'#70a040'}"></i></span> ${Math.round(CG.susp)} — ${Ts(LORE.tech.suspD.zh,LORE.tech.suspD.en)}</div>`;
   const g=document.createElement('div');g.style.cssText='display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px';
@@ -3774,10 +3774,10 @@ function drawShips(g){const sc=iconScale();for(const s of shipsOn()){const K=SHI
     const P=pathAt(s.path,shipProg(s)),q=c2s(P.x,P.y);if(q.x<-80||q.x>VW+80||q.y<-80||q.y>VH+80)continue;const f=P.f,cx=Math.cos(f),cy=Math.sin(f);
     const tot=Object.entries(s.goods).reduce((a,[k,n])=>a+(k==='horse'?n*3:k==='silver'?n*2:n),0);const nc=clamp(Math.ceil(tot/400),1,4);const moving=(s._a||0)<1;const fr=moving?Math.floor(CTIME*6)%4:0;
     const items=[];for(let j=0;j<nc;j++)items.push(['oxcart',-j*18]);if(s.goods.horse)items.push(['horse',-nc*18]);if(s.esc){items.unshift(['song_spear',16]);items.push(['song_spear',-(nc+1)*18]);}
-    if(s.kind==='loot'||s.kind==='raid')items.unshift(['song_militia',26]);else items.unshift(['porter',22]);
+    if(s.commissionUnits)items.unshift(['song_spear',26],['song_xbow',40],['song_cav',52]);else if(s.kind==='loot'||s.kind==='raid'||s.reliefUnit)items.unshift(['song_militia',26]);else items.unshift(['porter',22]);
     for(const[sp,o]of items){const x=q.x+cx*o*sc,y=q.y+cy*o*sc;if(sp==='horse')sprProp('animal',x,y+4*sc,4,.3*sc);else sprUnit(sp,x,y,sp==='oxcart'?8.5*sc:6.2*sc,f,fr);}
     g.strokeStyle='#3a2410';g.lineWidth=1.5;g.beginPath();g.moveTo(q.x,q.y-4*sc);g.lineTo(q.x,q.y-26*sc);g.stroke();g.fillStyle=K.c;g.fillRect(q.x,q.y-26*sc,12*sc,8*sc);
-    const r=shipRisk(s);const lab=K.ic+' '+goodsTxt(s.kind==='sell'?s.goods:s.goods).slice(0,26)+' · '+Tz(`${s.left}季`,`${s.left} ssn`);shipPill(g,lab,q.x,q.y-33*sc,Math.max(10,10*sc),r>.15&&!s.esc?'#ff9a70':'#fff0c8');
+    const r=shipRisk(s);const load=s.commissionUnits?Tz(`${s.commissionUnits.reduce((n,row)=>n+row[1],0)}名奉调军`,`${s.commissionUnits.reduce((n,row)=>n+row[1],0)} regulars`):s.reliefUnit?Tz(`${s.reliefUnit.men}名勤王军`,`${s.reliefUnit.men} relief troops`):goodsTxt(s.goods).slice(0,26);const lab=K.ic+' '+load+' · '+Tz(`${s.left}个月`,`${s.left} months`);shipPill(g,lab,q.x,q.y-33*sc,Math.max(10,10*sc),r>.15&&!s.esc?'#ff9a70':'#fff0c8');
     if(r>.15&&!s.esc)txt('⚠',q.x+16*sc,q.y-12*sc,Math.max(11,13*sc),'#ff6030','center','bold ');}}
 {const _dc=drawCaravans;drawCaravans=function(g){_dc(g);if(CG)drawShips(g);};}
 // ---------------------------------------------------------------- haulage scenes: looting the captured stores, unloading spoils at home (skippable)
@@ -4097,14 +4097,14 @@ function rtsEta(a,path){if(!path)return null;let km=0,c=a.loc;for(const p of pat
 function rtsEtaTxt(e){if(!e)return[LR.noRoute.zh,LR.noRoute.en];if(!e.turns)return[LR.here.zh,LR.here.en];const t=rtsFill(LR.turns,{n:String(e.turns)}),d=rtsFill(LR.days,{d:String(e.days)});return[t[0]+' · '+d[0],t[1]+' · '+d[1]];}
 function rtsTake(a){// start the next hop of a planned route (March phase only)
   if(!a.route||!a.route.length){a.route=null;return;}if(CG.phase!==2||a.dest)return;const nx=a.route[0];
-  if(CADJ[a.loc].includes(nx)&&orderMarch(a,nx)){a.raid=a.rtsRaid&&nx===a.route[a.route.length-1]&&CG.T[nx].own==='xia'?1:0;a.route.shift();if(!a.route.length)a.route=null;}
+  if(CADJ[a.loc].includes(nx)&&orderMarch(a,nx)){a.raid=a.rtsRaid&&nx===a.route[a.route.length-1]&&['xia','jin'].includes(CG.T[nx].own)?1:0;a.route.shift();if(!a.route.length)a.route=null;}
   else{cgLog('⚠',Ts(...rtsFill(LR.blocked,{a:[armyName(a),armyName(a)],t:[CT[a.loc].zh,CT[a.loc].en]})));a.route=null;}}
 function rtsGo(as,to,raid){let n=0;for(const a of as){const p=rtsPath(a,to);if(!p){cgLog('⚠',armyName(a)+' · '+Ts(LR.noRoute.zh,LR.noRoute.en));continue;}
     a.dest=null;a.raid=0;a.rtsRaid=raid?1:0;if(!p.length){a.route=null;n++;continue;}a.route=p.slice();const k=rtsEtaTxt(rtsEta(a,p));
     if(CG.phase===2){rtsTake(a);if(a.dest||a.route)cgLog('⚑',Ts(...rtsFill(LR.marching,{a:[armyName(a),armyName(a)],t:[CT[to].zh,CT[to].en],k})));}
     else cgLog('⚑',Ts(...rtsFill(LR.setOut,{a:[armyName(a),armyName(a)],t:[CT[to].zh,CT[to].en],k})));if(a.dest||a.route)n++;}
   if(n){sfx('order');if(CG.tut===3)CG.tut=4;}return n;}
-function rtsCommand(as,to){if(!as.length)return false;const o=CG.T[to].own;if(o==='xia'){rtsConfirm(as,to);return true;}return rtsGo(as,to)>0;}
+function rtsCommand(as,to){if(!as.length)return false;const o=CG.T[to].own;if(o==='xia'||o==='jin'){rtsConfirm(as,to);return true;}return rtsGo(as,to)>0;}
 function rtsConfirm(as,to){const old=$('cAtk');if(old)old.remove();const d=document.createElement('div');d.className='panel modal';d.id='cAtk';d.style.cssText='max-width:480px;text-align:center';
   let E=0,P=0,men=0;for(const a of as){men+=armyN(a);try{const q={type:'atk',army:a.id,terr:to};E=Math.max(E,qEnemyStr(q));P+=powerOf(a,q);}catch(e){}}
   const p=E?Math.round(clamp(P/(P+E*1.15),.05,.95)*100):50;const e=rtsEta(as[0],rtsPath(as[0],to));const k=rtsEtaTxt(e);const tt=rtsFill(LR.atkT,{t:[CT[to].zh,CT[to].en]});
@@ -4336,4 +4336,4 @@ window.__sw={
   cstart(o={}){CAMP=newCampaign();CAMP.done=[0];CAMP.next=1;CAMP.roster.militia=22;CAMP.res={grain:270,iron:120,silver:230};if(o.res)Object.assign(CAMP.res,o.res);campStart();if(o.tut==null)CG.tut=6;showCamp();return true;},
   cturn:cbotTurn,cg(){return CG;},cbot:{develop:cbotDevelop,recruit:cbotRecruit,march:cbotMarch,promote:cbotPromote},
 };
-</script><script src="frontier.js"></script><script src="campaign-ui.js"></script><script src="battlefields.js"></script><script src="song-music.js"></script><script src="medical.js"></script><script src="journey.js"></script><script src="supply.js"></script><script src="companions.js"></script><script src="refit.js"></script><script src="missions.js"></script><script src="frontier-war.js"></script><script src="production.js"></script></body></html>
+</script><script src="frontier.js"></script><script src="campaign-ui.js"></script><script src="battlefields.js"></script><script src="song-music.js"></script><script src="medical.js"></script><script src="journey.js"></script><script src="supply.js"></script><script src="companions.js"></script><script src="refit.js"></script><script src="missions.js"></script><script src="frontier-war.js"></script><script src="production.js"></script><script src="spoils.js"></script><script src="history.js"></script><script src="jin-campaign.js"></script><script src="field-command.js"></script></body></html>
