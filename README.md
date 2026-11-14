@@ -95,11 +95,21 @@ Powder and foundry resource quantities are abstract game tokens, not chemical fo
 
 Historical context: [Columbia University, Song commercial expansion](https://afe.easia.columbia.edu/songdynasty-module/econ-rev-commercial.html), [Columbia University, Song gunpowder technology](https://afe.easia.columbia.edu/songdynasty-module/tech-gunpowder.html), [Metropolitan Museum, Song–Yuan restaurant silverware](https://www.metmuseum.org/art/collection/search/44302). The Jinzhou association follows references to Jinzhou sulphur in the *Wujing Zongyao*; merchant ventures, influence rules, army strengths and the accelerated technology path are fictional gameplay.
 
+### v0.17 — Commerce & Council
+
+One **Commerce & Council** hub replaces the separate commerce/politics and economy entries. Its tabs cover businesses, trade, influence, government, production and the cargo ledger. Trade brings finite local markets and national/guild/Xia contracts into one screen. Government retains court favour, decrees, dues, tribes, petitions and governor automation. Older commerce/production/governor shortcuts redirect into the shared hub; the settlement Market tab opens the same trade page. Actions preserve their selected tab and share the existing treasury, shipments and saved state. Exchange purchases now travel by caravan instead of appearing instantly; unsupported commodities no longer clutter contract tables with empty controls.
+
+Twelve new resources—**fish, vegetables, fruit, beans, hemp, cloth, paper, clay, ceramics, copper, coal and refined steel**—support market gardens, orchards, weaving houses, paper mills, pottery kilns and steel works. Fish comes from fishing sites; new hemp, clay, coal and copper supply points connect to existing settlements without increasing the settlement count. Copper sources retain their older silver yield. Regional depot placement is schematic. Context for the historical industrial theme: [Columbia University, Song iron, steel and coal](https://afe.easia.columbia.edu/songdynasty-module/econ-rev-iron-steel.html).
+
+Banquet menus use varied foods for higher receipts; packaged beauty goods use cloth and ceramic containers; researched refined cannon batches use steel and copper. Merchant accounting consumes two paper per month for a 15% export-price premium. Level-two business upgrades use cloth, ceramics and paper; level-three upgrades also use steel and copper. Automatic exports retain inputs and a construction-material buffer, with at most eight active export convoys per settlement. All new goods, wages and outputs use the existing local inventory and real-worker systems.
+
+Town shops now use the detailed building atlases instead of flat placeholder façades. Tiled shops, annexes, a courtyard restaurant, kiln fittings, paper-drying frames, textile rolls, fruit trees, crop beds and metalworking equipment distinguish industries. Models and activity follow actual buildings, upgrade levels, pauses and stock; UI cards use the same building models. Existing saves migrate without restarting or duplicating resource grants.
+
 ## Local preview
 
 Serve this folder with `python -m http.server 8766 --bind 127.0.0.1`, then open [the campaign preview](http://127.0.0.1:8766/?preview=frontier). The preview starts directly on the campaign map and uses a separate save slot. The normal URL keeps the story campaign and its existing saves.
 
-GitHub Pages serves the root files directly; no build step is required. Upload `index.html`, `frontier.js`, `campaign-ui.js`, `campaign-ui.css`, `battlefields.js`, `song-music.js`, `medical.js`, `journey.js`, `supply.js`, `companions.js`, `refit.js`, `missions.js`, `frontier-war.js`, `production.js`, `spoils.js`, `history.js`, `jin-campaign.js`, `field-command.js`, `dynasty.js`, `dynasty-ui.js` and `dynasty.css` together with the existing `assets` folder.
+GitHub Pages serves the root files directly; no build step is required. Upload `index.html`, `frontier.js`, `campaign-ui.js`, `campaign-ui.css`, `battlefields.js`, `song-music.js`, `medical.js`, `journey.js`, `supply.js`, `companions.js`, `refit.js`, `missions.js`, `frontier-war.js`, `production.js`, `spoils.js`, `history.js`, `jin-campaign.js`, `field-command.js`, `dynasty.js`, `realm-resources.js`, `dynasty-ui.js`, `council.js`, `town-models.js` and `dynasty.css` together with the existing `assets` folder.
 
 ## Verification
 

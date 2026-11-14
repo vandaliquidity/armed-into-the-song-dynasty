@@ -64,16 +64,18 @@ function dynastyExchange(id,n=5){if(!dynastyPlanning()||!owned(id)||CG.T[id].st.
 {const old=canTrade;canTrade=function(id,k){return DY_GOODS[k]?false:old(id,k);};}
 function dynastyBuild(id,k){
  if(!dynastyPlanning()||!owned(id)||!DY_BUSINESSES[k])return false;const s=CG.T[id],b=s.businesses[k]||(s.businesses[k]={level:0}),n=b.level+1;if(n>3||b.build)return false;
- const cost=Object.fromEntries(Object.entries(DY_BUSINESSES[k].cost).map(([r,v])=>[r,v*n]));if(!dynastyPay(id,cost))return false;b.build=1;b.paused=false;saveGame();return true;
+ const cost=dynastyBuildCost(id,k);if(!dynastyPay(id,cost))return false;b.build=1;b.paused=false;saveGame();return true;
 }
+function dynastyBuildCost(id,k){const n=(CG.T[id].businesses[k]?.level||0)+1,c=Object.fromEntries(Object.entries(DY_BUSINESSES[k].cost).map(([r,v])=>[r,v*n]));if(n===2)Object.assign(c,{cloth:10,ceramics:10,paper:5});if(n===3)Object.assign(c,{steel:12,copper:8,ceramics:15,paper:10});return c;}
 function dynastyLabour(id){const s=CG.T[id],rows=Object.entries(s.businesses||{}).filter(([k,b])=>DY_BUSINESSES[k]&&b.level&&!b.paused).map(([k,b])=>({k,need:DY_BUSINESSES[k].jobs*b.level})),need=rows.reduce((n,r)=>n+r.need,0),available=Math.min(Math.floor(s.pop*.25),need);let left=available;for(const r of rows){r.work=Math.min(left,Math.floor(available*r.need/Math.max(1,need)));left-=r.work;}for(const r of rows)if(left&&r.work<r.need){r.work++;left--;}return {rows,used:available-left};}
 function dynastyWorkforce(id){return dynastyLabour(id).used;}
 function dynastyProduction(id,k){const s=CG.T[id],b=s.businesses[k],def=DY_BUSINESSES[k],lab=dynastyLabour(id).rows.find(r=>r.k===k),factor=(lab?.work||0)/def.jobs;
  let input=def.input,output=def.output;
  if(k==='arsenal'&&b.order==='cannon'){input={ore:45,timber:20,blackpowder:12};output={cannon:1,shot:10};}
  if(k==='arsenal'&&b.order==='shot'){input={ore:12,blackpowder:8};output={shot:20};}
+ if(typeof REALM_ORDERS!=='undefined'&&REALM_ORDERS[k]?.[b.order]){input=REALM_ORDERS[k][b.order].input;output=REALM_ORDERS[k][b.order].output;}
  const scale=Math.min(factor,...Object.entries(input).map(([r,v])=>(s.st[r]||0)/v));
- return {input,output,scale:Math.floor(Math.max(0,scale)*100)/100,workers:lab?.work||0,wage:Math.ceil(def.wage*factor),blocked:k==='arsenal'&&b.order==='cannon'&&!dynastyState().siegecraft};
+ return {input,output,scale:Math.floor(Math.max(0,scale)*100)/100,workers:lab?.work||0,wage:Math.ceil(def.wage*factor),blocked:k==='arsenal'&&['cannon','heavycannon'].includes(b.order)&&!dynastyState().siegecraft};
 }
 function dynastyNearest(id,max=4){if(!careFriendly(id))return null;const q=[[id]],seen=new Set([id]);for(const path of q){const at=path[path.length-1];if(owned(at))return {to:at,path};if(path.length>max)continue;for(const n of [...(CADJ[at]||[])].sort())if(!seen.has(n)&&careFriendly(n)){seen.add(n);q.push([...path,n]);}}return null;}
 function dynastyInfluence(id){return dynastyState().influence[id]||0;}
@@ -86,7 +88,7 @@ function dynastyTrade(from,to,k,n=20){
  dynastyPay(to,{silver:price});box[k]-=n;dynastyShipment('dynTrade',from,to,{[k]:n},{purchase:true});saveGame();return true;
 }
 function dynastyExport(from,to,k,n=12){
- const d=dynastyState(),m=d.markets[to],s=CG.T[from],pay=n*(DY_PRICE[k]||0);if(!owned(from)||CG.T[to]?.own!=='song'||!m||!['wine','cosmetics'].includes(k)||s.st[k]<n||m.budget<pay||(m.demand[k]||0)<n||!supplyPath(from,to))return false;
+ const d=dynastyState(),m=d.markets[to],s=CG.T[from],pay=Math.floor(n*(DY_PRICE[k]||0)*(s.accountsActive?1.15:1));if(!owned(from)||CG.T[to]?.own!=='song'||!m||!REALM_EXPORTS.includes(k)||s.st[k]<n||m.budget<pay||(m.demand[k]||0)<n||!supplyPath(from,to))return false;
  s.st[k]-=n;m.budget-=pay;m.demand[k]-=n;dynastyShipment('dynTrade',from,to,{[k]:n},{sale:true,pay});return true;
 }
 function dynastyAid(id,to){
@@ -125,13 +127,14 @@ function dynastyTick(){
  if(d.research&&owned(d.research.id)&&CG.T[d.research.id].businesses.arsenal?.level&&--d.research.left<=0){d.research=null;d.siegecraft=true;dynastyNote('试制铜炮研究完成。','Prototype cannon research completed.');}
  for(const [id,s]of Object.entries(CG.T)){
   if(s.own==='song'){
-   const m=d.markets[id],scale=CT[id].kind==='city'?3:1;if(!m)continue;m.budget=Math.min(600,m.budget+35*scale);m.demand.wine=Math.min(60,m.demand.wine+12*scale);m.demand.cosmetics=Math.min(40,m.demand.cosmetics+8*scale);
+   const m=d.markets[id],scale=CT[id].kind==='city'?3:1;if(!m)continue;m.budget=Math.min(600,m.budget+35*scale);m.demand.wine=Math.min(60,m.demand.wine+12*scale);m.demand.cosmetics=Math.min(40,m.demand.cosmetics+8*scale);realmMarketMonth(id,scale);
    s.st.grain=Math.min(900,s.st.grain+35*scale);s.st.oil=Math.min(180,s.st.oil+8*scale);s.st.herbs=Math.min(180,s.st.herbs+5*scale);s.st.nitre=Math.min(180,s.st.nitre+4*scale);s.st.wine=Math.max(0,s.st.wine-12*scale);s.st.cosmetics=Math.max(0,s.st.cosmetics-8*scale);
    for(const n of NODES.filter(n=>n.terr===id))for(const [k,v]of Object.entries(NODEK[n.k].y)){if(RAW.includes(k))s.st[k]=Math.min(1200,(s.st[k]||0)+Math.ceil(v/3));}
    for(const k of ['spear','bow','xbow','armL'])s.eq[k]=Math.min(200,s.eq[k]+(k==='xbow'?8:15));
    const near=dynastyNearest(id,3);if(near){const host=CG.T[near.to],business=Object.values(host.businesses).filter(b=>b.level&&!b.paused).length;d.influence[id]=Math.min(100,dynastyInfluence(id)+Math.min(12,2+business+Math.floor(host.prosp/25)+(host.bld.hosp||0)));}
   }
   if(!owned(id))continue;
+  s.accountsActive=!!(s.accounts&&s.st.paper>=2);if(s.accountsActive)s.st.paper-=2;
   for(const [k,b]of Object.entries(s.businesses))if(b.build&&--b.build<=0){delete b.build;b.level++;b.last=Tz('开张','Opened');CVIL.lay=null;}
   for(const [k,b]of Object.entries(s.businesses)){
    if(!b.level||b.paused)continue;const p=dynastyProduction(id,k);if(p.blocked||p.scale<=0||!dynastyCanPay(id,{silver:p.wage})){b.last=p.blocked?Tz('待试炮研究','Awaiting cannon research'):p.scale<=0?Tz('缺原料或劳力：','Missing inputs or workers: ')+Object.entries(p.input).filter(([r,n])=>s.st[r]<n).map(([r,n])=>Tz(...RES_N[r])+' '+Math.max(0,n-s.st[r])).join(' · '):Tz('缺工资','Wages unavailable');continue;}
@@ -141,7 +144,7 @@ function dynastyTick(){
    b.last=stockTxt(out);b.made=out;s.prosp=Math.min(100,s.prosp+.35);if(k==='restaurant'&&p.scale>=.5)s.pop+=2;
   }
   const customers=Object.keys(d.markets).filter(to=>CG.T[to].own==='song'&&supplyPath(id,to)?.length<=5).sort((a,b)=>supplyPath(id,a).length-supplyPath(id,b).length);
-  if(s.autoExport!==false)for(const k of ['wine','cosmetics']){const reserve=k==='wine'&&s.businesses.restaurant?.level?6:0,n=Math.min(12,Math.max(0,s.st[k]-reserve));if(n>=4)for(const to of customers)if(dynastyExport(id,to,k,n))break;}
+  if(s.autoExport!==false)for(const k of REALM_EXPORTS){if(shipsOn().filter(x=>x.sale&&x.from===id&&!x.state).length>=8)break;const reserve=realmReserve(s,k),n=Math.min(12,Math.max(0,s.st[k]-reserve));if(n>=4)for(const to of customers)if(dynastyExport(id,to,k,n))break;}
  }
  // Bounded real NPC trade: goods leave one Song market and arrive at another.
  if(shipsOn().filter(s=>s.kind==='dynNPC'&&!s.state).length<12){const all=Object.keys(d.markets).filter(id=>CG.T[id].own==='song'),near=all.filter(id=>dynastyNearest(id,4)),hubs=near.length?near:all;for(let i=0;i<Math.min(2,hubs.length);i++){const from=hubs[(now*2+i)%hubs.length],to=(CADJ[from]||[]).find(id=>CG.T[id].own==='song'&&CG.T[id].st.grain<800);if(to&&CG.T[from].st.grain>=40){CG.T[from].st.grain-=40;dynastyShipment('dynNPC',from,to,{grain:40});}}}

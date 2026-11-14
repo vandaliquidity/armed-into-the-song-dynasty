@@ -11,7 +11,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');const {startServer,
  const gold=s.st.gold;ok(!dynastyBuild(HOME,'brewery')&&s.st.gold===gold,'duplicate construction cannot charge twice');
  CG.phase=3;endTurn();ok(s.businesses.brewery.level===1&&campaignMonth()===2,'actual End month completes one-month business construction');
  CAMP.res.silver=5000;Object.assign(s.st,{grain:2000,timber:1000,ore:1000,charcoal:50,herbs:50,oil:50,salt:50,nitre:100,sulphur:100,blackpowder:0});s.autoExport=false;
- for(const k of Object.keys(DY_BUSINESSES))s.businesses[k]={level:1};
+ for(const k of ['brewery','beauty','restaurant','kiln','powderworks','arsenal'])s.businesses[k]={level:1};
  const workers=dynastyLabour(HOME),raw=productionWorkers(HOME);ok(workers.used+raw.rows.reduce((n,r)=>n+r.w,0)<=Math.round(s.pop*.5),'businesses and farms share actual available workers without double allocation');
  const wine=s.st.wine||0,beauty=s.st.cosmetics||0,money=CAMP.res.silver;tick();
  ok(s.st.wine>wine&&s.st.cosmetics>beauty&&s.st.blackpowder>0&&s.eq.bomb>0,'wine, beauty goods, powder and firebombs are produced through real local inputs');

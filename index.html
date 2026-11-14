@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="zh"><head><meta charset="utf-8"><title>Armed into the Song Dynasty · 持械入宋</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2210%22 fill=%22%23a3241c%22/%3E%3Ctext x=%2232%22 y=%2247%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22%23f3e3c0%22%3E%E5%AE%8B%3C/text%3E%3C/svg%3E">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="stylesheet" href="campaign-ui.css">
-<link rel="stylesheet" href="dynasty.css?v=0.16">
+<link rel="stylesheet" href="dynasty.css?v=0.17">
 <style>
 html,body{margin:0;height:100%;background:#120e0a;overflow:hidden;font-family:"Noto Serif SC","Songti SC","SimSun","PingFang SC","Microsoft YaHei",serif;color:#f0e2c4;user-select:none}
 canvas#cv{display:block;position:absolute;left:0;top:0;cursor:crosshair}
@@ -536,7 +536,7 @@ LORE.gfx={title:{zh:'画质',en:'Graphics'},auto:{zh:'自动',en:'Auto'},q:{high
   d:{zh:'高：原尺寸画卷、三人一伍、全部光影；中：标准画卷、两人一伍；低：小画卷、无投影雾霭（适合手机）',en:'High: full-size art, files of three, all lighting. Medium: standard art, files of two. Low: small art, no shadows or haze (phones).'}};
 // ===== 持械入宋 fan game — core =====
 'use strict';
-const VERSION='v0.16 · A Flourishing Realm';
+const VERSION='v0.17 · Commerce & Council';
 const TAU=Math.PI*2;
 const clamp=(v,a,b)=>v<a?a:v>b?b:v, lerp=(a,b,t)=>a+(b-a)*t, rnd=(a=1,b)=>b===undefined?Math.random()*a:a+Math.random()*(b-a), rint=(a,b)=>Math.floor(rnd(a,b+1));
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y), angTo=(a,b)=>Math.atan2(b.y-a.y,b.x-a.x);
@@ -3440,7 +3440,7 @@ function cpTradeTab(body,re){const ps=['song','guild','xia'];const pl=document.c
     c.innerHTML=`<b style="color:#ffd070">${T(LCP.partners[p].zh,LCP.partners[p].en)}</b><div class="tip">${Ts(LCP.partners[p].d[0],LCP.partners[p].d[1])}</div><div>${dep?'✔ '+Ts(LCP.depot.zh,LCP.depot.en)+': '+tName(dep):'<span class="short">✖ '+Ts(LCP.need[p].zh,LCP.need[p].en)+'</span>'}${p==='xia'?` · ⚠ ${Ts('被扣','seizure')} ${Math.round(seizeP()*100)}%`:''}</div>`;c.onclick=()=>{CP_P=p;cpUI();};pl.appendChild(c);}body.appendChild(pl);
   const p=CP_P,dep=cpDepot(p);const tb=document.createElement('table');tb.id='cTradeT';tb.style.cssText='width:100%;border-collapse:collapse;font-size:13px;margin-top:8px';
   tb.innerHTML=`<tr style="color:#f4d27a"><td>${Ts('货物','Goods')}</td><td>${Ts('库存','In store')}${dep?' ('+tName(dep)+Ts('及商路','+ roads')+')':''}</td><td>${Ts(LCP.buy.zh,LCP.buy.en)} (${Ts(LCP.lot.zh,LCP.lot.en)})</td><td>${Ts(LCP.sell.zh,LCP.sell.en)}</td><td class="tip">${Ts(LCP.season.zh,LCP.season.en)}</td></tr>`;
-  for(const k of RAW){if(k==='nitre'&&p!=='song')continue;const tr=document.createElement('tr');const cb=canDeal(p,k,'buy'),cs=canDeal(p,k,'sell');const pb=cpPrice(p,k,'buy'),ps2=cpPrice(p,k,'sell');const pr=mkP(p,k);
+  for(const k of RAW){if((!canDeal(p,k,'buy')&&!canDeal(p,k,'sell'))||(k==='nitre'&&p!=='song'))continue;const tr=document.createElement('tr');const cb=canDeal(p,k,'buy'),cs=canDeal(p,k,'sell');const pb=cpPrice(p,k,'buy'),ps2=cpPrice(p,k,'sell');const pr=mkP(p,k);
     tr.innerHTML=`<td>${RAWN[k][2]} ${Ts(RAWN[k][0],RAWN[k][1])} ×${lotN(k)}</td><td>${dep?have(dep,k,true):'—'}</td><td></td><td></td><td class="tip">${pr>0?'▲':pr<0?'▼':''}${(p==='xia'&&cs&&(k==='ore'))?' ⚠'+Ts('禁运','banned'):''}</td>`;
     if(cb)tr.children[2].appendChild(sbx(`🪙${pb}`,'',()=>{cpTrade(p,k,'buy');re();},!!dep&&CAMP.res.silver>=pb&&CG.phase<=1));if(cs)tr.children[3].appendChild(sbx(`🪙${ps2}`,'',()=>{cpTrade(p,k,'sell');re();},!!dep&&have(dep,k,true)>=lotN(k)&&CG.phase<=1));tb.appendChild(tr);}
   body.appendChild(tb);if(CG.phase>1)body.insertAdjacentHTML('beforeend',`<div class="tip">${Ts('买卖在筹划阶段进行','Trade during Planning')}</div>`);
@@ -3449,7 +3449,7 @@ function cpTradeTab(body,re){const ps=['song','guild','xia'];const pl=document.c
   const bw=document.createElement('div');bw.className='wk';bw.style.marginTop='8px';bw.innerHTML=`<b style="color:#ffd070">${T(LCP.barter.zh,LCP.barter.en)} · ${T(LCP.deals.zh,LCP.deals.en)}</b><div>${Ts(LCP.give.zh,LCP.give.en)} <select id="cBG">${opt('sell')}</select> ×<select id="cBN"><option>1</option><option>2</option><option>4</option></select> → ${Ts(LCP.get.zh,LCP.get.en)} <select id="cBR">${opt('buy')}</select> <span id="cBX" class="tip"></span></div>`;
   const row=document.createElement('div');row.style.marginTop='4px';const gv=()=>[bw.querySelector('#cBG').value,bw.querySelector('#cBR').value,+bw.querySelector('#cBN').value];
   const upd=()=>{const[a,b2,n]=gv();if(!a||!b2)return;const m=Math.round(n*lotN(a)*dealRate(p,a,b2));bw.querySelector('#cBX').textContent=`≈ ${n*lotN(a)} ${Tz(RAWN[a][0],RAWN[a][1])} → ${m} ${Tz(RAWN[b2][0],RAWN[b2][1])}`;};
-  row.appendChild(sbx(Ts('即刻交换','Swap now'),'',()=>{const[a,b2,n]=gv();for(let i=0;i<n;i++)if(cpTrade(p,a,'sell',1)!==true)break;let m=Math.round(n*lotN(a)*dealRate(p,a,b2)/1.06);const D=cpDepot(p);if(D&&a!==b2){const cost=Math.round(m/lotN(b2)*cpPrice(p,b2,'buy'));if(CAMP.res.silver>=cost){CAMP.res.silver-=cost;CG.T[D].st[b2]=(CG.T[D].st[b2]||0)+m;}}sfx('ui');re();},!!dep&&CG.phase<=1));
+  row.appendChild(sbx(Ts('派出交换商队','Dispatch exchange'),'',()=>{const[a,b2,n]=gv();let sold=0;for(let i=0;i<n;i++){if(cpTrade(p,a,'sell',1)!==true)break;sold++;}const m=Math.round(sold*lotN(a)*dealRate(p,a,b2)/1.06),D=cpDepot(p);if(D&&a!==b2&&m>0){const cost=Math.round(m/lotN(b2)*cpPrice(p,b2,'buy'));if(CAMP.res.silver>=cost){CAMP.res.silver-=cost;shipNew('buy',p==='xia'?xiaNear(D):p==='song'?'qinzhou':'qingshui',D,{[b2]:m},{p});}}sfx('ui');re();},!!dep&&CG.phase<=1));
   row.appendChild(sbx(Ts(LCP.sign.zh+' 🪙40',LCP.sign.en+' 🪙40'),'',()=>{const[a,b2,n]=gv();signDeal(p,a,b2,n);re();},!!dep&&(CG.deals||[]).length<3&&CAMP.res.silver>=40));bw.appendChild(row);
   for(const[i,dl]of(CG.deals||[]).entries()){const r=document.createElement('div');r.className='bl';r.innerHTML=`<span>🤝 ${Tz(LCP.partners[dl.p].zh,LCP.partners[dl.p].en)}: ${zx(LCP.dealTxt,{a:{zh:`${RAWN[dl.give][0]}${dl.n}`,en:`${dl.n} ${RAWN[dl.give][1]}`},b:{zh:`${RAWN[dl.get][0]}${dl.m}`,en:`${dl.m} ${RAWN[dl.get][1]}`},p:{zh:'定价',en:'fixed rate'},n:dl.left})}</span>`;r.appendChild(sbx(Ts(LCP.cancel.zh,LCP.cancel.en),'',()=>{CG.deals.splice(i,1);re();},true));bw.appendChild(r);}
   body.appendChild(bw);bw.querySelectorAll('select').forEach(s=>s.onchange=upd);upd();}
@@ -4347,4 +4347,4 @@ window.__sw={
   cstart(o={}){CAMP=newCampaign();CAMP.done=[0];CAMP.next=1;CAMP.roster.militia=22;CAMP.res={grain:270,iron:120,silver:230};if(o.res)Object.assign(CAMP.res,o.res);campStart();if(o.tut==null)CG.tut=6;showCamp();return true;},
   cturn:cbotTurn,cg(){return CG;},cbot:{develop:cbotDevelop,recruit:cbotRecruit,march:cbotMarch,promote:cbotPromote},
 };
-</script><script src="frontier.js"></script><script src="campaign-ui.js"></script><script src="battlefields.js"></script><script src="song-music.js"></script><script src="medical.js"></script><script src="journey.js?v=0.15.1"></script><script src="supply.js"></script><script src="companions.js"></script><script src="refit.js"></script><script src="missions.js?v=0.15.1"></script><script src="frontier-war.js"></script><script src="production.js?v=0.16"></script><script src="spoils.js"></script><script src="history.js"></script><script src="jin-campaign.js"></script><script src="field-command.js"></script><script src="dynasty.js?v=0.16"></script><script src="dynasty-ui.js?v=0.16"></script></body></html>
+</script><script src="frontier.js"></script><script src="campaign-ui.js"></script><script src="battlefields.js"></script><script src="song-music.js"></script><script src="medical.js"></script><script src="journey.js?v=0.15.1"></script><script src="supply.js"></script><script src="companions.js"></script><script src="refit.js"></script><script src="missions.js?v=0.15.1"></script><script src="frontier-war.js"></script><script src="production.js?v=0.16"></script><script src="spoils.js"></script><script src="history.js"></script><script src="jin-campaign.js"></script><script src="field-command.js"></script><script src="dynasty.js?v=0.17"></script><script src="realm-resources.js?v=0.17"></script><script src="dynasty-ui.js?v=0.17"></script><script src="council.js?v=0.17"></script><script src="town-models.js?v=0.17"></script></body></html>
