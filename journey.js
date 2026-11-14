@@ -11,18 +11,46 @@ LORE.off.list.push({id:'luwan',zh:'陆婉',en:'Lu Wan',k:'song',tr:['merchant','
   bio:{zh:'秦州商队的年轻管事。本作虚构人物；她的算盘与对乡人的承诺同样认真。',en:'A young Qinzhou caravan factor. A fictional character who takes her accounts and promises to villagers equally seriously.'}});
 {const old=offReq;offReq=function(o){if(o.id==='luwan'&&!CG?.off?.luwan?.hired)return Tz('完成秦州之旅并赢得信任','Earn her trust on the Qinzhou Journey');return old(o);};}
 
-function journeyState(){return CG.journey||(CG.journey={v:1,stage:'prepare',trust:0,journal:[],legacy:CAMP.done.includes(1)});}
+function journeyState(){
+  const j=CG.journey||(CG.journey={v:2,stage:'prepare',trust:0,journal:[],legacy:CAMP.done.includes(1)});
+  j.journal=j.journal||[];j.trust=j.trust||0;
+  j.before=j.before||{pop:CG.T[HOME].pop,prosp:CG.T[HOME].prosp};
+  if(!['prepare','route','decision','ambush','market','homeward','complete','setback'].includes(j.stage))j.stage='prepare';
+  if(['market','homeward'].includes(j.stage)&&!j.result)j.stage='ambush';
+  if(['decision','ambush'].includes(j.stage)&&!JOURNEY_ROUTES[j.route])j.stage='route';
+  // The original escort left a story lock; the replacement uses its own saved stage.
+  if(MODE==='camp'&&CG.pend?.story===1){CG.pend=null;CG.queue=CG.queue.filter(q=>q.story!==1);j.recovered=true;}
+  j.v=2;return j;
+}
 function journeyLeader(){return CG.armies.find(a=>a.cmd==='lead');}
+function journeyBlocker(){
+  if(CG.over)return Tz('战役已结束。','The campaign has ended.');
+  if(CG.pend||CG.queue.length)return Tz('请先处理当前战事。','Resolve the current battle first.');
+  if(CG.phase!==0)return Tz('请关闭任务面板，结束本月，回到筹划阶段。','Close this panel and end the month to return to Planning.');
+  if(!owned(HOME))return Tz('须先收复清河。','Recapture Qinghe before departing.');
+  const a=journeyLeader();
+  if(!a)return Tz('林队尚未组建。','Lin Feng needs a field army.');
+  if(a.loc!==HOME)return Tz(`林队现驻${tName(a.loc)}，请先返回清河。`,`Lin Feng is at ${tName(a.loc)}. Bring his army back to Qinghe.`);
+  if(a.dest||a.route?.length)return Tz('林队仍有行军令；可在下方取消后出发。','Lin Feng has a march order. Cancel it below before departing.');
+  if(!a.mem.length||!armyUnits(a).some(u=>u.men>0))return Tz('林队至少需要一名队员和一支有战斗人员的部队。','Lin Feng needs a companion and at least one troop unit with fit soldiers.');
+  return '';
+}
+function journeyReplay(){
+  if(MODE!=='camp'||!CG||!(CAMP.done.includes(1)||journeyState().stage==='complete')||journeyState().practice)return false;
+  const original=JSON.parse(JSON.stringify(journeyState()));
+  CG.journey={v:2,stage:'route',trust:0,journal:[],prep:'convoy',practice:true,original,before:{pop:CG.T[HOME].pop,prosp:CG.T[HOME].prosp}};
+  saveGame();journeyUI();return true;
+}
 function journeyCanPay(cost){return Object.entries(cost).every(([k,n])=>(k==='silver'?CAMP.res.silver:CG.T[HOME].st[k]||0)>=n);}
-function journeyPay(cost){if(!journeyCanPay(cost))return false;for(const [k,n] of Object.entries(cost)){if(k==='silver')CAMP.res.silver-=n;else CG.T[HOME].st[k]-=n;}return true;}
+function journeyPay(cost){if(journeyState().practice)return true;if(!journeyCanPay(cost))return false;for(const [k,n] of Object.entries(cost)){if(k==='silver')CAMP.res.silver-=n;else CG.T[HOME].st[k]-=n;}return true;}
 function journeyCost(cost){return Object.entries(cost).map(([k,n])=>n+' '+Tz(...({grain:['粮','grain'],timber:['木','timber'],silver:['银','silver']}[k]))).join(' · ')||Tz('无额外费用','No extra cost');}
 function journeyNote(zh,en){journeyState().journal.push({zh,en});}
 function journeyCommit(){syncRes();campRefresh();saveGame();campUI();journeyUI();}
 function journeyChoice(key){
-  if(!CG||MODE!=='camp'||CG.over||CG.pend)return false;
-  const j=journeyState(),s=CG.T[HOME];if(!owned(HOME))return false;
+  if(!CG||MODE!=='camp')return false;
+  const j=journeyState(),s=CG.T[HOME];if(CG.over||CG.pend||!owned(HOME))return false;
   if(j.stage==='prepare'){
-    const a=journeyLeader();if(CG.phase!==0||!a||a.loc!==HOME||!a.mem.length||!armyUnits(a).some(u=>u.men>0))return false;
+    const a=journeyLeader();if(journeyBlocker())return false;
     if(!['community','convoy'].includes(key))return false;
     const cost=key==='community'?{grain:80,timber:40,silver:30}:{grain:40,timber:20,silver:60};
     if(!journeyPay(cost))return false;j.prep=key;j.army=a.id;j.stage='route';j.started=campaignMonth();j.before={pop:s.pop,prosp:s.prosp,market:s.bld.market||0};
@@ -64,13 +92,15 @@ function journeyChoice(key){
 }
 
 function journeyStartBattle(){
-  if(MODE!=='camp'||!CG||CG.pend||CG.over)return false;const j=journeyState(),a=journeyLeader();
-  if(j.stage!=='ambush'||!a||a.id!==j.army||a.loc!==HOME||!a.mem.length||!armyUnits(a).some(u=>u.men>0))return false;
+  if(MODE!=='camp'||!CG)return false;const j=journeyState(),a=journeyLeader();
+  if(j.stage!=='ambush')return false;
+  if(journeyBlocker()){journeyUI();return false;}
+  j.army=a.id;saveGame();
   $('cJourney')?.remove();campEl().style.display='none';
   beginSkirm({type:'journey',terr:HOME,army:a.id,journey:true});return true;
 }
 
-{const old=battleSpec;battleSpec=function(q){const s=old(q);if(q.journey){s.journey=true;s.N=10;s.men=10;s.tro={};for(const u of qUnits(q)){const t=UT[u.type].eng;s.tro[t]=(s.tro[t]||0)+Math.round(u.men/10);}s.hud={zh:'秦州之旅 · 押运与抉择',en:'The Qinzhou Journey · convoy under fire',goal:{zh:'至少一辆车抵达东侧路标；救人路线须先解救村人。',en:'Get a wagon to the eastern marker. A rescue pledge also requires securing the hamlet.'}};}return s;};}
+{const old=battleSpec;battleSpec=function(q){const s=old(q);if(q.journey){s.journey=true;s.N=10;s.men=10;s.tro={};for(const u of qUnits(q)){const t=UT[u.type].eng;s.tro[t]=(s.tro[t]||0)+Math.round(u.men/10);}s.hud={zh:'秦州之旅 · 押运与抉择',en:'The Qinzhou Journey · convoy under fire',goal:{zh:'护送所有幸存车辆抵达东侧路标；救人路线须先解救村人。',en:'Escort every surviving wagon to the eastern marker. A rescue pledge also requires securing the hamlet.'}};}return s;};}
 
 {const old=SETUP.skirm;SETUP.skirm=function(){
   if(!B.skirm.journey)return old();const j=journeyState(),r=JOURNEY_ROUTES[j.route],W=r.width,H=r.height,R=srand(battlefieldHash('journey-'+j.route));
@@ -103,11 +133,17 @@ function journeyStartBattle(){
   // Wagons already at the destination must not block the next wagon's arrival.
   const all=B.carts;B.carts=all.filter(w=>!w.journeyArrived);try{return old(c,dt);}finally{B.carts=all;}
 };}
-{const old=updateBattle;updateBattle=function(dt){if(B?.journey){const n=B.carts.filter(c=>!c.dead).length,done=B.hamlet.done;B.skirm.hud.goal={zh:`车辆 ${n}/3 · 村庄${done?'已解救':'在路中北侧'} · 东行至金色路标`,en:`Wagons ${n}/3 · Hamlet ${done?'secured':'north of midpoint'} · reach the eastern gold marker`};}return old(dt);};}
+{const old=updateBattle;updateBattle=function(dt){if(B?.journey){const alive=B.carts.filter(c=>!c.dead),arrived=alive.filter(c=>c.x>(B.W-5)*TS).length,done=B.hamlet.done,held=journeyState().priority==='rescue'&&!done;B.skirm.hud.goal={zh:`车辆 ${alive.length}/3 · 已抵达 ${arrived}/${alive.length} · ${held?'先解救路中北侧村庄，车队等候':'护送所有幸存车辆至东侧金色路标'}`,en:`Wagons ${alive.length}/3 · Arrived ${arrived}/${alive.length} · ${held?'Rescue the northern hamlet; wagons wait':'Escort all surviving wagons to the eastern gold marker'}`};}return old(dt);};}
 {const old=drawOrders;drawOrders=function(){old();if(!B?.journey)return;ctx.save();for(const [p,name,color] of [[B.hamlet,Tz('解救村庄','RESCUE HAMLET'),'#a4d1b1'],[B.objective,Tz('秦州方向','TO QINZHOU'),'#edcc82']]){ctx.strokeStyle=color;ctx.lineWidth=3;ctx.setLineDash([9,7]);ctx.beginPath();ctx.ellipse(p.x,p.y,115,70,0,0,TAU);ctx.stroke();txt(name,p.x,p.y-85,17,color,'center','bold ');}ctx.restore();};}
 
 function journeyFinishBattle(){
   const j=journeyState();if(j.stage!=='ambush')return;
+  if(j.practice){
+    const win=!!B.over.win;CAMP.roster=SK_SNAP.roster;CG.journey=j.original;
+    journeyNote(win?'秦州押运演练胜利；未改变战役部队、物资或赏赐。':'秦州押运演练结束；可重新选择路线再试。',win?'Escort replay won. Campaign troops, stores and rewards are unchanged.':'Escort replay finished. Choose another route to try again.');
+    END={win,i:-1,skirm:1};MODE='end';show('scrEnd');saveGame();
+    setTimeout(()=>{B=null;showCamp();journeyUI();},0);return;
+  }
   const win=!!B.over.win,alive=countTroopsArmy(),a=journeyLeader();let fallen=0,wounded=0;
   for(const u of qUnits(SK_SNAP.q)){const t=UT[u.type].eng,f=B.init[t]?clamp(1-(alive[t]||0)/B.init[t],0,1):0,l=Math.min(u.men,Math.round(u.men*f)),w=Math.round(l*(a.mem.includes('medic')?.52:.36));u.men-=l;u.wnd=(u.wnd||0)+w;u.exp+=win?2:1;fallen+=l-w;wounded+=w;}
   CAMP.mod.ammo=Math.max(0,B.mod.ammo);CAMP.mod.gren=Math.max(0,B.mod.gren);CAMP.mod.fuel=Math.max(0,B.mod.fuel);CAMP.kills+=B.kills;CAMP.roster=SK_SNAP.roster;
@@ -129,15 +165,23 @@ function journeyScene(j){
   return art+'</svg><span>'+Tz(city?'秦州 · 人马往来，市声不绝':done?'清河 · 值得回来之地':'清河至秦州 · 西北边地',city?'QINZHOU · horses, account books and crowded streets':done?'QINGHE · a place worth returning to':'QINGHE → QINZHOU · the northwestern frontier')+'</span>';
 }
 function journeyUI(){
-  if(MODE!=='camp'||!CG)return;$('cJourney')?.remove();const j=journeyState(),d=document.createElement('div');d.id='cJourney';d.className='panel modal journey-panel';
+  if(MODE!=='camp'||!CG)return;for(const panel of campEl().querySelectorAll('.modal'))panel.remove();const j=journeyState(),d=document.createElement('div');d.id='cJourney';d.className='panel modal journey-panel';
   const stages=['prepare','route','decision','ambush','market','homeward','complete'];const i=stages.indexOf(j.stage);
   d.innerHTML=`<div class="journey-top"><div><div class="campaign-eyebrow">${Tz('边地纪事 · 第一卷','FRONTIER CHRONICLES · I')}</div><h2>${Tz('秦州之旅','The Qinzhou Journey')}</h2></div></div><div class="journey-scene">${journeyScene(j)}</div><div class="journey-progress">${[Tz('清河','Qinghe'),Tz('择路','The road'),Tz('抉择','A promise'),Tz('押运','The convoy'),Tz('秦州','Qinzhou'),Tz('归途','Homeward'),Tz('新家','Home')].map((s,n)=>`<span class="${n<=i?'lit':''}">${s}</span>`).join('')}</div><div class="journey-body"></div>`;
   d.querySelector('.journey-top').appendChild(btn('关闭','Close',()=>d.remove()));const body=d.querySelector('.journey-body');
   const prose=(zh,en)=>body.insertAdjacentHTML('beforeend','<p>'+Tz(zh,en)+'</p>');
-  const choose=(key,zh,en,detail,cost,enabled=true)=>{const b=btn(zh,en,()=>journeyChoice(key));b.classList.add('journey-choice');b.dataset.choice=key;b.insertAdjacentHTML('beforeend',`<small>${detail}${cost?' · '+journeyCost(cost):''}</small>`);const can=enabled&&(!cost||journeyCanPay(cost));if(!can){b.classList.add('dis');b.setAttribute('aria-disabled','true');b.style.pointerEvents='none';}body.appendChild(b);};
+  const choose=(key,zh,en,detail,cost,enabled=true)=>{const b=btn(zh,en,()=>journeyChoice(key));b.classList.add('journey-choice');b.dataset.choice=key;b.insertAdjacentHTML('beforeend',`<small>${detail}${cost&&!j.practice?' · '+journeyCost(cost):''}</small>`);const can=enabled&&(j.practice||!cost||journeyCanPay(cost));if(!can){b.classList.add('dis');b.setAttribute('aria-disabled','true');b.disabled=true;b.style.pointerEvents='none';if(cost&&!journeyCanPay(cost))b.insertAdjacentHTML('beforeend','<small>'+Tz('清河库存不足：','Missing at Qinghe: ')+Object.entries(cost).filter(([k,n])=>(k==='silver'?CAMP.res.silver:CG.T[HOME].st[k]||0)<n).map(([k,n])=>journeyCost({[k]:n-(k==='silver'?CAMP.res.silver:CG.T[HOME].st[k]||0)})).join(' · ')+'</small>');}body.appendChild(b);};
+  if(j.practice)prose('押运演练：可重选路线；不消耗战役物资，不重复领取奖励。','Escort replay: choose a route and fight again. Campaign supplies, casualties and rewards are unaffected.');
+  if(j.recovered)prose('已修复旧版第二章的待战记录，可继续任务。','Recovered the old Chapter II battle record. You can continue the mission.');
+  const blocked=journeyBlocker();
+  if(['prepare','ambush'].includes(j.stage)&&blocked){
+    const note=document.createElement('div');note.className='wk';note.id='journeyRequirements';note.textContent=blocked;body.appendChild(note);
+    const a=journeyLeader();if(a?.loc===HOME&&(a.dest||a.route?.length))note.appendChild(btn('取消林队行军令','Cancel Lin Feng’s march order',()=>{a.dest=null;a.route=null;a.from=null;saveGame();journeyUI();}));
+    if(a&&a.loc!==HOME)note.appendChild(btn('在地图上选择林队','Select Lin Feng on the map',()=>{d.remove();CSEL={a:a.id};const p=tPos(a.loc);CC.tx=p.x-VW/2/CC.z;CC.ty=p.y-VH/2/CC.z;campUI();}));
+  }
   if(j.stage==='prepare'){
     prose(j.legacy?'你曾走通过秦州的路。这次不是重领赏赐：清河需要一条能留下人才与生计的商路。':'秦州的商人愿用马匹换粮。清河却还在修屋、安置流民。带走一车粮，就少一车过冬粮。',j.legacy?'You have reached Qinzhou before. This expedition is a new undertaking: Qinghe needs a road that brings people and livelihoods home.':'Qinzhou merchants will trade horses for grain. Qinghe is still repairing homes and sheltering refugees. Every wagon sent away is one less in the winter store.');
-    const a=journeyLeader(),ready=CG.phase===0&&a?.loc===HOME&&a?.mem.length&&armyUnits(a).some(u=>u.men>0);
+    const ready=!blocked;
     prose('苏：先让乡人安顿下来。程：车轴若断在山里，谁也带不回来。','Su: “Help the families settle first.” Cheng: “An axle broken in the hills brings nothing home.”');
     if(!ready)prose('在筹划阶段，让主将、队员与至少一支部队回到清河后才能出发。','Start during Planning, with the lead army, companions and at least one troop unit at Qinghe.');
     choose('community','先修民居、开粥棚','Repair homes and share grain',Tz('人口+60，繁荣+8；陆婉信任+1。普通车轴。','+60 residents, +8 prosperity; trust +1. Standard wagons.'),{grain:80,timber:40,silver:30},ready);
@@ -148,11 +192,11 @@ function journeyUI(){
   }else if(j.stage==='decision'){
     prose('前哨来报：半路村庄遭到劫掠。年轻管事陆婉的家人也在那里。苏要去救人；程担心车队停下后会被包围。','A scout reports a hamlet under attack. Caravan factor Lu Wan has family there. Su wants a rescue; Cheng fears the wagons will be surrounded if they stop.');
     choose('rescue','答应救人，车队在村口等候','Promise a rescue; hold the wagons',Tz('必须解救村庄才能获胜。救出乡人可得信任+1；停留会暴露车队。','Must secure the hamlet to win. Surviving villagers earn trust +1; waiting exposes the wagons.'));
-    choose('cargo','车队继续，救人由你判断','Keep moving; rescue if you can',Tz('只须一辆车抵达。仍可绕行救人；若置之不理，陆婉会记得。','One arriving wagon wins. You may still rescue villagers; Lu Wan remembers if you leave them.'));
+    choose('cargo','车队继续，救人由你判断','Keep moving; rescue if you can',Tz('护送所有幸存车辆抵达。仍可绕行救人；若置之不理，陆婉会记得。','Escort every surviving wagon to the marker. Rescue is optional; Lu Wan remembers your choice.'));
   }else if(j.stage==='ambush'){
     prose('这不是占领战：护送车辆沿路向东，防住侧翼伏兵。村庄在路中段北侧。','This is an escort: protect the eastbound wagons from flanking ambushes. The hamlet lies north of the road at its midpoint.');
     prose('车辆携带全部交易货物。保住三辆的回报高于勉强保住一辆。现代弹药不会补回；未完成的战斗在重载后从头开始。','The wagons carry your trade goods: three arriving wagons pay more than one. Modern ammunition is finite. Reloading an unfinished battle restarts that encounter.');
-    body.appendChild(btn('护送车队','Escort the convoy',journeyStartBattle));
+    const start=btn('护送车队','Escort the convoy',journeyStartBattle);start.id='journeyLaunch';start.disabled=!!blocked;start.classList.toggle('dis',!!blocked);body.appendChild(start);
   }else if(j.stage==='market'){
     prose(`抵达${j.result.carts}/3辆车。陆婉在马市核对牙牌、秤重与账册。“在这里，讲信用比会造神兵更值钱。”`,`Arrived: ${j.result.carts}/3 wagons. At the horse market, Lu Wan checks tallies, weights and accounts. “A kept promise is worth more here than another miraculous weapon.”`);
     prose(j.result.rescued?'她认出了获救的乡人，神色松了下来。':'她问起半路的村庄。你没有带回幸存者。',j.result.rescued?'She recognises the rescued villagers. Her expression softens.':'She asks about the hamlet. You brought no survivors.');
@@ -172,6 +216,8 @@ function journeyUI(){
     body.appendChild(btn('看看回来的清河','Visit the changed Qinghe',()=>{d.remove();showCVil(HOME);}));if(j.recruited)body.appendChild(btn('查看陆婉与将佐','Meet Lu Wan in Officers',()=>{d.remove();offUI();}));
   }
   body.insertAdjacentHTML('beforeend',`<div class="journey-trust">${Tz('陆婉的信任','Lu Wan’s trust')} ${j.trust}/2 · ${Tz('达到2愿意留下；并非历史人物。','At 2, she will stay. A fictional character.')}</div>`);
+  if(!j.practice&&(CAMP.done.includes(1)||j.stage==='complete')){const replay=btn('重玩第二章押运（演练）','Replay Chapter II escort (practice)',journeyReplay);replay.id='journeyReplay';body.appendChild(replay);}
+  if(j.practice)body.appendChild(btn('退出演练','Leave replay',()=>{CG.journey=j.original;saveGame();journeyUI();}));
   if(j.journal.length)body.insertAdjacentHTML('beforeend',`<details class="journey-journal"><summary>${Tz('行旅记事','Journey journal')}</summary>${j.journal.map(e=>'<p>'+Tz(e.zh,e.en)+'</p>').join('')}</details>`);
   body.insertAdjacentHTML('beforeend',`<div class="tip">${Tz('历史底色：宋代西北边贸、马匹供应与成熟工艺。人物与此次行旅为虚构，路线为示意。','Historical setting: Song frontier trade, horse supply and skilled crafts. This expedition and its characters are fictional; routes are schematic.')}</div>`);
   campEl().appendChild(d);

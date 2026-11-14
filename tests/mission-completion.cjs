@@ -3,7 +3,7 @@ const {chromium}=require('playwright');const {startServer,browserOptions}=requir
  const checks=await p.evaluate(()=>{const out=[],ok=(v,m)=>{if(!v)throw Error(m);out.push(m);};coachSave({off:1,seen:{}});LOGI.on=false;setLang('en');__sw.cstart();
   CAMP.done=[0,1];delete CG.journey;CG.missionsVersion=1;const assets=JSON.stringify({res:CAMP.res,T:CG.T,U:CG.U,off:CG.off});missionsUI();
   ok(document.querySelector('[data-mission="qinzhou"] .chip').textContent==='Completed','old escort completion is recognised independently of expanded journey progress');
-  ok(!document.querySelector('[data-mission="qinzhou"] .btn'),'completed original escort does not require a replay');
+  ok(!document.querySelector('[data-mission="qinzhou"] #missionJourney')&&document.querySelector('#missionReplayJourney'),'completed original escort offers optional practice without requiring replay');
   ok(document.querySelector('[data-mission="qinzhou-return"]').textContent.includes('Optional'),'expanded journey is labelled as an optional return expedition');
   ok(!document.querySelector('#missionQinghe').classList.contains('dis'),'Chapter III remains unlocked after a completed original escort');
   missionsUI();ok(JSON.stringify({res:CAMP.res,T:CG.T,U:CG.U,off:CG.off})===assets,'recognising completion neither grants duplicate rewards nor changes campaign assets');

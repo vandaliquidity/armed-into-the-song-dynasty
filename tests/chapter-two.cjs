@@ -1,0 +1,26 @@
+const {chromium}=require('playwright');
+const {startServer,browserOptions}=require('./server.cjs');
+(async()=>{const {server,url}=await startServer();let browser;try{
+ browser=await chromium.launch(browserOptions());const p=await browser.newPage({viewport:{width:1280,height:720}}),errors=[],checks=[];
+ p.on('pageerror',e=>errors.push(e.message));await p.goto(process.argv[2]||url,{waitUntil:'networkidle'});
+ await p.evaluate(()=>{coachSave({off:1,seen:{}});LOGI.on=false;setLang('en');__sw.cstart();missionsUI();});
+ await p.keyboard.press('Enter');await p.keyboard.press('Space');
+ checks.push(...await p.evaluate(()=>{if(CG.phase!==0)throw Error('Mission board shortcuts advanced the month');return ['Enter and Space cannot resolve campaign orders underneath the mission board'];}));
+ await p.locator('#missionJourney').click();await p.keyboard.press('Enter');
+ checks.push(...await p.evaluate(()=>{if(CG.phase!==0||CG.journey.stage!=='prepare')throw Error('Journey shortcuts advanced campaign');const a=journeyLeader();a.route=[HOME,'qingshui'];a.dest='qingshui';journeyUI();if(!document.querySelector('[data-choice="community"]').disabled)throw Error('Marching army allowed departure');return ['journey shortcuts preserve Planning and marching armies receive an explicit blocker'];}));
+ await p.getByText('Cancel Lin Feng’s march order',{exact:true}).click();
+ await p.locator('[data-choice="community"]').click();await p.locator('[data-choice="road"]').click();await p.locator('[data-choice="cargo"]').click();
+ checks.push(...await p.evaluate(()=>{if(CG.journey.stage!=='ambush')throw Error('Preparation failed');CG.journey.army=999;CG.phase=3;journeyUI();if(!document.querySelector('#journeyLaunch').disabled||!document.querySelector('#journeyRequirements').textContent.includes('Planning'))throw Error('Blocked launch is silent');CG.phase=0;CG.pend={story:1,army:999};saveGame();CAMP=loadGame();campLoad();showCamp();missionsUI();return ['launch explains phase requirements rather than silently failing'];}));
+ await p.locator('#missionJourney').click();await p.locator('#journeyLaunch').click();
+ checks.push(...await p.evaluate(()=>{if(!B?.journey||CG.pend||CG.journey.army!==journeyLeader().id)throw Error('Old story lock or army id blocked the escort');return ['old Chapter II locks and stale expedition army IDs recover and launch through actual UI'];}));
+ await p.keyboard.press('Escape');await p.getByText('Resume (Esc)',{exact:true}).click();await p.keyboard.press('Escape');await p.getByText('Restart battle',{exact:true}).click();
+ checks.push(...await p.evaluate(()=>{if(!B?.journey||PAUSE_MENU||B.paused||B.t>5)throw Error('Escort restart failed');return ['escort pause, resume and restart launch a fresh escort without a chapter-index crash'];}));
+ await p.keyboard.press('Escape');await p.getByText('Return to mission',{exact:true}).click();await p.locator('#journeyLaunch').click();
+ checks.push(...await p.evaluate(()=>{if(!B?.journey||CG.journey.stage!=='ambush')throw Error('Return to mission lost expedition');B.paused=true;return ['returning from the battle preserves route choices and allows a clean relaunch'];}));
+ await p.evaluate(()=>{B.over={win:true};endSkirm();});await p.waitForSelector('[data-choice="fair"]');await p.locator('[data-choice="fair"]').click();await p.locator('[data-choice="hospital"]').click();
+ checks.push(...await p.evaluate(()=>{if(!CAMP.done.includes(1)||CG.journey.stage!=='complete')throw Error('Homecoming failed');document.querySelector('#cJourney').remove();missionsUI();window.chapterTwoAssets=JSON.stringify({res:CAMP.res,U:CG.U,off:CG.off,command:CG.fieldCommand,home:CG.T[HOME],done:CAMP.done,stats:CG.stats,mod:CAMP.mod});return ['escort victory, trade and homecoming complete Chapter II and unlock its commission'];}));
+ await p.locator('#missionReplayJourney').click();await p.locator('[data-choice="gorge"]').click();await p.locator('[data-choice="cargo"]').click();await p.locator('#journeyLaunch').click();
+ checks.push(...await p.evaluate(()=>{if(!B.journey||B.W!==64||!CG.journey.practice)throw Error('Replay failed');B.paused=true;for(const u of B.units)if(u.team===1)u.dead=true;rebuildHash();for(let i=0;i<7000&&!B.win();i++)for(const c of B.carts)updCart(c,.1);if(!B.win())throw Error('Gorge wagons cannot naturally finish');B.mod.ammo=0;B.over={win:true};endSkirm();return ['completed Chapter II can be selected and replayed; gorge convoy reaches its objective naturally'];}));
+ await p.waitForSelector('#journeyReplay');checks.push(...await p.evaluate(()=>{const now=JSON.stringify({res:CAMP.res,U:CG.U,off:CG.off,command:CG.fieldCommand,home:CG.T[HOME],done:CAMP.done,stats:CG.stats,mod:CAMP.mod});if(now!==window.chapterTwoAssets)throw Error('Replay changed real campaign assets');return ['replaying grants no duplicate resources, commissions, equipment or casualties and preserves modern ammunition'];}));
+ console.log(JSON.stringify({checks,errors},null,2));if(errors.length)throw Error(errors.join('\n'));
+}finally{if(browser)await browser.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});

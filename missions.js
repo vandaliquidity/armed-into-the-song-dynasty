@@ -21,6 +21,7 @@ function missionQinghe(){
   $('cMissions')?.remove();missionBriefRoster={...CAMP.roster};saveGame();campStory(2);return true;
 }
 function missionNext(){
+  if(CG)journeyState();
   if(MODE!=='camp'||!CG||CG.over||CG.pend)return false;
   if(CG.phase===3&&CG.queue.length){$('cMissions')?.remove();showCamp();if(!$('cBattle'))campEl().appendChild(battleCard());return true;}
   if(!missionChapterDone(1)){$('cMissions')?.remove();journeyUI();return true;}
@@ -40,6 +41,7 @@ function missionPlan(army,terr){
   saveGame();campUI();missionsUI(Tz('已下达行动命令。点击“执行军令”开始行军与战斗。','Operation ordered. Use Resolve orders to start the march and battle.'));return true;
 }
 function missionsUI(message=''){
+  if(CG)journeyState();
   if(MODE!=='camp'||!CG)return;missionsInit();$('cMissions')?.remove();const d=document.createElement('div');d.id='cMissions';d.className='panel modal';d.style.cssText='width:min(850px,94%);max-width:850px;max-height:88vh;overflow:auto';
   d.innerHTML=`<div class="campaign-eyebrow">${Tz('战役任务总览','CAMPAIGN MISSION BOARD')}</div><h2>${Tz('边地纪事与军务','Missions and frontier operations')}</h2><p>${Tz('剧情任务集中在此。准备好后点击开始或继续；未开始的清河剧情战不会自动倒计时。普通敌军进攻仍按战役时间推进。','Story missions live here. Start or continue when you are ready; the scripted Qinghe battle has no countdown before you launch it. Ordinary enemy attacks still follow the campaign clock.')}</p>${message?'<p class="ok">'+message+'</p>':''}`;
   const active=CG.phase===3&&CG.queue.length;
@@ -52,6 +54,7 @@ function missionsUI(message=''){
   const j=journeyState(),finished=missionChapterDone(1),expandedDone=j.stage==='complete',escortWon=j.result?.win&&['market','homeward'].includes(j.stage);
   const journey=row(Tz('第二章 · 秦州押运','II · Escort to Qinzhou'),finished?Tz('已完成','Completed'):escortWon?Tz('押运已完成 · 待交易与归乡','Escort completed · trade and homecoming remain'):j.stage==='prepare'?Tz('可准备','Available'):Tz('进行中','In progress'),finished&&!expandedDone?Tz('存档已记录原版秦州押运任务完成。无需重新押运，第三章已解锁。','Your save records the original Qinzhou escort as complete. No replay is required; Chapter III is unlocked.'):Tz('重建清河、择路押运、解救乡人、在秦州交易，再带着人才与物资归来。','Prepare Qinghe, escort a convoy, rescue villagers, trade in Qinzhou, and bring people and supplies home.'),finished&&!expandedDone?null:expandedDone?['查看行旅记事','View journey journal']:escortWon?['完成交易与归乡','Finish trade and homecoming']:['准备 / 继续行旅','Prepare / continue journey'],finished&&!expandedDone?null:()=>{d.remove();journeyUI();});journey.dataset.mission='qinzhou';const jb=journey.querySelector('.btn');if(jb)jb.id='missionJourney';
   if(finished&&!expandedDone){const optional=row(Tz('可选 · 再访秦州','Optional · Return to Qinzhou'),j.stage==='prepare'?Tz('支线扩展','Optional expansion'):Tz('支线进行中','Optional expedition in progress'),Tz('新增行旅支线，可结识陆婉并改善清河。它不影响第二章的已完成状态，也不是推进主线的要求。','An expanded expedition to meet Lu Wan and improve Qinghe. It does not change your completed escort record and is not required for the main story.'),['游玩 / 继续可选支线','Play / continue optional expedition'],()=>{d.remove();journeyUI();});optional.dataset.mission='qinzhou-return';optional.querySelector('.btn').id='missionJourney';}
+  if(finished){const replay=btn('重玩第二章押运（演练）','Replay Chapter II escort (practice)',()=>{d.remove();journeyReplay();});replay.id='missionReplayJourney';journey.appendChild(replay);}
   const won=missionChapterDone(2),unlocked=missionChapterDone(1);
   const q=row(Tz('第三章 · 清河血战','III · The Battle of Qinghe'),won?Tz('已完成','Completed'):!unlocked?Tz('秦州商路开通后解锁','Unlock by opening Qinzhou trade'):ready?Tz('等你准备好','Ready when you are'):Tz('待整军','Prepare your army'),Tz('西夏三千大军。保住粮仓并击杀敌军统领即可获胜，无须杀尽敌军。开战后有35秒布防；秦州援军在进攻开始45秒后出现。','A 3,000-strong Xia host. Protect the granary and kill its commander to win. You have 35 seconds to prepare; unlocked Qinzhou riders arrive 45 seconds after the assault begins.'),won?null:['我已准备好，开始清河战役','I am ready: start Qinghe'],won?null:missionQinghe,unlocked&&ready);const qb=q.querySelector('.btn');if(qb)qb.id='missionQinghe';
   if(!won&&!ready)q.insertAdjacentHTML('beforeend',`<div class="tip">${Tz('在筹划阶段，让林队部、队员与至少一支部队回到清河，取消其行军令，并先处理当前战事。','During Planning, bring Captain Lin’s band, companions and at least one troop unit to Qinghe, cancel its march order, and resolve any current battles.')}</div>`);
@@ -67,3 +70,5 @@ CAMPAIGN_ICONS.missions=CAMPAIGN_ICONS.flag;
 {const old=campAfterStory;campAfterStory=function(i,win,stats){const r=old(i,win,stats);if(i===2)missionBriefRoster=null;return r;};}
 {const old=campLoad;campLoad=function(){old();missionsInit();};}
 {const old=campUI;campUI=function(){missionsInit();old();if(MODE!=='camp'||!CG)return;const b=$('cJourneyB');if(b){b.id='cMissionsB';b.onclick=()=>missionsUI();b.innerHTML=campaignIcon('missions','nav-icon')+'<span class="nav-label">'+T('战役任务','Missions')+'</span>';}};}
+// Campaign shortcuts must not resolve orders underneath a mission dialog.
+{const old=campKey;campKey=function(k,e){const panel=$('cJourney')||$('cMissions');if(MODE==='camp'&&panel){if(k==='escape')panel.remove();return;}return old(k,e);};}

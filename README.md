@@ -2,6 +2,10 @@
 
 A browser strategy game.
 
+### v0.15.1 — Chapter II escort repair
+
+Chapter II now explains missing stores, campaign phase and army requirements, lets you cancel Lin Feng’s pending march order, and recovers old escort locks and stale army IDs. Mission dialogs no longer pass Enter/Space through to campaign orders. Escort pause, restart and return-to-mission use the current campaign snapshot. Completed escorts offer an optional route-selectable practice replay without changing campaign troops, ammunition or rewards.
+
 **Play:** [https://vandaliquidity.github.io/armed-into-the-song-dynasty/](https://vandaliquidity.github.io/armed-into-the-song-dynasty/)
 
 ## Frontier update
