@@ -27,7 +27,7 @@ Edict acknowledgement accepts mouse and keyboard input and closes with one actio
 
 ### v0.10 — The Qinzhou Journey
 
-Open **Qinzhou Journey** at the top of campaign navigation. Bring the lead army and companions to Qinghe during Planning to start. Existing saves, including those that already completed the old Qinzhou chapter, can play the expedition once.
+Open **Missions → Qinzhou Journey** in campaign navigation. Bring the lead army and companions to Qinghe during Planning to start. Existing saves, including those that already completed the old Qinzhou chapter, can play the expedition once.
 
 Prepare either the community or reinforced wagons, choose between a paid post road, an archer-filled gorge and a cavalry-threatened pasture route, then decide whether to promise a rescue. The promise makes the convoy wait at the hamlet and adds a rescue requirement to victory. All surviving wagons must reach the eastern marker; at least one must survive. Route geometry, enemies, costs and wagon speed differ. Casualties become actual campaign dead and wounded, and spent modern supplies persist. Unfinished tactical battles restart on reload; preparation and completed results are saved.
 
@@ -43,11 +43,21 @@ The five companions have larger base health pools (600/380/480/400/420), 20% add
 
 While their army is at an owned village, companions grant local passives: Captain shortens recruitment by one season (minimum one) and improves seasonal morale; Marksman reveals an additional road link; Engineer raises workshop capacity by 25% with full material costs; Medic supplies the existing +15 percentage-point recovery bonus; Comms doubles departing internal carts' monthly travel distance. Settlement panels show the effects and let non-commanding companions stay behind and rejoin a physically present army. Posted companions can defend that village. Passive effects follow actual location and do not stack with the same existing bonus.
 
+### v0.12 — Veterans and Missions
+
+Every campaign unit card has **Re-equip / upgrade**. During Planning, at an owned settlement, convert militia or lower-tier troops to supported stronger troop types, or upgrade their armour. The same unit retains its ID, experience, rank chevrons, weapon quality, morale, manpower, local wounded, home and army assignment. Type changes require local barracks; cavalry conversions outside Qinghe also require stables. Shared kit is reused; replaced kit returns to local stores. Only additional kit and the displayed conversion fee are charged, with per-soldier quantities including local wounded. Remote equipment must arrive before the upgrade can be applied; the panel can request missing kit through supply carts. Evacuated patients must rejoin before a whole-unit refit, preventing remote equipment changes at hospitals.
+
+**Missions** replaces the separate Qinzhou navigation shortcut. It lists the three current story chapters, their status, requirements and a **Start / continue next mission** button. The scripted Battle of Qinghe waits until you choose **I am ready** during Planning with Captain Lin's army at Qinghe; old saves with that scripted march are migrated to this held state. Ordinary enemy attacks still advance normally. Completed main chapters cannot be replayed for rewards. The board also lists repeatable frontier raid/claim opportunities adjacent to your armies; planning one creates normal march orders, executed through **Resolve orders**. These operations use the existing map and battle systems, rather than adding new authored story chapters.
+
+### v0.13 — A Living Frontier
+
+Song and Xia field independent columns, reinforce frontier garrisons, fight at enemy settlements, retreat after defeats and capture territory after victories. Troops are deducted from their actual source garrison and survivors arrive at their destination; garrisons replenish gradually each month. Marches take one road link per month, with a visible battle phase before results settle. Animated columns show faction, headcount and their current task. The **Missions** board lists current movements and recent battle reports, with the latest relevant result also shown in settlement inspection. Armies, cooldowns, progress and bounded report history persist in saves. This is a fictional gameplay simulation, not a replay of historical campaign outcomes. NPC war changes only Song/Xia territory and garrisons; player troops and settlements remain in the normal campaign battle system.
+
 ## Local preview
 
 Serve this folder with `python -m http.server 8766 --bind 127.0.0.1`, then open [the campaign preview](http://127.0.0.1:8766/?preview=frontier). The preview starts directly on the campaign map and uses a separate save slot. The normal URL keeps the story campaign and its existing saves.
 
-GitHub Pages serves the root files directly; no build step is required. Upload `index.html`, `frontier.js`, `campaign-ui.js`, `campaign-ui.css`, `battlefields.js`, `song-music.js`, `medical.js`, `journey.js`, `supply.js` and `companions.js` together with the existing `assets` folder.
+GitHub Pages serves the root files directly; no build step is required. Upload `index.html`, `frontier.js`, `campaign-ui.js`, `campaign-ui.css`, `battlefields.js`, `song-music.js`, `medical.js`, `journey.js`, `supply.js`, `companions.js`, `refit.js`, `missions.js` and `frontier-war.js` together with the existing `assets` folder.
 
 ## Verification
 

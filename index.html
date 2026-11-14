@@ -535,7 +535,7 @@ LORE.gfx={title:{zh:'画质',en:'Graphics'},auto:{zh:'自动',en:'Auto'},q:{high
   d:{zh:'高：原尺寸画卷、三人一伍、全部光影；中：标准画卷、两人一伍；低：小画卷、无投影雾霭（适合手机）',en:'High: full-size art, files of three, all lighting. Medium: standard art, files of two. Low: small art, no shadows or haze (phones).'}};
 // ===== 持械入宋 fan game — core =====
 'use strict';
-const VERSION='v0.11 · Roads and Companions';
+const VERSION='v0.13 · A Living Frontier';
 const TAU=Math.PI*2;
 const clamp=(v,a,b)=>v<a?a:v>b?b:v, lerp=(a,b,t)=>a+(b-a)*t, rnd=(a=1,b)=>b===undefined?Math.random()*a:a+Math.random()*(b-a), rint=(a,b)=>Math.floor(rnd(a,b+1));
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y), angTo=(a,b)=>Math.atan2(b.y-a.y,b.x-a.x);
@@ -2299,7 +2299,7 @@ function endTurn(){const rep={turn:CG.turn,date:dateTxt(CG.turn),res0:{...CAMP.r
 function totalPop(){let n=0;for(const id in CG.T)if(owned(id))n+=CG.T[id].pop;return n;}
 function xiaAI(rep){for(const x of CG.xa)x.eta--;
   const st=CG.story;
-  if(CAMP.done.includes(1)&&!st.ch3warn&&!CAMP.done.includes(2)&&CG.turn>=(st.ch2t||0)+1){st.ch3warn=1;CG.xa.push({id:CG.xid++,from:'majia',to:HOME,str:3000,eta:2,story:'ch3'});rep.lines.push(['⚠',Ts(CL.ev.ch3.zh,CL.ev.ch3.en)]);cgLog('⚠',Ts(CL.ev.ch3.zh,CL.ev.ch3.en));}
+  // The scripted Qinghe battle is launched by the Missions board when ready.
   const sea=seasonOf(CG.turn);const p=clamp(.2+.04*CG.turn+(sea===2?.25:sea===3?.1:0),0,.75);
   if(CG.turn>=2&&Math.random()<p&&CG.xa.filter(x=>!x.story).length<2){const cands=[];for(const id in CG.T)if(owned(id))for(const b of CADJ[id])if(CG.T[b].own==='xia'&&CG.T[b].str>=200)cands.push([b,id]);
     if(cands.length){cands.sort((u,v)=>(CG.T[v[1]].prosp-garrison(v[1])/50)-(CG.T[u[1]].prosp-garrison(u[1])/50));const[f,t]=Math.random()<.6?cands[0]:pick(cands);const fs=CG.T[f];const str=Math.round(Math.max(200,fs.str*.45+CG.turn*12));fs.str=Math.max(100,fs.str-Math.round(str*.4));
@@ -3264,7 +3264,7 @@ function intelLine(x){const ex=intelExact(x);const n=ex?x.str:Math.round(x.str*(
   let s=zx(o,{f:{zh:CT[x.from].zh,en:CT[x.from].en},t:{zh:CT[x.to].zh,en:CT[x.to].en},n,e:Math.max(1,x.eta)});if(x.weak)s+=Ts(LORE.intel.weak.zh,LORE.intel.weak.en);if(x.real&&ex&&Math.random()<.5)s+=Ts(LORE.intel.feint.zh,LORE.intel.feint.en);return s;}
 function xiaAI(rep){v7s();for(const x of CG.xa){x.eta--;if(x.real&&x.eta===1){const t=x.real;x.real=null;if(owned(t)){x.to=t;const m=Ts(`西夏军忽然转向${CT[t].zh}！`,`The Xia army suddenly wheels toward ${CT[t].en}!`);rep.lines.push(['⚠',m]);cgLog('⚠',m);}}}
   const st=CG.story;
-  if(CAMP.done.includes(1)&&!st.ch3warn&&!CAMP.done.includes(2)&&CG.turn>=(st.ch2t||0)+1){st.ch3warn=1;CG.xa.push({id:CG.xid++,from:'majia',to:HOME,str:3000,eta:2,story:'ch3'});rep.lines.push(['⚠',Ts(CL.ev.ch3.zh,CL.ev.ch3.en)]);cgLog('⚠',Ts(CL.ev.ch3.zh,CL.ev.ch3.en));}
+  // The scripted Qinghe battle is launched by the Missions board when ready.
   const D=[.7,1,1.35][CG.diff],sea=seasonOf(CG.turn);const p=clamp((.2+.04*CG.turn+(sea===2?.25:sea===3?.1:0))*D,0,.85);const maxA=[1,2,3][CG.diff];
   const c=xiaTargets();CG.xai=c.slice(0,4).map(x=>({id:x.id,sc:Math.round(x.sc),why:x.why,def:x.def,str:x.str}));
   if(CG.turn>=2&&Math.random()<p&&CG.xa.filter(x=>!x.story).length<maxA&&c.length){const tg=pickSoft(c,[.5,.3,.15][CG.diff]);const fs=CG.T[tg.f];fs.str=Math.max(100,fs.str-Math.round(tg.str*.4));
@@ -4336,4 +4336,4 @@ window.__sw={
   cstart(o={}){CAMP=newCampaign();CAMP.done=[0];CAMP.next=1;CAMP.roster.militia=22;CAMP.res={grain:270,iron:120,silver:230};if(o.res)Object.assign(CAMP.res,o.res);campStart();if(o.tut==null)CG.tut=6;showCamp();return true;},
   cturn:cbotTurn,cg(){return CG;},cbot:{develop:cbotDevelop,recruit:cbotRecruit,march:cbotMarch,promote:cbotPromote},
 };
-</script><script src="frontier.js"></script><script src="campaign-ui.js"></script><script src="battlefields.js"></script><script src="song-music.js"></script><script src="medical.js"></script><script src="journey.js"></script><script src="supply.js"></script><script src="companions.js"></script></body></html>
+</script><script src="frontier.js"></script><script src="campaign-ui.js"></script><script src="battlefields.js"></script><script src="song-music.js"></script><script src="medical.js"></script><script src="journey.js"></script><script src="supply.js"></script><script src="companions.js"></script><script src="refit.js"></script><script src="missions.js"></script><script src="frontier-war.js"></script></body></html>

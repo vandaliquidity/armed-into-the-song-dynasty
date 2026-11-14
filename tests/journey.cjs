@@ -6,7 +6,7 @@ const {startServer,browserOptions}=require('./server.cjs');
   browser=await chromium.launch(browserOptions());const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];
   page.on('pageerror',e=>errors.push(e.stack));await page.goto(url,{waitUntil:'networkidle'});
   await page.evaluate(()=>{coachSave({off:1,seen:{}});LOGI.on=false;setLang('en');__sw.cstart();});
-  await page.locator('#cJourneyB').click();await page.locator('[data-choice="community"]').click();await page.locator('[data-choice="gorge"]').click();
+  await page.locator('#cMissionsB').click();await page.locator('#missionJourney').click();await page.locator('[data-choice="community"]').click();await page.locator('[data-choice="gorge"]').click();
   fs.mkdirSync('test-results',{recursive:true});await page.screenshot({path:'test-results/journey-promise.png'});
   await page.locator('[data-choice="rescue"]').click();await page.getByText('Escort the convoy',{exact:true}).click();
   await page.waitForTimeout(500);await page.screenshot({path:'test-results/journey-ambush.png'});

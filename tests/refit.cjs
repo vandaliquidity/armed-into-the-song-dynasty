@@ -1,0 +1,44 @@
+const {chromium}=require('playwright'),fs=require('node:fs');
+const {startServer,browserOptions}=require('./server.cjs');
+(async()=>{const {server,url}=await startServer();let browser;try{
+ browser=await chromium.launch(browserOptions());const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.stack));await page.goto(url,{waitUntil:'networkidle'});
+ const checks=await page.evaluate(()=>{
+  const checks=[],ok=(v,m)=>{if(!v)throw Error(m);checks.push(m);};coachSave({off:1,seen:{}});LOGI.on=false;setLang('en');__sw.cstart();CG.supplyAuto=false;
+  const s=CG.T[HOME],a=CG.armies[0],u=armyUnits(a)[0];s.bld.yard=1;CAMP.res.silver=5000;u.exp=11;u.mor=73;u.wq=2;u.men=80;u.wnd=20;u.name='Qinghe veterans';
+  const id=u.id,loc=JSON.stringify(u.loc),members=JSON.stringify(a.units),rank=chev(u),pop=s.pop,oldSpear=s.eq.spear;
+  s.eq.armL=100;s.eq.bow=0;s.eq.xbow=0;
+  const p=refitPlan(id,'spear',1);ok(p.ok&&p.cost.armL===100&&!p.cost.spear,'militia reuse their spears and equip all healthy and locally wounded soldiers');
+  ok(refitUnit(id,'spear',1),'militia can upgrade to armoured spearmen');
+  ok(CG.U[id]===u&&u.exp===11&&chev(u)===rank&&u.mor===73&&u.wq===2&&u.name==='Qinghe veterans','unit identity, veteran rank, experience, morale, quality and custom fields survive');
+  ok(u.men===80&&u.wnd===20&&s.pop===pop&&JSON.stringify(u.loc)===loc&&JSON.stringify(a.units)===members,'refitting preserves manpower, wounded, population and army assignment');
+  ok(s.eq.armL===0&&s.eq.spear===oldSpear,'only additional equipment is deducted');
+  s.eq.armI=100;ok(reequip(id,2)&&u.arm===2&&s.eq.armI===0&&s.eq.armL===100,'iron armour upgrade returns the replaced leather armour');
+  const gear=JSON.stringify(s.eq),silver=CAMP.res.silver;
+  ok(!refitUnit(id,'spear',2)&&JSON.stringify(s.eq)===gear&&CAMP.res.silver===silver,'repeating a completed refit cannot consume or create equipment');
+  const noGear=refitPlan(id,'xbow',2);ok(noGear.missing.xbow===100&&!noGear.ok,'missing local crossbows block conversion');
+  ok(!refitUnit(id,'xbow',2)&&u.type==='spear'&&JSON.stringify(s.eq)===gear&&CAMP.res.silver===silver,'failed refit is atomic and leaves the veteran unchanged');
+  CG.T.qingshui.own='qh';CG.T.qingshui.eq.xbow=100;campRefresh();supplyRequest(HOME,noGear.cost);
+  ok(!refitUnit(id,'xbow',2)&&CG.T.qingshui.eq.xbow===0&&s.eq.xbow<100,'remote equipment travels in a cart and cannot be equipped in transit');
+  const risk=shipRisk;shipRisk=()=>0;shipTurn([]);shipRisk=risk;
+  const before=s.eq.spear;ok(refitUnit(id,'xbow',2)&&u.type==='xbow'&&s.eq.xbow===0&&s.eq.spear===before+100,'delivered crossbows upgrade spearmen and return their replaced spears');
+  ok(u.exp===11&&chev(u)===rank&&u.arm===2&&u.wq===2,'crossbow upgrade preserves veteran rank, heavy armour and quality');
+  CG.phase=3;const state=JSON.stringify(u);ok(!refitUnit(id,'cav',2)&&JSON.stringify(u)===state,'battle phase cannot re-equip troops');CG.phase=0;
+  ok(!refitUnit(id,'mil',2)&&u.type==='xbow','downgrade paths cannot be used to cycle equipment');
+  CG.medical=[{unitId:id,n:12,kit:{type:'xbow'},at:HOME,state:'care'}];ok(!refitPlan(id,'cav',2).ok,'evacuated patients cannot receive equipment remotely through a unit conversion');CG.medical=[];
+  a.dest='qingshui';ok(!refitPlan(id,'cav',2).ok,'a marching unit must cancel its order before refitting');a.dest=null;
+  s.st.horse=100;s.eq.saddle=100;s.eq.spear=100;ok(refitUnit(id,'cav',2)&&u.type==='cav'&&s.st.horse===0&&s.eq.saddle===0,'cavalry conversion requires actual horses, saddles and weapons');
+  ok(u.exp===11&&chev(u)===rank&&u.mor===73,'cavalry conversion retains the same veterans');
+  saveGame();CAMP=loadGame();campLoad();ok(CG.U[id].type==='cav'&&CG.U[id].exp===11&&chev(CG.U[id])===rank,'upgraded troop type and veteran rank survive save/load');
+  const village=CG.T.qingshui;village.bld.yard=0;const v=newUnit('mil',60,{exp:6,wq:1,loc:{v:'qingshui'},home:'qingshui'});village.eq.bow=60;
+  ok(refitPlan(v.id,'arch',0).reasons.length>0,'changing troop roles requires local barracks');village.bld.yard=1;
+  const old=village.eq.spear||0;ok(refitUnit(v.id,'arch',0)&&village.eq.spear===old+60&&village.eq.bow===0&&v.exp===6,'partial garrison units use per-soldier costs and keep their rank');
+  const live=CG.T[HOME];live.bld.yard=1;live.eq.armI=100;const fresh=newUnit('mil',100,{exp:9,mor:81,loc:{v:HOME},home:HOME});live.eq.bow=100;
+  settleUI(HOME,'garr');window.refitTestId=fresh.id;return checks;
+ });
+ await page.locator('[data-refit]').filter({hasText:'Re-equip'}).last().click();
+ // Select the known fresh veteran directly if another card was ordered last by the existing UI.
+ await page.evaluate(()=>refitUI(window.refitTestId));await page.locator('#refitType').selectOption('arch');await page.locator('#refitArmour').selectOption('0');
+ fs.mkdirSync('test-results',{recursive:true});await page.screenshot({path:'test-results/veteran-refit.png'});
+ await page.locator('#refitApply').click();checks.push(...await page.evaluate(()=>{const u=CG.U[window.refitTestId];if(u.type!=='arch'||u.exp!==9||chev(u)!==3||u.mor!==81)throw Error('UI did not retain veteran rank');return ['actual upgrade button converts veteran militia to archers without changing rank'];}));
+ console.log(JSON.stringify({checks,errors},null,2));if(errors.length)throw Error('Browser errors');
+ }finally{if(browser)await browser.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});
