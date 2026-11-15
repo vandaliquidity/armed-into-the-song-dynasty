@@ -3,3 +3,5 @@ for(const file of ['campaign.cjs','battlefields.cjs','edict-resources.cjs','medi
  const r=spawnSync(process.execPath,[require('node:path').join(__dirname,file)],{stdio:'inherit',windowsHide:true});
  if(r.status!==0)process.exit(r.status||1);
 }
+const banners=spawnSync(process.execPath,[require('node:path').join(__dirname,'banner-orders.cjs')],{stdio:'inherit',windowsHide:true});
+if(banners.status!==0)process.exit(banners.status||1);

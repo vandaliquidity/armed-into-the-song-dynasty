@@ -115,11 +115,19 @@ The **Muster roll & banners** panel displays banner commanders and companion off
 
 Company merges require the same formation, troop type, armour, weapon quality and rank. They conserve healthy and wounded soldiers. Splits retain experience/quality, conserve wounded and require another company slot. Filling consumes local equipment, silver and manpower, preserves the unit's rank and reserves recovering soldiers' places; 300 civilians remain at the settlement. March orders, battle phases and hospital transfers block reorganisation. Recruitment uses the existing training queue and supply delivery rules rather than creating troops immediately. The settlement's refill shortcut uses the same replacement rules as Muster.
 
+### v0.19 — Banners on the March
+
+The muster roll opens a banner-first screen: choose a banner, then **Add soldiers**, **Recruit & send**, **Officers**, or **Merge banner**. Soldiers can come from any connected friendly city or another banner. Select a destination city to remove a company; it marches there automatically. Split a company in half, combine matching partial companies, or fill ranks from local manpower and equipment directly in the Soldiers view. Rank, equipment and recovering soldiers are retained. Detailed company tools remain available separately.
+
+**New banner / split** lets an available officer establish a banner at their actual location, then call troops to it. Distant officers travel too. Merging banners transfers both troops and officers; multiple hired officers can remain attached to one banner, with existing primary-officer bonuses unchanged. Available officers can lead within the eight-banner ceiling; ordinary company capacities still apply.
+
+Transfers follow friendly roads at one road link per month and follow a banner that changes location. They leave their former formation immediately, reserve space at the destination, and join only on arrival. Blocked routes or full destinations hold the detachment safely. Return orders require travel as well. The map shows marching columns, and the panel lists progress and arrival estimates. Recruiting for a banner uses real equipment deliveries and training before automatic departure. Orders and progress persist in existing saves.
+
 ## Local preview
 
 Serve this folder with `python -m http.server 8766 --bind 127.0.0.1`, then open [the campaign preview](http://127.0.0.1:8766/?preview=frontier). The preview starts directly on the campaign map and uses a separate save slot. The normal URL keeps the story campaign and its existing saves.
 
-GitHub Pages serves the root files directly; no build step is required. Upload `index.html`, `frontier.js`, `campaign-ui.js`, `campaign-ui.css`, `battlefields.js`, `song-music.js`, `medical.js`, `journey.js`, `supply.js`, `companions.js`, `refit.js`, `missions.js`, `frontier-war.js`, `production.js`, `spoils.js`, `history.js`, `jin-campaign.js`, `field-command.js`, `dynasty.js`, `realm-resources.js`, `dynasty-ui.js`, `council.js`, `town-models.js`, `production-cards.js`, `muster.js`, `dynasty.css` and `management.css` together with the existing `assets` folder.
+GitHub Pages serves the root files directly; no build step is required. Upload the root HTML, JavaScript and CSS files together with the existing `assets` folder, including `banner-orders.js`, `banner-ui.js` and `banners.css`.
 
 ## Verification
 
