@@ -22,6 +22,25 @@ const result=await p.evaluate(()=>{const checks=[],ok=(v,m)=>{if(!v)throw Error(
  ok(max<=20&&frontierWar().reports.length<=24,'long-running frontier activity keeps bounded armies and report history');
  ok(Object.values(CG.T).every(s=>(s.str||0)>=0&&(s.songGarrison?.men||0)>=0),'army recruitment, casualties and reinforcements never create negative garrisons');
  const before=JSON.stringify(CG.U);const controlled=Object.keys(CG.T).filter(owned);ok(controlled.length===1&&controlled[0]===HOME&&before===JSON.stringify(CG.U),'independent war leaves player settlement ownership unchanged');
+ // Isolated settlement tests verify the economy cannot manufacture soldiers.
+ const site=Object.keys(CG.T).find(id=>warFaction(id)==='song'),ss=CG.T[site];
+ warSetMen(site,0);ss.pop=500;ss.bld.farm=0;ss.bld.smithy=0;ss.bld.market=0;
+ for(const k of Object.keys(ss.st))ss.st[k]=0;ss.eq.spear=0;ss.npcEconomy.pending=0;
+ CG.month++;npcEconomyTick();ok(warMen(site)===0&&ss.npcEconomy.pending===0,'empty stores and idle workshops cannot create soldiers');
+ Object.assign(ss.st,{grain:200,silver:100,ore:100,timber:100});ss.bld.farm=1;ss.bld.smithy=1;
+ const civilians=ss.pop;CG.month++;npcEconomyTick();const trainees=ss.npcEconomy.pending;
+ ok(trainees>0&&warMen(site)===0&&ss.pop===civilians-trainees,'recruits consume civilian population and wait a month before joining');
+ CG.month++;npcEconomyTick();ok(warMen(site)===trainees,'only completed recruits join the garrison');
+ const enemy=Object.keys(CG.T).find(id=>warFaction(id)==='xia');warSetMen(enemy,200);
+ ok(!npcRaid(enemy,site)&&warMen(enemy)===200,'Xia cannot launch a raid against a non-adjacent settlement');
+ ok(!warDispatch('xia',site,enemy,10),'a hostile or unoccupied origin cannot dispatch an army');
+ const source=(CADJ[HOME]||[]).find(id=>warFaction(id)==='xia');
+ if(source){warSetMen(source,200);const raid=npcRaid(source,HOME);ok(raid&&raid.str===90&&warMen(source)===110,'a player-bound raid pays for every attacking soldier');CG.T[source].own='free';const count=CG.xa.length;ok(!npcRaid(source,HOME)&&CG.xa.length===count,'losing the source settlement prevents new raids');}
+ const ownSnapshot=Object.fromEntries(Object.entries(CG.T).map(([id,s])=>[id,s.own]));
+ for(const s of Object.values(CG.T))if(s.own==='xia')s.own='free';
+ const cart={kind:'buy',path:[HOME,HOME],eta:1,left:1,goods:{grain:100}};
+ ok(shipRaid(cart,[])===false&&!cart.state,'convoy raiders cannot appear without a nearby occupied Xia settlement');
+ for(const [id,own] of Object.entries(ownSnapshot))CG.T[id].own=own;
  missionsUI();return{checks,borderEdges:edges.length,maxColumns:max,reports:frontierWar().reports.length};});
 fs.mkdirSync('test-results',{recursive:true});await p.screenshot({path:'test-results/frontier-war-board.png'});await p.evaluate(()=>{document.querySelector('#cMissions')?.remove();const a=frontierWar().armies[0];if(a)focusOn(a.at,1.1);});await p.waitForTimeout(1500);await p.screenshot({path:'test-results/frontier-war-map.png'});console.log(JSON.stringify({...result,errors},null,2));if(errors.length)throw Error('Browser errors');
 }finally{if(browser)await browser.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});

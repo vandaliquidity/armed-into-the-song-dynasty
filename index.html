@@ -538,7 +538,7 @@ LORE.gfx={title:{zh:'画质',en:'Graphics'},auto:{zh:'自动',en:'Auto'},q:{high
   d:{zh:'高：原尺寸画卷、三人一伍、全部光影；中：标准画卷、两人一伍；低：小画卷、无投影雾霭（适合手机）',en:'High: full-size art, files of three, all lighting. Medium: standard art, files of two. Low: small art, no shadows or haze (phones).'}};
 // ===== 持械入宋 fan game — core =====
 'use strict';
-const VERSION='v0.19 · Banners on the March';
+const VERSION='v0.20 · Armies Need Settlements';
 const TAU=Math.PI*2;
 const clamp=(v,a,b)=>v<a?a:v>b?b:v, lerp=(a,b,t)=>a+(b-a)*t, rnd=(a=1,b)=>b===undefined?Math.random()*a:a+Math.random()*(b-a), rint=(a,b)=>Math.floor(rnd(a,b+1));
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y), angTo=(a,b)=>Math.atan2(b.y-a.y,b.x-a.x);
@@ -2243,15 +2243,15 @@ function claimTerr(id,quiet){const s=CG.T[id];const wasXia=s.own==='xia';s.own='
   if(s.stock){const g=lootStock(id,1,id);s.stock=null;if(!quiet&&Object.keys(g).length)cgLog('📦',Ts(`缴获${CT[id].zh}囤积：`,`Captured the stockpile at ${CT[id].en}: `)+stockTxt(g));}
   if(!quiet)cgLog('🚩',Ts(CL.ev.taken.zh.replace('{t}',CT[id].zh),CL.ev.taken.en.replace('{t}',CT[id].en)));campRefresh();}
 function stockTxt(g){return Object.keys(g).filter(k=>g[k]).map(k=>{const n=RAWN[k]||EQN[k]||(k==='silver'?['银','silver','🪙']:[k,k,'']);return `${n[2]||''}${g[k]}`;}).join(' ');}
-function loseTerr(id){const s=CG.T[id];for(const u of unitsAt(id))delete CG.U[u.id];s.stock={horse:Math.round(s.st.horse*.6),silver:20,grain:Math.round(s.st.grain*.6),spear:s.eq.spear,dao:s.eq.dao,bow:s.eq.bow,armL:s.eq.armL,hide:Math.round(s.st.hide*.6)};for(const k of RAW)s.st[k]=Math.round(s.st[k]*.2);for(const k of EQ)s.eq[k]=0;s.trn=[];s.own='xia';s.str=Math.max(300,s.str||300);s.prosp=Math.max(5,s.prosp-30);s.build=null;const ks=DEV_ORDER.filter(k=>s.bld[k]>0);if(ks.length)s.bld[pick(ks)]--;CG.stats.lost++;
+function loseTerr(id){const s=CG.T[id];for(const u of unitsAt(id))delete CG.U[u.id];s.stock={horse:Math.round(s.st.horse*.6),silver:20,grain:Math.round(s.st.grain*.6),spear:s.eq.spear,dao:s.eq.dao,bow:s.eq.bow,armL:s.eq.armL,hide:Math.round(s.st.hide*.6)};for(const k of RAW)s.st[k]=Math.round(s.st[k]*.2);for(const k of EQ)s.eq[k]=0;s.trn=[];s.own='xia';s.str=0;s.prosp=Math.max(5,s.prosp-30);s.build=null;const ks=DEV_ORDER.filter(k=>s.bld[k]>0);if(ks.length)s.bld[pick(ks)]--;CG.stats.lost++;
   cgLog('🔥',Ts(CL.ev.lost.zh.replace('{t}',CT[id].zh),CL.ev.lost.en.replace('{t}',CT[id].en)));for(const a of CG.armies)if(a.loc===id){const back=CADJ[id].find(b=>owned(b))||HOME;a.loc=back;}
   if(id===HOME){CG.over=1;cgLog('☠',Ts(CL.ev.over.zh,CL.ev.over.en));}campRefresh();}
 // battle resolution --------------------------------------------------------
 function qItem(){return CG.queue[0];}
 function qArmy(q){if(q.story)return CG.armies.find(a=>a.cmd==='lead');return q.army?CG.armies.find(a=>a.id===q.army):armyAt(q.terr);}
-function qEnemyStr(q){if(q.type==='def'){const x=CG.xa.find(x=>x.id===q.xa);return x?x.str:200;}if(q.type==='claim')return 120+rint(0,120);const s=Math.max(100,CG.T[q.terr].str);return q.type==='raid'?Math.round(s*.55):s;}
-function enemyMix(str,kind,N=10){const n=Math.max(6,Math.min(230,Math.round(str/N)));const m={xfoot:0,xarch:0,xraid:0,xiron:0,xcamel:0};
-  m.xiron=str>800?Math.round(n*.1):0;m.xcamel=(kind==='city'||kind==='fort')&&str>1000?Math.min(4,Math.round(n*.03)):0;m.xraid=Math.round(n*(kind==='camp'||kind==='pass'?.26:.16));m.xarch=Math.round(n*.22);m.xfoot=Math.max(2,n-m.xiron-m.xcamel-m.xraid-m.xarch);return m;}
+function qEnemyStr(q){if(q.type==='def'){const x=CG.xa.find(x=>x.id===q.xa);return x?x.str:0;}if(q.type==='claim')return 120+rint(0,120);const s=Math.max(0,CG.T[q.terr].str);return q.type==='raid'?Math.round(s*.55):s;}
+function enemyMix(str,kind,N=10){const n=Math.max(0,Math.min(230,Math.ceil(str/N)));const m={xfoot:0,xarch:0,xraid:0,xiron:0,xcamel:0};
+  m.xiron=str>800?Math.round(n*.1):0;m.xcamel=(kind==='city'||kind==='fort')&&str>1000?Math.min(4,Math.round(n*.03)):0;m.xraid=Math.round(n*(kind==='camp'||kind==='pass'?.26:.16));m.xarch=Math.round(n*.22);m.xfoot=Math.max(0,n-m.xiron-m.xcamel-m.xraid-m.xarch);return m;}
 function qUnits(q){const a=qArmy(q);const us=a?armyUnits(a).slice():[];if(q.type==='def')for(const u of unitsAt(q.terr))if(!us.includes(u))us.push(u);return us;}
 function powerOf(a,q){let p=0;const us=a?armyUnits(a).slice():[];if(q&&q.type==='def')for(const u of unitsAt(q.terr))if(!us.includes(u))us.push(u);for(const u of us)p+=unitPow(u)*100;const mem=a?a.mem:[];let rk=0;for(const m of mem)rk+=CG.sq[m].rank;p+=mem.length*60*(1+.12*rk);
   if(q&&q.type==='def'){const s=CG.T[q.terr];p+=s.pop*.03;p*=1+.2*s.bld.wall;}return p*(a?a.morale/100:1);}
@@ -2273,7 +2273,7 @@ function resolveBattle(q,win,r){const a=qArmy(q),id=q.terr,s=CG.T[id],P=perkSum(
   let stock=null;
   if(q.type==='atk'||q.type==='claim'){if(win){const st0=s.stock?{...s.stock}:null;claimTerr(id);stock=st0;s.prosp=Math.max(15,Math.round(s.prosp*.7));a.from=a.loc;CG.anim.push({a:a.id,from:a.loc,to:id,t:0});a.loc=id;}else{a.morale=Math.max(40,a.morale-25);}}
   else if(q.type==='raid'){if(win){stock=lootStock(id,.6,a.loc&&owned(a.loc)?a.loc:HOME);CG.stats.raids++;s.str=Math.round(s.str*.8);cgLog('🐎',Ts(`劫营${CT[id].zh}得手：`,`Raid on ${CT[id].en}: `)+stockTxt(stock));}else a.morale=Math.max(40,a.morale-20);}
-  else{const x=CG.xa.find(x=>x.id===q.xa);CG.xa=CG.xa.filter(o=>o!==x);if(win){s.prosp=Math.min(100,s.prosp+3);if(x&&x.story==='ch3'){for(const k in CG.T)if(CG.T[k].own==='xia')CG.T[k].str=Math.round(CG.T[k].str*.7);}}else{if(x&&x.story==='ch3'){s.prosp=Math.max(10,s.prosp-30);}else if(id===HOME&&s.prosp>20){s.prosp-=22;s.raided=1;s.st.grain=Math.round(s.st.grain*.7);CAMP.res.silver=Math.round(CAMP.res.silver*.75);s.pop=Math.round(s.pop*.9);cgLog('🔥',Ts(CL.ev.sacked.zh,CL.ev.sacked.en));}else loseTerr(id);}}
+  else{const x=CG.xa.find(x=>x.id===q.xa);CG.xa=CG.xa.filter(o=>o!==x);if(win){s.prosp=Math.min(100,s.prosp+3);if(x&&x.story==='ch3'){for(const k in CG.T)if(CG.T[k].own==='xia')CG.T[k].str=Math.round(CG.T[k].str*.7);}}else{if(x&&x.story==='ch3'){s.prosp=Math.max(10,s.prosp-30);}else if(id===HOME&&s.prosp>20){s.prosp-=22;s.raided=1;s.st.grain=Math.round(s.st.grain*.7);CAMP.res.silver=Math.round(CAMP.res.silver*.75);s.pop=Math.round(s.pop*.9);cgLog('🔥',Ts(CL.ev.sacked.zh,CL.ev.sacked.en));}else{loseTerr(id);s.str=Math.max(0,Math.round((x?.str||0)*.6));}}}
   if(win&&CG.T[dst]&&CG.T[dst].st){CG.T[dst].st.grain+=gain.grain;CG.T[dst].st.ore+=gain.ore;CG.T[dst].st.horse+=gain.horse;}
   if(a&&!a.units.length&&!a.mem.length){CG.armies=CG.armies.filter(x=>x!==a);}else if(a&&a.cmd!=='lead'&&!a.units.length)mergeArmyHome(a);
   CG.last={q:{...q},win,gain,lostN,back,wnd,su,kills:r.kills,auto:!!r.auto,terr:id,t:r.t||0,saved:r.saved||0,horses:gain.horse,stock};CG.queue.shift();if(!CG.queue.length&&CG.tut===4)CG.tut=5;campRefresh();syncRes();saveGame();return CG.last;}
@@ -2299,7 +2299,7 @@ function endTurn(){const rep={turn:CG.turn,date:dateTxt(CG.turn),res0:{...CAMP.r
   for(const id in CG.T){const s=CG.T[id];const t0=tierOf(s.prosp);
     if(owned(id)){const rt=ROUTES.filter(r=>r.a===id||r.b===id).length;s.held=(s.held||0)+1;let d=2+Math.min(3,s.held*.25)+s.bld.market*1.2+s.bld.farm*.8+rt*2+(s.bld.wall?.5:0)+(s.fest?3:0)-(SUPP.has(id)?0:5)-(s.st.grain<=0?4:0)-(s.raided?12:0);
       if(id===HOME)d+=1;s.prosp=clamp(s.prosp+d,0,100);const g=s.pop*.035*(s.prosp/50)*(1+P.popG)*(s.st.grain<=0?-.5:1);s.pop=Math.round(clamp(s.pop+g,200,popCap(id)));}
-    else if(s.own==='xia'){s.prosp=clamp(s.prosp+(s.prosp>34?-1:1),0,100);const base=(CT[id].str||10)*({village:25,fort:25,pass:30,camp:40,town:30,city:50}[CT[id].kind]||25);s.str=Math.round(Math.min(base*1.6,s.str+base*.06+CG.turn*3));}
+    else if(s.own==='xia'){s.prosp=clamp(s.prosp+(s.prosp>34?-1:1),0,100);/* Reinforcements are trained by npcEconomyTick, using local stores. */}
     else if(s.own==='free')s.prosp=clamp(s.prosp+.5,0,40);
     s.raided=0;s.fest=0;const t1=tierOf(s.prosp);if(owned(id)&&t1>t0){rep.tiers.push([id,t1]);cgLog('🏮',Ts(CL.ev.tier.zh.replace('{t}',CT[id].zh).replace('{n}',CL.tiers[t1][0]),CL.ev.tier.en.replace('{t}',CT[id].en).replace('{n}',CL.tiers[t1][1])));}}
   if(seasonOf(CG.turn)===2)for(const id in CG.T){const s=CG.T[id];if(owned(id)&&tierOf(s.prosp)>=2){s.fest=1;rep.lines.push(['🏮',Ts(CL.ev.festival.zh.replace('{t}',CT[id].zh),CL.ev.festival.en.replace('{t}',CT[id].en))]);CAMP.res.rep+=1;}}
@@ -2315,10 +2315,10 @@ function xiaAI(rep){for(const x of CG.xa)x.eta--;
   // The scripted Qinghe battle is launched by the Missions board when ready.
   const sea=seasonOf(CG.turn);const p=clamp(.2+.04*CG.turn+(sea===2?.25:sea===3?.1:0),0,.75);
   if(CG.turn>=2&&Math.random()<p&&CG.xa.filter(x=>!x.story).length<2){const cands=[];for(const id in CG.T)if(owned(id))for(const b of CADJ[id])if(CG.T[b].own==='xia'&&CG.T[b].str>=200)cands.push([b,id]);
-    if(cands.length){cands.sort((u,v)=>(CG.T[v[1]].prosp-garrison(v[1])/50)-(CG.T[u[1]].prosp-garrison(u[1])/50));const[f,t]=Math.random()<.6?cands[0]:pick(cands);const fs=CG.T[f];const str=Math.round(Math.max(200,fs.str*.45+CG.turn*12));fs.str=Math.max(100,fs.str-Math.round(str*.4));
+    if(cands.length){cands.sort((u,v)=>(CG.T[v[1]].prosp-garrison(v[1])/50)-(CG.T[u[1]].prosp-garrison(u[1])/50));const[f,t]=Math.random()<.6?cands[0]:pick(cands);const fs=CG.T[f];const str=Math.floor(fs.str*.45);fs.str-=str;
       CG.xa.push({id:CG.xid++,from:f,to:t,str,eta:1});if(SEEN.has(f)||SEEN.has(t)){const m=Ts(CL.ev.raid.zh.replace('{t}',CT[t].zh),CL.ev.raid.en.replace('{t}',CT[t].en));rep.lines.push(['⚔',m]);cgLog('⚔',m);}}}
   // Xia reclaim unguarded free villages next to them
-  for(const id in CG.T)if(CG.T[id].own==='free'&&CADJ[id].some(b=>CG.T[b].own==='xia')&&Math.random()<.08){CG.T[id].own='xia';CG.T[id].str=250;CG.T[id].stock=CG.T[id].stock||{horse:10,silver:20,grain:100,spear:20,dao:0,bow:20,armL:0,hide:20};}}
+  for(const id in CG.T)if(CG.T[id].own==='free'&&CADJ[id].some(b=>CG.T[b].own==='xia')&&Math.random()<.08){const from=CADJ[id].find(b=>warFaction(b)==='xia'&&warMen(b)>=100);if(from)warDispatch('xia',from,id,Math.floor(warMen(from)*.35),'occupy');}}
 // story missions inside the campaign
 function storyAvail(){if(!CG||CG.phase!==2)return null;const L=CG.armies.find(a=>a.cmd==='lead');if(!L||(L.loc!==HOME&&!CADJ[HOME].includes(L.loc)))return null;if(!CAMP.done.includes(1)&&CG.turn>=2)return 1;return null;}
 // ===== v0.6 economy: village stores, production chain, 都-based units, garrisons, map resource sites =====
@@ -3265,7 +3265,7 @@ function zhYear(turn){const ad=CL.ad0+Math.floor((turn-1)/4);const er=ad>=1127?L
 function defPow(id){return powerOf(armyAt(id),{type:'def',terr:id});}
 function stockVal(id){const s=CG.T[id];let v=0;for(const k of RAW)v+=(s.st[k]||0)*(PRICE[k]||8)/50;for(const k of EQ)v+=(s.eq[k]||0)*.4;return v;}
 function xiaTargets(){const out=[];for(const id in CG.T){if(!owned(id))continue;const s=CG.T[id];if(s.tribX&&s.tribX>=CG.turn)continue;const src=CADJ[id].filter(b=>CG.T[b].own==='xia'&&CG.T[b].str>=200);if(!src.length)continue;
-    const f=src.sort((a,b)=>CG.T[b].str-CG.T[a].str)[0];const str=Math.round(Math.max(200,CG.T[f].str*.45+CG.turn*12)*[.7,1,1.35][CG.diff]);const def=defPow(id);
+    const f=src.sort((a,b)=>CG.T[b].str-CG.T[a].str)[0];const str=Math.floor(CG.T[f].str*.45);const def=defPow(id);
     const ownN=CADJ[id].filter(owned).length;const iso=(SUPP.has(id)?0:.5)+(ownN<=1?.25:0)+(s.held!=null&&s.held<3?.3:0);
     const rts=ROUTES.filter(r=>r.a===id||r.b===id).length;const val=20+s.prosp*.8+stockVal(id)/40+NODES.filter(n=>n.terr===id&&CG.out[n.id]).length*8+(id===HOME?25:0)+rts*8;
     const rec=CG.xhit[id]&&CG.turn-CG.xhit[id]<2?.6:1;const win=str/(str+def*1.1);const sc=val*(1+iso)*win*win*rec;
@@ -3280,13 +3280,13 @@ function xiaAI(rep){v7s();for(const x of CG.xa){x.eta--;if(x.real&&x.eta===1){co
   // The scripted Qinghe battle is launched by the Missions board when ready.
   const D=[.7,1,1.35][CG.diff],sea=seasonOf(CG.turn);const p=clamp((.2+.04*CG.turn+(sea===2?.25:sea===3?.1:0))*D,0,.85);const maxA=[1,2,3][CG.diff];
   const c=xiaTargets();CG.xai=c.slice(0,4).map(x=>({id:x.id,sc:Math.round(x.sc),why:x.why,def:x.def,str:x.str}));
-  if(CG.turn>=2&&Math.random()<p&&CG.xa.filter(x=>!x.story).length<maxA&&c.length){const tg=pickSoft(c,[.5,.3,.15][CG.diff]);const fs=CG.T[tg.f];fs.str=Math.max(100,fs.str-Math.round(tg.str*.4));
-    const x={id:CG.xid++,from:tg.f,to:tg.id,str:tg.str,eta:2,weak:tg.why.includes('weak'),fz:rnd(.8,1.25)};
+  if(CG.turn>=2&&Math.random()<p&&CG.xa.filter(x=>!x.story).length<maxA&&c.length){const tg=pickSoft(c,[.5,.3,.15][CG.diff]);const fs=CG.T[tg.f];fs.str-=tg.str;
+    const x={id:CG.xid++,from:tg.f,to:tg.id,str:tg.str,eta:2,weak:tg.why.includes('weak'),fz:rnd(.8,1.25),paid:true};
     const alt=c.filter(o=>o.id!==tg.id&&CADJ[o.id].includes(tg.f));if(alt.length&&Math.random()<.15){x.real=tg.id;x.to=pick(alt).id;}
     CG.xa.push(x);const m=intelLine(x);rep.lines.push(['⚔',m]);cgLog('⚔',m);
     if(tg.why.includes('cut')&&Math.random()<.5){const m2=zx(LORE.intel.cut,{t:{zh:CT[tg.id].zh,en:CT[tg.id].en}});rep.lines.push(['👁',m2]);}}
   if(typeof xiaDemand==='function')xiaDemand(rep);
-  for(const id in CG.T)if(CG.T[id].own==='free'&&CADJ[id].some(b=>CG.T[b].own==='xia')&&Math.random()<.08*D){CG.T[id].own='xia';CG.T[id].str=250;CG.T[id].stock=CG.T[id].stock||{horse:10,silver:20,grain:100,spear:20,dao:0,bow:20,armL:0,hide:20};}}
+  for(const id in CG.T)if(CG.T[id].own==='free'&&CADJ[id].some(b=>CG.T[b].own==='xia')&&Math.random()<.08*D){const from=CADJ[id].find(b=>warFaction(b)==='xia'&&warMen(b)>=100);if(from)warDispatch('xia',from,id,Math.floor(warMen(from)*.35),'occupy');}}
 // ---------------------------------------------------------------- 5. battle choice card: odds and expected casualties
 function battleForecast(q,N=400){const a=qArmy(q),E=qEnemyStr(q)*1.1,P=powerOf(a,q);const us=qUnits(q);const men=menOf(us);const su=memIn(a,'medic');const wf=clamp(.36+(su?.16:0)-.06+perkSum().heal*.3,.12,.72);
   let w=0,dead=0,wnd=0,kills=0;for(let i=0;i<N;i++){const pe=P*rnd(.85,1.15),ee=E*rnd(.85,1.15);const win=pe>ee;if(win)w++;const fr=(win?clamp(.45*ee/(pe+ee),.04,.35):clamp(.7*pe/(pe+ee)+.25,.3,.8))*.95;const l=men*fr;wnd+=l*wf;dead+=l*(1-wf);kills+=win?E*.57:E*.22;}
@@ -3395,7 +3395,7 @@ function xiaDemand(rep){if(CG.xdem||CG.turn<3)return;const D=[.7,1,1.35][CG.diff
   const id=c.sort((a,b)=>garrison(a)-garrison(b))[0];CG.xdem={terr:id,from:xiaNear(id),want:{silver:40+CG.turn*4,grain:120+CG.turn*10},turn:CG.turn+1};const m=zx(LCP.xdemTxt,{t:{zh:CT[id].zh,en:CT[id].en},g:{zh:`银${CG.xdem.want.silver}、粮${CG.xdem.want.grain}`,en:`${CG.xdem.want.silver} silver and ${CG.xdem.want.grain} grain`}});rep.lines.push(['⚠',m]);cgLog('⚠',m);}
 function xdemAnswer(pay){const X=CG.xdem;if(!X)return false;const id=X.terr;if(pay){if(CAMP.res.silver<X.want.silver||have(id,'grain',true)<X.want.grain)return false;CAMP.res.silver-=X.want.silver;take(id,'grain',X.want.grain,true);CG.T[id].tribX=CG.turn+2;
     CG.fac.court=clamp(CG.fac.court-6,0,100);CG.fac.gentry=clamp(CG.fac.gentry+4,0,100);favAdd(-5,'court');addConvoy(id,X.from,'xiapay');cgLog('🏳',zx(LCP.paidX,{t:{zh:CT[id].zh,en:CT[id].en}}));}
-  else{CG.xa.push({id:CG.xid++,from:X.from,to:id,str:Math.round((250+CG.turn*15)*[.7,1,1.35][CG.diff]),eta:1,weak:1});CG.fac.court=clamp(CG.fac.court+3,0,100);CG.fac.gentry=clamp(CG.fac.gentry-3,0,100);cgLog('⚔',zx(LCP.refX,{t:{zh:CT[id].zh,en:CT[id].en}}));}
+  else{npcRaid(X.from,id,true);CG.fac.court=clamp(CG.fac.court+3,0,100);CG.fac.gentry=clamp(CG.fac.gentry-3,0,100);cgLog('⚔',zx(LCP.refX,{t:{zh:CT[id].zh,en:CT[id].en}}));}
   CG.xdem=null;sfx(pay?'ui':'drum');return true;}
 // ---------------------------------------------------------------- politics: petitions and decrees
 function issueDecree(k){const D=LCP.decree.find(x=>x.id===k);if(!D||CG.decT===CG.turn)return false;for(const r in D.c)if((CAMP.res[r]||0)<D.c[r])return false;for(const r in D.c)CAMP.res[r]-=D.c[r];CG.decT=CG.turn;CG.dec=CG.dec||{};const F=CG.fac;
@@ -3692,9 +3692,9 @@ function shipDeliver(s,lines){const T=CG.T[s.to],g=s.goods;s.state='done';
     if(owned(s.to))logvPush(s.to,'in',g,'porter',s.id);if(s.kind==='loot'&&s.to===HOME)LOGI.scenes.push({kind:'unload',id:HOME,sid:s.id});}
   escHome(s,s.to);
   const K=SHIPK[s.kind]||SHIPK.buy;lines.push([K.ic,Ts(`${K.zh}抵达${CT[s.to].zh}：`,`${K.en} reached ${CT[s.to].en}: `)+(s.kind==='sell'?'🪙'+(s.pay||0):goodsTxt(g))]);}
-function shipRaid(s,lines){const D=[.7,1,1.35][CG.diff||1];const rs=Math.round((150+CG.turn*12)*D*(.7+Math.random()*.6));const esc=shipEscMen(s);const K=SHIPK[s.kind]||SHIPK.buy;
-  if(esc&&esc*1.6>=rs){const u=CG.U[s.esc];u.men=Math.max(10,Math.round(u.men*.88));u.exp+=1;lines.push(['🛡',Ts(`夏军截击${K.zh}，护送之都击退来敌`,`Xia raiders struck the ${K.en.toLowerCase()} — the escort drove them off`)]);s.repel=CG.turn;return false;}
-  s.state='lost';s.lostT=CG.turn;s.lostAt=s.path[Math.min(s.path.length-1,Math.max(1,Math.round((s.eta-s.left+.5)/s.eta*(s.path.length-1))))];
+function shipRaid(s,lines){const at=s.path[Math.min(s.path.length-1,Math.max(1,Math.round((s.eta-s.left+.5)/s.eta*(s.path.length-1))))];const origin=[at,...(CADJ[at]||[])].find(id=>warFaction(id)==='xia'&&warMen(id)>=40);if(!origin)return false;const rs=Math.floor(warMen(origin)*.25);const esc=shipEscMen(s);const K=SHIPK[s.kind]||SHIPK.buy;
+  if(esc&&esc*1.6>=rs){warSetMen(origin,warMen(origin)-Math.ceil(rs*.35));const u=CG.U[s.esc];u.men=Math.max(10,Math.round(u.men*.88));u.exp+=1;lines.push(['🛡',Ts(`夏军截击${K.zh}，护送之都击退来敌`,`Xia raiders struck the ${K.en.toLowerCase()} — the escort drove them off`)]);s.repel=CG.turn;return false;}
+  warSetMen(origin,warMen(origin)-Math.ceil(rs*.1));s.state='lost';s.lostT=CG.turn;s.lostAt=s.path[Math.min(s.path.length-1,Math.max(1,Math.round((s.eta-s.left+.5)/s.eta*(s.path.length-1))))];
   const xs=(CADJ[s.lostAt]||[]).concat([s.lostAt]).find(b=>CG.T[b]&&CG.T[b].own==='xia'&&CG.T[b].stock);if(xs){const st=CG.T[xs].stock;for(const k in s.goods)st[k]=(st[k]||0)+Math.round(s.goods[k]*.8);}
   if(s.kind==='court'&&CG.trib){CG.trib.paid.silver=Math.max(0,CG.trib.paid.silver-(s.goods.silver||0));CG.trib.paid.grain=Math.max(0,CG.trib.paid.grain-(s.goods.grain||0));}
   if(s.esc){const u=CG.U[s.esc];u.men=Math.max(10,Math.round(u.men*.6));escHome(s,s.from);}
@@ -4349,4 +4349,4 @@ window.__sw={
   cstart(o={}){CAMP=newCampaign();CAMP.done=[0];CAMP.next=1;CAMP.roster.militia=22;CAMP.res={grain:270,iron:120,silver:230};if(o.res)Object.assign(CAMP.res,o.res);campStart();if(o.tut==null)CG.tut=6;showCamp();return true;},
   cturn:cbotTurn,cg(){return CG;},cbot:{develop:cbotDevelop,recruit:cbotRecruit,march:cbotMarch,promote:cbotPromote},
 };
-</script><script src="frontier.js"></script><script src="campaign-ui.js"></script><script src="battlefields.js"></script><script src="song-music.js"></script><script src="medical.js"></script><script src="journey.js?v=0.15.1"></script><script src="supply.js"></script><script src="companions.js"></script><script src="refit.js"></script><script src="missions.js?v=0.15.1"></script><script src="frontier-war.js"></script><script src="production.js?v=0.16"></script><script src="spoils.js"></script><script src="history.js"></script><script src="jin-campaign.js"></script><script src="field-command.js"></script><script src="dynasty.js?v=0.17"></script><script src="realm-resources.js?v=0.17"></script><script src="dynasty-ui.js?v=0.18"></script><script src="council.js?v=0.18"></script><script src="town-models.js?v=0.17"></script><script src="production-cards.js?v=0.18"></script><script src="muster.js?v=0.18"></script><script src="banner-orders.js?v=0.19"></script><script src="banner-ui.js?v=0.19"></script></body></html>
+</script><script src="frontier.js"></script><script src="campaign-ui.js"></script><script src="battlefields.js"></script><script src="song-music.js"></script><script src="medical.js"></script><script src="journey.js?v=0.15.1"></script><script src="supply.js"></script><script src="companions.js"></script><script src="refit.js"></script><script src="missions.js?v=0.15.1"></script><script src="frontier-war.js?v=0.20"></script><script src="production.js?v=0.16"></script><script src="spoils.js"></script><script src="history.js"></script><script src="jin-campaign.js?v=0.20"></script><script src="field-command.js"></script><script src="dynasty.js?v=0.17"></script><script src="realm-resources.js?v=0.17"></script><script src="dynasty-ui.js?v=0.18"></script><script src="council.js?v=0.18"></script><script src="town-models.js?v=0.17"></script><script src="production-cards.js?v=0.18"></script><script src="muster.js?v=0.18"></script><script src="banner-orders.js?v=0.19"></script><script src="banner-ui.js?v=0.19"></script><script src="npc-economy.js?v=0.20"></script></body></html>

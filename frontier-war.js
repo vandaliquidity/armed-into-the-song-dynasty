@@ -6,7 +6,7 @@ function frontierWar(){return CG.frontierWar||(CG.frontierWar={v:1,next:1,armies
 function warFaction(id){const f=CG.T[id]?.own;return f==='song'||f==='xia'?f:null;}
 function warMen(id){return warFaction(id)==='song'?CG.T[id].songGarrison?.men||0:warFaction(id)==='xia'?CG.T[id].str||0:0;}
 function warSetMen(id,n){const s=CG.T[id];n=Math.max(0,Math.round(n));if(s.own==='song'){s.songGarrison=s.songGarrison||{type:CT[id].trait==='horse'?'cav':'spear',men:0};s.songGarrison.men=n;}else if(s.own==='xia')s.str=n;}
-function warCap(id,fac=warFaction(id)){return (fac==='song'?{city:1200,town:400,fort:700,pass:500,camp:300,village:150}:{city:1600,town:700,fort:800,pass:650,camp:600,village:300})[CT[id].kind]||250;}
+function warCap(id,fac=warFaction(id)){return (fac==='song'?{city:450,town:180,fort:260,pass:180,camp:150,village:70}:{city:1600,town:700,fort:800,pass:650,camp:600,village:300})[CT[id].kind]||250;}
 function warBorder(id){const fac=warFaction(id);return fac&&(CADJ[id]||[]).some(n=>warFaction(n)&&warFaction(n)!==fac);}
 function warPath(from,to,fac){
   const prev={[from]:null},q=[from];for(const at of q){if(at===to)break;for(const n of CADJ[at]||[])if(warFaction(n)===fac&&!(n in prev)){prev[n]=at;q.push(n);}}
@@ -14,7 +14,7 @@ function warPath(from,to,fac){
 }
 function warReport(zh,en,at){const w=frontierWar(),r={month:campaignMonth(),zh,en,at};w.reports.unshift(r);w.reports.length=Math.min(w.reports.length,24);cgLog('⚔',Tz(zh,en));}
 function warDispatch(fac,from,to,men,kind='attack',path=[from,to]){
-  if(warFaction(from)!==fac||warMen(from)<men||men<1)return null;warSetMen(from,warMen(from)-men);
+  if(!Number.isInteger(men)||warFaction(from)!==fac||warMen(from)<men||men<1||path[0]!==from||path[path.length-1]!==to||path.length<2||path.some((id,i)=>i&&(!(CADJ[path[i-1]]||[]).includes(id)||(i<path.length-1&&warFaction(id)!==fac))))return null;warSetMen(from,warMen(from)-men);
   const w=frontierWar(),a={id:w.next++,fac,from,to,at:from,path,step:0,men,kind,state:'march',born:campaignMonth(),anim:0};w.armies.push(a);w.cooldown[from]=campaignMonth()+3;return a;
 }
 function warRetreat(a,at){
@@ -22,18 +22,18 @@ function warRetreat(a,at){
   if(!candidates.length||a.men<=0)return false;const best=candidates[0];a.from=at;a.at=at;a.to=best.id;a.path=best.path;a.step=0;a.kind='return';a.state='march';a.anim=0;return true;
 }
 function warResolve(a){
-  const fac=warFaction(a.to),s=CG.T[a.to],w=frontierWar();if(!fac||fac===a.fac){if(fac===a.fac)warSetMen(a.to,warMen(a.to)+a.men);return false;}
+  const fac=warFaction(a.to),s=CG.T[a.to],w=frontierWar();if((!fac&&!(a.kind==='occupy'&&s.own==='free'))||fac===a.fac){if(fac===a.fac)warSetMen(a.to,warMen(a.to)+a.men);return false;}
   const defenders=warMen(a.to),fort=1+(s.bld?.wall||0)*.12+(['city','fort','pass'].includes(CT[a.to].kind)?.2:0);
   const R=srand(battlefieldHash(`war-${a.id}-${campaignMonth()}-${a.to}`)),won=a.men*(.85+R()*.3)>defenders*fort*(.85+R()*.3);
   const attackerName=a.fac==='song'?['宋军','Song']:['夏军','Xia'],defenderName=fac==='song'?['宋军','Song']:['夏军','Xia'];
   if(won){
-    const routed=Math.round(defenders*.2);a.men=Math.max(15,Math.round(a.men*(.65-R()*.15)));s.own=a.fac;s.prosp=Math.max(8,s.prosp-7);s.pop=Math.max(50,Math.round(s.pop*.98));
+    const routed=Math.round(defenders*.2);a.men=Math.round(a.men*(.65-R()*.15));s.own=a.fac;s.prosp=Math.max(8,s.prosp-7);s.pop=Math.max(50,Math.round(s.pop*.98));
     if(a.fac==='song'){s.str=0;s.songGarrison={men:a.men,type:CT[a.to].trait==='horse'?'cav':'spear'};}else{delete s.songGarrison;s.str=a.men;}
     warReport(`${attackerName[0]}攻下${CT[a.to].zh}，边界移位。`,`${attackerName[1]} captured ${CT[a.to].en}; the frontier shifts.`,a.to);
     if(routed){const retreat={id:w.next++,fac,from:a.to,at:a.to,to:a.to,path:[a.to],step:0,men:routed,kind:'return',state:'march',born:campaignMonth(),anim:0};if(warRetreat(retreat,a.to))w.armies.push(retreat);}
     return false;
   }
-  warSetMen(a.to,Math.max(10,defenders-Math.round(Math.min(defenders*.45,a.men*(.25+R()*.2)))));a.men=Math.round(a.men*(.25+R()*.15));
+  warSetMen(a.to,Math.max(0,defenders-Math.round(Math.min(defenders*.45,a.men*(.25+R()*.2)))));a.men=Math.round(a.men*(.25+R()*.15));
   warReport(`${defenderName[0]}守住${CT[a.to].zh}，${attackerName[0]}退却。`,`${defenderName[1]} held ${CT[a.to].en}; the ${attackerName[1]} column retreats.`,a.to);
   return warRetreat(a,a.to);
 }
@@ -63,18 +63,18 @@ function warTick(){
     a.anim=0;
     if(a.state==='fight'){if(warResolve(a))w.armies.push(a);continue;}
     const destination=warFaction(a.to);
-    if(!destination||(a.kind==='attack'&&destination===a.fac)){
+    if((!destination&&!(a.kind==='occupy'&&CG.T[a.to]?.own==='free'))||(a.kind==='attack'&&destination===a.fac)){
       if(warFaction(a.at)===a.fac)warSetMen(a.at,warMen(a.at)+a.men);else if(warRetreat(a,a.at))w.armies.push(a);continue;
     }
     const next=a.path[a.step+1];
     if(!next){if(destination===a.fac)warSetMen(a.to,warMen(a.to)+a.men);else if(a.kind==='attack'){a.state='fight';w.armies.push(a);}continue;}
-    const enteringEnemy=next===a.to&&a.kind==='attack'&&warFaction(next)&&warFaction(next)!==a.fac;
-    if(warFaction(next)!==a.fac&&!enteringEnemy){if(warRetreat(a,a.at))w.armies.push(a);continue;}
+    const enteringEnemy=next===a.to&&((a.kind==='attack'&&warFaction(next)&&warFaction(next)!==a.fac)||(a.kind==='occupy'&&CG.T[next]?.own==='free'));
+    if(!(CADJ[a.at]||[]).includes(next)||(warFaction(next)!==a.fac&&!enteringEnemy)){if(warRetreat(a,a.at))w.armies.push(a);continue;}
     a.step++;a.at=next;
-    if(a.at===a.to){if(a.kind==='attack'&&destination!==a.fac){a.state='fight';w.armies.push(a);}else warSetMen(a.to,warMen(a.to)+a.men);}
+    if(a.at===a.to){if(['attack','occupy'].includes(a.kind)&&destination!==a.fac){a.state='fight';w.armies.push(a);}else warSetMen(a.to,warMen(a.to)+a.men);}
     else w.armies.push(a);
   }
-  for(const id of Object.keys(CG.T))if(warFaction(id)){const cap=warCap(id),men=warMen(id);if(men<cap)warSetMen(id,Math.min(cap,men+Math.max(3,Math.round(cap*.025))));}
+  npcEconomyTick();
   warIssueOrders();campRefresh();
 }
 {const old=endTurn;endTurn=function(){if(!CG||CG.pend||CG.queue.length)return old();frontierWar();const before=campaignMonth(),r=old();if(campaignMonth()>before){warTick();saveGame();}return r;};}

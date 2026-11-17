@@ -2,6 +2,12 @@
 
 A browser strategy game.
 
+### v0.20 — Settlement-funded frontier armies
+
+Song garrisons start substantially smaller (about 45 in a village, 117 in a town and 292 in a city). Song and Xia replacements now cost local civilians, weapons, grain and silver, and take one month to train. Settlement workers farm, gather timber and forge spears from local ore; iron-producing settlements replenish ore. Grain upkeep and shortages constrain garrisons. Inspect a settlement for its recruitment and supply figures.
+
+Xia campaign raids withdraw their entire force from an adjacent occupied settlement. Free settlements are taken by visible marching troops, without a free occupation garrison. Automatic soldier growth, turn-based army inflation and separate free weapon restocking are removed. Existing saves receive the smaller garrison limits once; legacy regular raiders are checked and funded from valid origins. Authored chapter encounters and the historical Jin invasion remain scripted scenarios.
+
 ### v0.15.1 — Chapter II escort repair
 
 Chapter II now explains missing stores, campaign phase and army requirements, lets you cancel Lin Feng’s pending march order, and recovers old escort locks and stale army IDs. Mission dialogs no longer pass Enter/Space through to campaign orders. Escort pause, restart and return-to-mission use the current campaign snapshot. Completed escorts offer an optional route-selectable practice replay without changing campaign troops, ammunition or rewards.

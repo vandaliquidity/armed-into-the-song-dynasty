@@ -13,7 +13,7 @@ function jinReport(zh,en,at){const j=jinState();j.reports.unshift({zh,en,at,mont
 function jinArmy(name,men,path,phase,state='march'){const j=jinState(),a={id:j.next++,name,men,path,step:0,at:path[0],phase,state,anim:0};j.armies.push(a);return a;}
 function jinColumn(q){const id=q.jin||CG.xa.find(x=>x.id===q.xa&&x.faction==='jin')?.jinColumn;return jinState().armies.find(a=>a.id===id);}
 function jinPlayerPower(id){let n=0;for(const u of Object.values(CG.U))if(unitSite(u)===id||(u.loc?.a&&CG.armies.find(a=>a.id===u.loc.a)?.loc===id))n+=unitPow(u)*100;return n;}
-function jinDefencePower(){const c=CG.T.kaifeng,a=historyAid();return Math.round(((c.songGarrison?.men||0)+jinPlayerPower('kaifeng'))*8+Math.min(a.crossbows,2000)*20+Math.min(a.grain,5000)*2+historyReadiness()*100);}
+function jinDefencePower(){const c=CG.T.kaifeng,a=historyAid();return Math.round(((c.songGarrison?.men||0)+jinPlayerPower('kaifeng'))*8+Math.min(a.crossbows,2000)*40+Math.min(a.grain,5000)*2+historyReadiness()*100);}
 function jinOccupy(a,id){
   const s=CG.T[id];if(owned(id)){
     if(!CG.xa.some(x=>x.jinColumn===a.id))CG.xa.push({id:CG.xid++,from:a.path[Math.max(0,a.step-1)],to:id,str:a.men,eta:0,faction:'jin',jinColumn:a.id});a.state='player-battle';return false;
@@ -40,7 +40,7 @@ function jinTick(){
     if(a.state==='siege'&&!jinOccupy(a,a.at))continue;
     if(a.state==='taiyuan-siege'){if(jinPlayerPower('taiyuan')+(CG.T.taiyuan.songGarrison?.men||0)*3>a.men){a.defeated=true;a.state='retreat';a.retreatMonths=2;jinReport('太原援军击退宗翰，西路金军受挫。','Taiyuan’s relief defeats Zonghan; the western column is checked.','taiyuan');}continue;}
     if(a.at==='kaifeng'){
-      a.state='capital-siege';if(a.phase===1&&now>=1126*12+1){a.state='retreat';a.retreatMonths=2;CG.T.kaifeng.songGarrison.men=Math.max(600,Math.round(CG.T.kaifeng.songGarrison.men*.9));jinReport('汴京第一次围城解围，金军暂退；第二次进攻仍需防备。','The first siege of Kaifeng is lifted; the Jin withdraw, but a second invasion remains possible.','kaifeng');}continue;
+      a.state='capital-siege';if(a.phase===1&&now>=1126*12+1){a.state='retreat';a.retreatMonths=2;CG.T.kaifeng.songGarrison.men=Math.max(0,Math.round(CG.T.kaifeng.songGarrison.men*.9));jinReport('汴京第一次围城解围，金军暂退；第二次进攻仍需防备。','The first siege of Kaifeng is lifted; the Jin withdraw, but a second invasion remains possible.','kaifeng');}continue;
     }
     const next=a.path[a.step+1];if(!next)continue;a.step++;a.at=next;
     if(next==='kaifeng'){a.state='capital-siege';jinReport(`${a.name[0]}抵达汴京，开始围城。`,`${a.name[1]} reaches Kaifeng and begins the siege.`,'kaifeng');}

@@ -26,7 +26,7 @@ const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
    ok(Object.keys(bfsDist(HOME,100)).length===118,'every settlement reachable by road');
    ok(NODES.every(n=>CT[n.terr]&&NODEK[n.k]),'every resource site has a valid owner and type');
    ok(CL.links.every(([a,b])=>CADJ[a].includes(b)&&CADJ[b].includes(a)),'roads bidirectional');
-   ok(garrison('qinzhou')===1200&&CG.T.liulin.str>0,'Song and Xia settlements have garrisons');
+   ok(garrison('qinzhou')>0&&garrison('qinzhou')<=450&&CG.T.liulin.str>0,'Song and Xia settlements have garrisons');
    ok(CG.T[HOME].st.grain===900&&CG.T[HOME].st.timber===460,'initial supplies increased');
    ok(!STK_BINS.flat().some(k=>k==='gold'||k==='silver'),'no exposed warehouse precious metals');
    const points=stkGrid(8,10,20,100,100,{cw:20,ch:15,ly:2}).pts;
