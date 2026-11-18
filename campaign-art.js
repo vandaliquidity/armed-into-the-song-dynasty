@@ -138,3 +138,10 @@ drawNodes=function(g){
   for(const [id,r] of MAP_LABELS)if(x>=r.x&&x<=r.x+r.w&&y>=r.y&&y<=r.y+r.h)return {t:id};
   return hit;
 };}
+drawFog=function(g,a){
+  g.save();for(const t of CL.terr){if(SEEN.has(t.id)||CG.T[t.id].own!=='xia')continue;
+    const p=tPos(t.id),q=c2s(p.x,p.y);if(q.x<-200||q.x>VW+200||q.y<-200||q.y>VH+200)continue;
+    for(let i=0;i<2;i++){const dx=Math.sin(CTIME*.15+i*2.1+p.x)*26*CC.z,w=170*CC.z*(1+i*.15);g.globalAlpha=.32;g.drawImage(a.cloud,q.x-w/2+dx+(i-.5)*40*CC.z,q.y-w*.32+(i-.5)*14*CC.z,w,w*.54);}
+    g.globalAlpha=1;g.fillStyle='#596d68';g.font='bold 11px serif';g.textAlign='center';g.fillText('?',q.x,q.y+5);
+  }g.restore();
+};
