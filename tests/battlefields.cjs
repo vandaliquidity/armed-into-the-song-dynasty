@@ -13,7 +13,7 @@ const {startServer,browserOptions}=require('./server.cjs');
    const checks=[],maps=[];const ok=(x,m)=>{if(!x)throw Error(m);checks.push(m);};
    const roster={...CAMP.roster};
    function build(id,mission='atk'){
-    CAMP.roster={...roster};const s=battleSpec({type:mission,terr:id,army:CG.armies[0].id});
+    CAMP.roster={...roster};const q={type:mission,terr:id,army:CG.armies[0].id};if(mission==='def'){const x={id:CG.xid++,from:'liulin',to:id,str:400,eta:0,paid:true};CG.xa.push(x);q.xa=x.id;}const s=battleSpec(q);
     B=newBattle(-1);B.skirm=s;B.members=s.members;B.eqMul=s.eqMul;B.N=s.N;uidN=1;CAMP.roster={...s.tro};SETUP.skirm();return B;
    }
    function reachable(){
@@ -29,11 +29,11 @@ const {startServer,browserOptions}=require('./server.cjs');
    }
    ok(new Set(maps.map(x=>x.width+'|'+x.props+'|'+x.blocked)).size===7,'all seven map archetypes have distinct geometry');
    for(const t of CL.terr){build(t.id);if(!reachable())throw Error('Inaccessible objective at '+t.id);}
-   ok(true,'all 118 settlements have reachable assault objectives');
-   build('qinghe');
+   ok(true,'all 121 settlements have reachable assault objectives');
+   build('qinghe');ok(!B.units.some(u=>u.team===1),'an empty garrison cannot generate minimum enemy figures');
    const p=B.frontier.points[0];
    B.units.forEach(u=>{u.x=100;u.y=100;});const ally=B.squad[0];ally.x=p.x;ally.y=p.y;
-   const foe=B.units.find(u=>u.team===1);foe.x=p.x;foe.y=p.y;
+   const foe=mkUnit('xfoot',1,p.x,p.y);
    battlefieldTick(13);ok(!p.captured,'contested objectives cannot be captured');
    foe.x=100;foe.y=100;battlefieldTick(13);ok(p.captured,'uncontested presence captures a district');
    build('tiandu','raid');

@@ -18,7 +18,7 @@ function settlementProfile(id){
 }
 {const old=battleSpec;battleSpec=function(q){
   const s=old(q),p=settlementProfile(q.terr);s.profile=p;s.kind=CT[q.terr].kind;s.mission=q.type==='raid'?'raid':q.type==='def'?'defend':'occupy';
-  const total=Math.max(6,Object.values(s.enemy).reduce((a,b)=>a+b,0));
+  const total=Math.max(0,Object.values(s.enemy).reduce((a,b)=>a+b,0));
   const weights={farm:{xfoot:.65,xarch:.3,xraid:.05},market:{xfoot:.5,xarch:.45,xraid:.05},fort:{xfoot:.5,xarch:.4,xiron:.1},city:{xfoot:.45,xarch:.4,xiron:.15},steppe:{xfoot:.15,xarch:.15,xraid:.55,xiron:.15},crossing:{xfoot:.55,xarch:.4,xraid:.05},quarry:{xfoot:.65,xarch:.35}}[p.type];
   let left=total;const keys=Object.keys(weights);s.enemy={};keys.forEach((k,i)=>{s.enemy[k]=i===keys.length-1?left:Math.min(left,Math.round(total*weights[k]));left-=s.enemy[k];});
   s.hud={...s.hud,zh:s.hud.zh+' · '+p.zh,en:s.hud.en+' · '+p.en};

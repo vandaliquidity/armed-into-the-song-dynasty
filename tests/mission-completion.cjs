@@ -8,7 +8,7 @@ const {chromium}=require('playwright');const {startServer,browserOptions}=requir
   ok(!document.querySelector('#missionQinghe').classList.contains('dis'),'Chapter III remains unlocked after a completed original escort');
   missionsUI();ok(JSON.stringify({res:CAMP.res,T:CG.T,U:CG.U,off:CG.off})===assets,'recognising completion neither grants duplicate rewards nor changes campaign assets');
   missionNext();ok(CG.pend?.story===2&&MODE==='brief','next mission advances to Qinghe rather than replaying the escort');showCamp();
-  CAMP.done.push(2);missionsUI();ok(document.querySelector('#missionNext').classList.contains('dis'),'original three-chapter completion is shown even if optional expedition is unplayed');
+  CAMP.done.push(2);missionsUI();ok(!document.querySelector('#missionNext').classList.contains('dis')&&chronNext().id==='county','original three-chapter completion unlocks the new chronicle without requiring the optional expedition');
   const j=journeyState();j.stage='route';j.prep='community';j.trust=1;missionsUI();ok(document.querySelector('[data-mission="qinzhou"] .chip').textContent==='Completed'&&j.stage==='route'&&j.trust===1,'an optional expedition in progress does not reset the completed escort or its own choices');
   saveGame();CAMP=loadGame();campLoad();missionsUI();ok(missionChapterDone(1)&&CG.journey.stage==='route','correct completion and optional progress survive save/load');
   __sw.cstart();CG.journey.stage='market';CG.journey.result={win:true,carts:2,saved:4};missionsUI();

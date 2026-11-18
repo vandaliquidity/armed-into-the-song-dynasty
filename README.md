@@ -2,6 +2,14 @@
 
 A browser strategy game.
 
+### v0.22 — The Qinghe Chronicle
+
+The preserved three-chapter opening now leads into a 30-chapter, six-act campaign: county reform and Longcheng, the western siege and its losses, Deshun and regional command, Roulang/Linhe and the river crossing, northern rearmament, and the game's visible Jingkang crisis. Use **Missions → Start / continue next chapter**. Existing campaigns continue into Chapter IV without restarting.
+
+Chapters require actual town improvements, manufactured arms, completed training, export receipts, safe roads and delivered cargo. Appointments transfer surviving allied garrisons and increase command capacity. Rescue, stronghold and bridgehead encounters have distinct objectives, real casualties and persistent enemy survivors. The Xia river force is paid from an adjacent occupied garrison. Earlier conquests can avert story threats rather than respawn them. Choices and progress survive saves; chapter completion is manual and cannot duplicate rewards.
+
+Deshun, Roulang and Linhe are three new connected schematic locations. The campaign follows documented novel events through IV:165, uses newly written dialogue and the existing altered names, and marks its final historical act and alternate choices explicitly. If Kaifeng falls before you reach the later chapters, refuge logistics and post-siege recovery keep the campaign playable. See [campaign design](CAMPAIGN_DESIGN.md).
+
 ### v0.21 — The Painted Frontier
 
 The main campaign map now uses shaded mountain relief, geographic woodland and farmland washes, layered riverbanks, finer roads and tiled-roof settlement models. Cities, forts, camps and hamlets have distinct silhouettes. Settlement labels avoid each other and stay clickable when displaced; the overview prioritises major towns while resource icons and garrison details expand as you zoom or hover. Landscape artwork is cached, and map rendering does not change campaign simulation.
