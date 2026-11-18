@@ -2,6 +2,10 @@
 
 A browser strategy game.
 
+### v0.21 — The Painted Frontier
+
+The main campaign map now uses shaded mountain relief, geographic woodland and farmland washes, layered riverbanks, finer roads and tiled-roof settlement models. Cities, forts, camps and hamlets have distinct silhouettes. Settlement labels avoid each other and stay clickable when displaced; the overview prioritises major towns while resource icons and garrison details expand as you zoom or hover. Landscape artwork is cached, and map rendering does not change campaign simulation.
+
 ### v0.20 — Settlement-funded frontier armies
 
 Song garrisons start substantially smaller (about 45 in a village, 117 in a town and 292 in a city). Song and Xia replacements now cost local civilians, weapons, grain and silver, and take one month to train. Settlement workers farm, gather timber and forge spears from local ore; iron-producing settlements replenish ore. Grain upkeep and shortages constrain garrisons. Inspect a settlement for its recruitment and supply figures.

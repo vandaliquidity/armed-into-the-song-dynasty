@@ -184,7 +184,7 @@ CL.tut=[
 
 // Region shading is drawn beneath roads and settlements; these are schematic game districts.
 {const old=drawMapLife;drawMapLife=function(g){
-  for(const r of FRONTIER_REGIONS) {
+  for(const r of (typeof drawCampaignGround==='function'?[]:FRONTIER_REGIONS)) {
     const [x0,y0,x1,y1]=r.box,a=cwp(x0,y1),b=cwp(x1,y0),p=c2s(a.x,a.y),q=c2s(b.x,b.y);
     g.save();g.fillStyle=r.color;g.globalAlpha=.065;g.fillRect(p.x,p.y,q.x-p.x,q.y-p.y);
     g.globalAlpha=.3;g.strokeStyle=r.color;g.lineWidth=1;g.setLineDash([8,6]);g.strokeRect(p.x,p.y,q.x-p.x,q.y-p.y);g.restore();
