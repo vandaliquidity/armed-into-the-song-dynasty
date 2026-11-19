@@ -2,6 +2,14 @@
 
 A browser strategy game.
 
+### v0.23 — Take Command
+
+Manual field battles now start with deployment: choose **Shield and bolt**, **Left hook** or **Right hook**, then **Execute orders**. Press **P** to pause and plan at any point. Select infantry, missiles, cavalry or officers from the command panel, then send them to a post; these advance orders engage enemies along the route. Skills can be queued during the pause and spend their actual ammunition or supplies when execution resumes. **2×** speed shortens quiet stretches.
+
+Terrain now offers different opportunities: save a harvest before the deadline, escort townspeople, cut a reserve’s signal at a fort/city/crossing, hold a quarry ridge, or intercept a moving baggage wagon intact. Enemy officers are members of their actual force; reserves commit once and come from the existing battle budget. Enemies counterattack and can retake abandoned posts. Directional frontal cover and rear-attack bonuses apply to both sides. Break command and cohesion to force a retreat without hunting every survivor; raids still require getting the actual carriers home. Regular holdouts are shorter.
+
+A successful opportunity, breaking enemy command and retaining at least 80% of your troops each add five percentage points to equipment recovery, up to fifteen extra. Recovery comes from the same finite modeled inventory and follows the existing local-stock or loot-convoy rules. The debrief shows the manoeuvres, cover contribution, flanking damage and soldiers preserved. Killed defenders remain lost even if a manual attack fails. Auto-resolve remains available. Authored opening, escort and Chronicle encounters retain their special win conditions and gain the pause/order controls.
+
 ### v0.22 — The Qinghe Chronicle
 
 The preserved three-chapter opening now leads into a 30-chapter, six-act campaign: county reform and Longcheng, the western siege and its losses, Deshun and regional command, Roulang/Linhe and the river crossing, northern rearmament, and the game's visible Jingkang crisis. Use **Missions → Start / continue next chapter**. Existing campaigns continue into Chapter IV without restarting.

@@ -120,6 +120,7 @@ SETUP.skirm=function(){
   const units=[];for(const t in S.enemy)for(let i=0;i<S.enemy[t];i++)units.push(t);
   const reserveN=S.mission==='raid'?0:Math.floor(units.length*.2);
   const reserve=units.splice(Math.max(0,units.length-reserveN));
+  B.frontier.reserveTypes=reserve.slice();
   const enemy=(t,x,y,goal)=>{const u=mkUnit(t,1,x,y,{aggro:type==='steppe'?450:260});u.goal=goal||{x,y};return u;};
   if(own){
     const dirs=type==='crossing'?['N','E']:type==='fort'?['N','W']:type==='steppe'?['E','W']:['N','E'];
@@ -130,7 +131,7 @@ SETUP.skirm=function(){
   } else {
     units.forEach((t,i)=>{const o=points[i%points.length],a=R()*TAU,r=(1.5+R()*3)*TS;enemy(t,o.x+Math.cos(a)*r,o.y+Math.sin(a)*r);});
     B.waves=[];
-    if(reserve.length)B.events.push({c:()=>B.t>75&&!points[points.length-1].captured,f:()=>{reserve.forEach((t,i)=>{const sp=B.spawns[p.seed%2?'E':'N'];enemy(t,sp.x+(i%4)*20,sp.y+Math.floor(i/4)*20,B.objective);});say('敌方预备队赶到！','Enemy reserves arrive!',3);}});
+    if(reserve.length)B.events.push({tacticalReserve:true,c:()=>B.t>75&&!points[points.length-1].captured,f:()=>{reserve.forEach((t,i)=>{const sp=B.spawns[p.seed%2?'E':'N'];enemy(t,sp.x+(i%4)*20,sp.y+Math.floor(i/4)*20,B.objective);});say('敌方预备队赶到！','Enemy reserves arrive!',3);}});
   }
   B.win=()=>{
     const F=B.frontier;if(S.mode==='def')return !B.key.dead&&(F.elapsed>=F.defendTime||(B.wave>=B.waves.length-1&&enemiesAlive()<=1&&routRest()));
@@ -166,7 +167,7 @@ function battlefieldTick(dt){
 {const old=updateBattle;updateBattle=function(dt){battlefieldTick(dt);return old(dt);};}
 {const old=drawOrders;drawOrders=function(){
   old();const F=B?.frontier;if(!F)return;ctx.save();
-  for(const p of F.points){const color=p.captured?'#a8d79a':p.contested?'#e08d6d':'#edce82';ctx.strokeStyle=color;ctx.lineWidth=2;ctx.setLineDash([8,7]);ctx.beginPath();ctx.ellipse(p.x,p.y,p.r,p.r*.65,0,0,TAU);ctx.stroke();ctx.setLineDash([]);ctx.strokeStyle=color;ctx.lineWidth=6;ctx.beginPath();ctx.arc(p.x,p.y-30,18,-Math.PI/2,-Math.PI/2+TAU*p.held/p.need);ctx.stroke();txt((p.captured?'✓ ':String(p.index+1)+'. ')+Tz(...p.name),p.x,p.y-p.r*.65-15,15,color,'center','bold ');}
+  for(const p of F.points){if(B.tactics?.regular&&B.skirm.mode==='def'&&p!==B.tactics.sidePoint)continue;const color=p.captured?'#a8d79a':p.contested?'#e08d6d':'#edce82';ctx.strokeStyle=color;ctx.lineWidth=2;ctx.setLineDash([8,7]);ctx.beginPath();ctx.ellipse(p.x,p.y,p.r,p.r*.65,0,0,TAU);ctx.stroke();ctx.setLineDash([]);ctx.strokeStyle=color;ctx.lineWidth=6;ctx.beginPath();ctx.arc(p.x,p.y-30,18,-Math.PI/2,-Math.PI/2+TAU*p.held/p.need);ctx.stroke();txt((p.captured?'✓ ':String(p.index+1)+'. ')+Tz(...p.name),p.x,p.y-p.r*.65-15,15,color,'center','bold ');}
   if(F.mission==='raid'){const e=F.extraction;ctx.strokeStyle='#9bcbbc';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(e.x,e.y,150,80,0,0,TAU);ctx.stroke();txt(Tz('撤离点','WITHDRAW HERE'),e.x,e.y+100,16,'#b9e6d1','center','bold ');}
   ctx.restore();
 };}
