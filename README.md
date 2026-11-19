@@ -2,6 +2,19 @@
 
 A browser strategy game.
 
+### v0.24 — Power and Patronage
+
+Court favour now funds six visible commissions in **Commerce & Council → Court & government**. Available merit is earned favour minus committed merit; spending it never reduces lifetime rank. Successful petitions earn 8 additional base favour, subject to the existing court-support multiplier.
+
+- County charters transfer connected allied villages or towns and their actual garrisons after two months.
+- Arsenal warrants withdraw up to 100 crossbows from finite allied stocks, wait one month for authorisation, then travel by cart. Captured destinations and broken roads block delivery.
+- Public works permanently add the existing +15% irrigation bonus, then +10% for the second improvement.
+- A command seal grants one banner and four main-command company slots; court support below 30 suspends expansion rights without removing troops.
+- Local market charters improve export prices by 20% for twelve months, subject to finite customer budgets. Money and the bonus ledger update only on arrival. Court or gentry support below 40 suspends new premium contracts.
+- Frontier compacts unlock calls on an ally's real garrison and halve nearby convoy raid risk for twelve months. Qiang support below 35 suspends road protection.
+
+Every commission displays its merit/material costs, support requirements, authorisation time, progress and payoff. Existing petitions, decrees, ranks, dues and governors remain in the shared council. Political projects and rights persist in existing campaigns; opening the panel grants no resources.
+
 ### v0.23 — Take Command
 
 Manual field battles now start with deployment: choose **Shield and bolt**, **Left hook** or **Right hook**, then **Execute orders**. Press **P** to pause and plan at any point. Select infantry, missiles, cavalry or officers from the command panel, then send them to a post; these advance orders engage enemies along the route. Skills can be queued during the pause and spend their actual ammunition or supplies when execution resumes. **2×** speed shortens quiet stretches.

@@ -88,7 +88,7 @@ function dynastyTrade(from,to,k,n=20){
  dynastyPay(to,{silver:price});box[k]-=n;dynastyShipment('dynTrade',from,to,{[k]:n},{purchase:true});saveGame();return true;
 }
 function dynastyExport(from,to,k,n=12){
- const d=dynastyState(),m=d.markets[to],s=CG.T[from],pay=Math.floor(n*(DY_PRICE[k]||0)*(s.accountsActive?1.15:1));if(!owned(from)||CG.T[to]?.own!=='song'||!m||!REALM_EXPORTS.includes(k)||s.st[k]<n||m.budget<pay||(m.demand[k]||0)<n||!supplyPath(from,to))return false;
+ const d=dynastyState(),m=d.markets[to],s=CG.T[from],pay=typeof politicalExportValue==='function'?politicalExportValue(from,k,n):Math.floor(n*(DY_PRICE[k]||0)*(s.accountsActive?1.15:1));if(!owned(from)||CG.T[to]?.own!=='song'||!m||!REALM_EXPORTS.includes(k)||s.st[k]<n||m.budget<pay||(m.demand[k]||0)<n||!supplyPath(from,to))return false;
  s.st[k]-=n;m.budget-=pay;m.demand[k]-=n;dynastyShipment('dynTrade',from,to,{[k]:n},{sale:true,pay});return true;
 }
 function dynastyAid(id,to){
