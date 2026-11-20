@@ -178,12 +178,12 @@ function battlefieldTick(dt){
   old();if(!v8ok())return;
   const p=settlementProfile(CVIL.id),R=srand(p.seed),L=CVIL.lay;
   L.profile=p;
-  for(const h of L.houses){h.x+=Math.round((R()-.5)*(p.type==='farm'?34:8));h.y+=Math.round((R()-.5)*(p.type==='farm'?26:5));
+  for(const h of L.houses){const jx=Math.round((R()-.5)*(p.type==='farm'?34:8)),jy=Math.round((R()-.5)*(p.type==='farm'?26:5));if(!h.side&&!h.row){h.x+=jx;h.y+=jy;}   // t255: the west column and the south row keep their slots (no overlap)
     if(p.type==='city'||p.type==='market'){h.v=.65+R()*.3;h.yard=R()>.4;h.shop=R()>.5;}
     if(p.type==='steppe'||p.type==='quarry')h.v=R()*.3;
   }
   if(p.type==='city'||p.type==='market')for(let x=580;x<1560;x+=135)L.houses.push({x,y:1050,v:.7+R()*.25,yard:p.type==='city',shop:true});
-  if(p.type==='farm')L.trees.push(...Array.from({length:5},(_,i)=>({x:1040+i*140,y:360,v:i%4})));
+  if(p.type==='farm')L.trees.push(...Array.from({length:4},(_,i)=>({x:1040+i*140,y:398,v:i%4})));
   for(const s of L.stalls){s.x+=Math.round((R()-.5)*20);s.y+=Math.round((R()-.5)*10);}
 };}
 cvilStatic8=function(add,s,tier){
@@ -195,10 +195,10 @@ cvilStatic8=function(add,s,tier){
     add(VWH-4,()=>sprProp('vgate8',900,VWH-4,0,1));
     for(const x of [85,1710])add(740,()=>sprProp('tower',x,740,0,1.4));
   } else {
-    for(let x=70;x<1700;x+=190)if(Math.abs(x-900)>140)add(VWH-10,()=>sprProp('fence',x,VWH-10,0,1));
+    for(let x=70;x<1700;x+=190)if(Math.abs(x-900)>140)add(VWH-3,()=>sprProp('fence',x,VWH-3,0,1));
     add(VWH-5,()=>sprProp('banner',845,VWH-5,s.own==='xia'?1:0,1));
   }
-  add(900,()=>sprProp('vcomp8',500,902,p.type==='city'?0:1,.8));
+  add(900,()=>sprProp('vcomp8',512,902,p.type==='city'?0:1,.8));
   if(p.type==='steppe')for(let i=0;i<3;i++)add(280+i*30,()=>sprProp('yurt',1450+i*95,280+i*30,0,1));
   if(p.type==='quarry'){add(810,()=>sprProp('forge',1700,810,0,1.2));for(let i=0;i<5;i++)add(1020,()=>sprProp('rock',1460+i*55,1020,i%2,1.5));}
   if(p.type==='crossing')for(let i=0;i<7;i++)add(340,()=>sprProp('stk8',1270+i*60,340,9,.9));

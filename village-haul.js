@@ -7,7 +7,7 @@
 'use strict';
 const VHL={GL:50,SL:10,TRES:[278,988],LANE:388};
 function vhIncome(id){const B=prodBreak(id),farm=(B.rows.find(r=>r.k==='farm')||{}).amt||0,trade=(ROUTES||[]).filter(r=>r.a===id||r.b===id).reduce((n,r)=>n+(r.v||0),0);return {farm,tax:B.tax||0,trade};}
-function vhFields(s){const nf=2+(s.bld.farm||0),o=[];for(let i=0;i<nf;i++){const x=VZ.fld[0]+(i%3)*200,y=VZ.fld[1]+Math.floor(i/3)*130;o.push([x+95,y+128]);}return o;}
+function vhFields(s){return vfSlots(2+(s.bld.farm||0)).map(([x,y])=>[x,y+8]);}
 function vhTres(){return {d:VHL.TRES,via:[[114,VHL.TRES[1]]],port:[114,470]};}
 function vhHouses(){const L=CVIL.lay;return (L&&L.houses||[]).filter(h=>h.x<330&&h.y<900).slice(0,4);}
 {const old=vcPlan;vcPlan=function(s){const P=old.apply(this,arguments),I=vhIncome(CVIL.id);P.inc=I;

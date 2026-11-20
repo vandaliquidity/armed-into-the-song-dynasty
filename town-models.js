@@ -1,5 +1,5 @@
 'use strict';
-function townModel(k,level){if(k==='arsenal'||k==='refinery')return ['forge',0,1.8];if(k==='kiln'||k==='pottery')return ['vhouse8',8,1.18];if(k==='powderworks')return ['vhouse8',9,1.18];if(k==='papermill')return ['vhouse8',4,1.18];if(k==='restaurant'&&level>=3)return ['vcomp8',0,.8];return ['vhouse8',level>=3?6:level>=2?7:k==='brewery'?8:3,1.18];}
+function townModel(k,level){if(k==='arsenal'||k==='refinery')return ['forge',0,1.45];if(k==='kiln'||k==='pottery')return ['vhouse8',8,1.18];if(k==='powderworks')return ['vhouse8',9,1.18];if(k==='papermill')return ['vhouse8',4,1.18];if(k==='restaurant'&&level>=3)return ['vcomp8',0,.8];return ['vhouse8',level>=3?6:level>=2?7:k==='brewery'?8:3,1.18];}
 function townShopIcon(k,level){const c=mkCanvas(500,210),[name,v]=townModel(k,level);propIcon(name,c,v);return c;}
 function townJar(g,x,y,color){g.fillStyle=color;g.strokeStyle='#493b2d';g.lineWidth=1;g.beginPath();g.ellipse(x,y-5,6,9,0,0,TAU);g.fill();g.stroke();g.fillStyle='#c5ad7d';g.fillRect(x-4,y-16,8,4);}
 dynastyShop=function(add,k,b,x,y){const s=CG.T[CVIL.id],t=CVIL.t,def=DY_BUSINESSES[k],active=!b.paused&&dynastyProduction(CVIL.id,k).scale>0,[model,v,scale]=townModel(k,b.level);
@@ -17,9 +17,9 @@ dynastyShop=function(add,k,b,x,y){const s=CG.T[CVIL.id],t=CVIL.t,def=DY_BUSINESS
   const goods=Object.keys(b.made||def.output).filter(q=>q!=='silver').map(q=>`${(RAWN[q]||EQN[q])[2]} ${s.st[q]||s.eq[q]||0}`).join(' · ');txt(b.paused?Tz('歇业','PAUSED'):goods||Tz('酒楼营业','DINING'),x,y+62,10,'#493c29','center','bold ');g.restore();
  });
  if(active)for(let i=0;i<Math.min(5,b.level+2);i++){const p=(t*.045+i*.23)%1,xx=x-70+p*140,yy=y+34+i%2*8;add(yy,()=>sprUnit(i%2?'porter':'villager',xx,yy,8,p<.5?0:Math.PI,frontierWalkFrame('villager',t*.6+i)));}
- CVIL.hot.push({r:[x-95,y-130,x+95,y+63],t:Tz(...def.name)+' Lv '+b.level+'\n'+(b.last||Tz('待月结','Awaiting month end'))});
+ CVIL.hot.push({r:[x-77,y-125,x+77,y+40],t:Tz(...def.name)+' Lv '+b.level+'\n'+(b.last||Tz('待月结','Awaiting month end'))});   // t255: box = the building, no overlap with neighbours
 };
-{const old=cvilStatic8;cvilStatic8=function(add,s,tier){old(add,s,tier);for(const [k,x,y]of [['weaver',690,710],['papermill',1115,710]]){const b=s.businesses?.[k];if(b?.level)dynastyShop(add,k,b,x,y);}
- for(const [k,paired,x]of [['pottery','kiln',1380],['refinery','arsenal',1690]]){const b=s.businesses?.[k];if(b?.level&&!s.businesses[paired]?.level)dynastyShop(add,k,b,x,737);else if(b?.level)add(780,()=>{townJar(ctx,x+50,777,'#91aca4');txt(Tz(...DY_BUSINESSES[k].name),x,785,10,'#4a3c28','center','bold ');});}
- if(s.businesses?.garden?.level||s.businesses?.orchard?.level)for(let i=0;i<9;i++){const x=1260+i%3*170,y=125+Math.floor(i/3)*82;add(y,()=>{if(s.businesses.orchard?.level&&i%2){sprProp('tree',x,y,0,.55);for(let j=0;j<5;j++){ctx.fillStyle='#b88254';ctx.beginPath();ctx.arc(x-18+j*9,y-40+Math.sin(j)*9,3,0,TAU);ctx.fill();}}else{ctx.fillStyle='#668054';for(let j=0;j<8;j++){ctx.beginPath();ctx.ellipse(x-40+j*10,y-10,4,7,-.3,0,TAU);ctx.fill();}}});}
+{const old=cvilStatic8;cvilStatic8=function(add,s,tier){old(add,s,tier);for(const [k,x,y]of [['weaver',690,735],['papermill',1105,735]]){const b=s.businesses?.[k];if(b?.level)dynastyShop(add,k,b,x,y);}
+ for(const [k,paired,x]of [['pottery','kiln',1380],['refinery','arsenal',1690]]){const b=s.businesses?.[k];if(b?.level&&!s.businesses[paired]?.level)dynastyShop(add,k,b,x,x>1600?716:722);else if(b?.level)add(762,()=>{townJar(ctx,x+50,757,'#91aca4');txt(Tz(...DY_BUSINESSES[k].name),x,765,10,'#4a3c28','center','bold ');});}
+ if(s.businesses?.garden?.level||s.businesses?.orchard?.level)for(let i=0;i<9;i++){const x=1200+i*42,y=104;add(y,()=>{if(s.businesses.orchard?.level&&i%2){sprProp('tree',x,y,0,.55);for(let j=0;j<5;j++){ctx.fillStyle='#b88254';ctx.beginPath();ctx.arc(x-18+j*9,y-40+Math.sin(j)*9,3,0,TAU);ctx.fill();}}else{ctx.fillStyle='#668054';for(let j=0;j<4;j++){ctx.beginPath();ctx.ellipse(x-15+j*10,y-6,4,7,-.3,0,TAU);ctx.fill();}}});}   // t255: orchard + kitchen beds in the strip north of the field plots, not on them
 };}

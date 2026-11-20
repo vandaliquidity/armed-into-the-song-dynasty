@@ -2872,13 +2872,15 @@ function drawMapLife(g){const sc=iconScale(),z=CC.z;const se=seasonOf(CG.turn);c
   g.strokeStyle='rgba(30,25,20,.7)';g.lineWidth=1.4;for(let i=0;i<7;i++){const x=((CTIME*18+i*260)%(VW+200))-100,y=120+((i*137)%(VH-300))+Math.sin(CTIME*.7+i)*20;const w=Math.sin(CTIME*6+i)*3;g.beginPath();g.moveTo(x-7,y-3+w);g.quadraticCurveTo(x-3,y-5,x,y);g.quadraticCurveTo(x+3,y-5,x+7,y-3+w);g.stroke();}}
 // ===== v0.6 live village: open-topped storehouses with real stock, drilling yard, walkers, haggling merchants, caravans =====
 const CVIL={id:null,peo:[],t:0,fw:[],seed:0,lay:null,arrows:[],carts:[],bub:[]};const VWW=1800,VWH=1120;
+// t255 field plots: 3 columns, or 2 when the hospital ward stands in the north-east corner (the third column sat under it); at most 2 rows
+function vfSlots(nf){const wd=typeof vlOn==='function'&&vlOn(),C=wd?[1290,1470]:[1290,1470,1650],o=[];for(let i=0;i<nf&&i<C.length*2;i++)o.push([C[i%C.length],180+Math.floor(i/C.length)*130]);return o;}
 function showCVil(id){if(!CG)return;MODE='cvil';show(null);cv.style.display='block';CVIL.id=id;CVIL.lay=null;CVIL.peo=[];CVIL.t=0;CVIL.fw=[];CVIL.arrows=[];CVIL.carts=[];CVIL.bub=[];CVIL.horses=[];CVIL.drill=null;CVIL.z=1;CVIL.fx=VWW/2;CVIL.fy=VWH/2;cvilUI();}
 // zoom/pan the village (wheel + drag); cvilFocus(zone) jumps to a district
 function cvilFocus(k,z){const Z=VZ[k];if(Z&&Z.length){CVIL.fx=(Z[0]+Z[2])/2;CVIL.fy=(Z[1]+Z[3])/2;}CVIL.z=z||2;}
 addEventListener('wheel',e=>{if(MODE!=='cvil'||e.clientX>VW-360)return;CVIL.z=clamp((CVIL.z||1)*(e.deltaY>0?.88:1.14),1,3.2);},{passive:true});
 addEventListener('mousemove',e=>{if(MODE!=='cvil'||!CDRAG)return;const k=CVIL._sc||1;CVIL.fx-= (e.clientX-(CDRAG.lx??CDRAG.x))/k;CVIL.fy-=(e.clientY-(CDRAG.ly??CDRAG.y))/k;CDRAG.lx=e.clientX;CDRAG.ly=e.clientY;});
 // fixed districts so every village reads the same way: stores NW, armoury W, market centre, yard S, paddock E, workshops SE, fields NE
-const VZ={store:[150,190,1060,430],arm:[150,520,560,720],mkt:[640,450,1180,690],yard:[560,770,1300,1060],pad:[1300,430,1730,700],wk:[1330,760,1760,1060],fld:[1180,60,1780,330],well:{x:940,y:720}};
+const VZ={store:[150,190,1060,430],arm:[150,520,560,720],mkt:[640,450,1180,690],yard:[560,770,1300,1060],pad:[1300,430,1730,590],wk:[1330,760,1760,1060],fld:[1180,60,1780,330],well:{x:940,y:720}};
 function cvilLayout(){const id=CVIL.id,s=CG.T[id],R=srand([...id].reduce((a,c)=>a*31+c.charCodeAt(0),7));const L={houses:[],trees:[],stalls:[],ban:[]};
   const inZ=(x,y)=>Object.values(VZ).some(z=>z.length&&x>z[0]-50&&x<z[2]+50&&y>z[1]-40&&y<z[3]+40)||Math.abs(y-505)<50||Math.abs(x-900)<50;
   for(let y=110;y<1080;y+=96)for(let x=60;x<1760;x+=118){const px=x+R()*40-20,py=y+R()*24;if(inZ(px,py))continue;L.houses.push({x:px,y:py,v:R()});}
@@ -2943,10 +2945,10 @@ function cvilYard(add,g,s,t,dt){const us=unitsAt(CVIL.id);const a=armyAt(CVIL.id
     txt(Tz('校场','Drill yard')+` · ${menOf(all)}${Tz('人','men')}${trn.length?` · ${Tz('操练新兵','training')} ${trn.length}${Tz('都',' du')}`:''}`,yb[0]+16,yb[1]+26,17,'#3a1a08','left','bold ');});
   // archery butts on the east side of the yard
   const ranged=blocks.filter(b=>b.type==='archer'||b.type==='xbow'||b.type==='fire');const melee=blocks.filter(b=>!ranged.includes(b)&&b.type!=='cav');const cav=blocks.filter(b=>b.type==='cav');
-  let row=0;for(const b of melee.slice(0,6)){const by=yb[1]+70+(row%3)*62,bx=yb[0]+50+Math.floor(row/3)*230;row++;for(let i=0;i<b.n;i++){const x=bx+(i%4)*26,y=by+Math.floor(i/4)*24;const ph=t*1.6+i*.05;const fr=Math.floor(ph*2)%2?5:4;add(y,()=>sprUnit(UNITS[b.type].spr,x,y,10,0,fr,b.tr?{tint:'rgba(255,240,200,.0)'}:null));}
+  let row=0;for(const b of melee.slice(0,6)){const by=yb[1]+70+(row%3)*62,bx=yb[0]+100+Math.floor(row/3)*230;row++;for(let i=0;i<b.n;i++){const x=bx+(i%4)*31,y=by+Math.floor(i/4)*28;const ph=t*1.6+i*.05;const fr=Math.floor(ph*2)%2?5:4;add(y,()=>sprUnit(UNITS[b.type].spr,x,y,10,0,fr,b.tr?{tint:'rgba(255,240,200,.0)'}:null));}
     add(by-20,()=>{if(Math.floor(t*1.6)%2&&b.tr)txt(Tz('杀！','Ha!'),bx+40,by-22,14,'#8a1a08','center','bold ');});}
   const tx=yb[2]-60;for(let r=0;r<Math.min(3,ranged.length||(us.length?1:0));r++){const y=yb[1]+90+r*60;add(y,()=>{g.fillStyle='#5a3a1a';g.fillRect(tx-2,y-30,4,30);g.fillStyle='#e8d090';g.strokeStyle='#5a3a10';g.beginPath();g.arc(tx,y-34,13,0,TAU);g.fill();g.stroke();g.strokeStyle='#c03010';g.lineWidth=2;g.beginPath();g.arc(tx,y-34,7,0,TAU);g.stroke();g.fillStyle='#c03010';g.beginPath();g.arc(tx,y-34,2.5,0,TAU);g.fill();});}
-  ranged.slice(0,3).forEach((b,r)=>{const y=yb[1]+90+r*60;for(let i=0;i<Math.min(6,b.n);i++){const x=yb[2]-330+i*24;const k=(t*.8+i*.37)%2;add(y+i*.01,()=>sprUnit(UNITS[b.type].spr,x,y,10,0,k<.25?5:k<.6?4:0));if(Math.random()<dt*.6)CVIL.arrows.push({x0:x+6,y0:y-14,x1:tx+rnd(-6,6),y1:y-34+rnd(-6,6),t:0,fire:b.type==='fire'});}});
+  ranged.slice(0,3).forEach((b,r)=>{const y=yb[1]+90+r*60;for(let i=0;i<Math.min(6,b.n);i++){const x=yb[2]-310+i*29;const k=(t*.8+i*.37)%2;add(y+i*.01,()=>sprUnit(UNITS[b.type].spr,x,y,10,0,k<.25?5:k<.6?4:0));if(Math.random()<dt*.6)CVIL.arrows.push({x0:x+6,y0:y-14,x1:tx+rnd(-6,6),y1:y-34+rnd(-6,6),t:0,fire:b.type==='fire'});}});
   // cavalry laps on an oval track in the yard's east half
   const nc=clamp(cav.reduce((n,b)=>n+b.n,0),0,10);const cx=(yb[0]+yb[2])/2+120,cy=yb[3]-70;for(let i=0;i<nc;i++){const ang=t*.7+i/nc*TAU;const x=cx+Math.cos(ang)*170,y=cy+Math.sin(ang)*38;add(y,()=>sprUnit('song_cav',x,y,13,ang+Math.PI/2,Math.floor(t*10+i)%4));}
   if(nc)add(cy-40,()=>{g.strokeStyle='rgba(120,90,50,.35)';g.lineWidth=14;g.beginPath();g.ellipse(cx,cy,170,38,0,0,TAU);g.stroke();});
@@ -3067,10 +3069,10 @@ function cvilYard7(add,g,s,t,dt){const us=unitsAt(CVIL.id);const a=armyAt(CVIL.i
   // low rammed-earth wall round the yard (sprites), gap at the lane
   for(let x=yb[0];x<=yb[2];x+=32){if(Math.abs(x-900)<50)continue;add(yb[3]+8,()=>sprProp('cwall',x,yb[3]+8,6,1));}
   const ranged=blocks.filter(b=>b.type==='archer'||b.type==='xbow'||b.type==='fire');const melee=blocks.filter(b=>!ranged.includes(b)&&b.type!=='cav');const cav=blocks.filter(b=>b.type==='cav');
-  let row=0;for(const b of melee.slice(0,6)){const by=yb[1]+70+(row%3)*62,bx=yb[0]+50+Math.floor(row/3)*230;row++;for(let i=0;i<b.n;i++){const x=bx+(i%4)*26,y=by+Math.floor(i/4)*24;const ph=t*1.6+i*.05;const fr=Math.floor(ph*2)%2?5:4;add(y,()=>sprUnit(UNITS[b.type].spr,x,y,10,0,fr));}
+  let row=0;for(const b of melee.slice(0,6)){const by=yb[1]+70+(row%3)*62,bx=yb[0]+100+Math.floor(row/3)*230;row++;for(let i=0;i<b.n;i++){const x=bx+(i%4)*31,y=by+Math.floor(i/4)*28;const ph=t*1.6+i*.05;const fr=Math.floor(ph*2)%2?5:4;add(y,()=>sprUnit(UNITS[b.type].spr,x,y,10,0,fr));}
     add(by-20,()=>{if(Math.floor(t*1.6)%2&&b.tr)txt(Tz('杀！','Ha!'),bx+40,by-22,14,'#8a1a08','center','bold ');});}
   const tx=yb[2]-60;for(let r=0;r<Math.min(3,ranged.length||(us.length?1:0));r++){const y=yb[1]+90+r*60;add(y,()=>sprProp('butt',tx,y-4,0,1.1));}
-  ranged.slice(0,3).forEach((b,r)=>{const y=yb[1]+90+r*60;for(let i=0;i<Math.min(6,b.n);i++){const x=yb[2]-330+i*24;const k=(t*.8+i*.37)%2;add(y+i*.01,()=>sprUnit(UNITS[b.type].spr,x,y,10,0,k<.25?5:k<.6?4:0));if(Math.random()<dt*.6)CVIL.arrows.push({x0:x+6,y0:y-14,x1:tx+rnd(-6,6),y1:y-22+rnd(-6,6),t:0,fire:b.type==='fire'});}});
+  ranged.slice(0,3).forEach((b,r)=>{const y=yb[1]+90+r*60;for(let i=0;i<Math.min(6,b.n);i++){const x=yb[2]-310+i*29;const k=(t*.8+i*.37)%2;add(y+i*.01,()=>sprUnit(UNITS[b.type].spr,x,y,10,0,k<.25?5:k<.6?4:0));if(Math.random()<dt*.6)CVIL.arrows.push({x0:x+6,y0:y-14,x1:tx+rnd(-6,6),y1:y-22+rnd(-6,6),t:0,fire:b.type==='fire'});}});
   const nc=clamp(cav.reduce((n,b)=>n+b.n,0),0,10);const cx=(yb[0]+yb[2])/2+120,cy=yb[3]-70;for(let i=0;i<nc;i++){const ang=t*.7+i/nc*TAU;const x=cx+Math.cos(ang)*170,y=cy+Math.sin(ang)*38;add(y,()=>sprUnit('song_cav',x,y,13,ang+Math.PI/2,Math.floor(t*10+i)%4));}
   if(nc)add(cy-40,()=>{g.strokeStyle='rgba(90,70,45,.18)';g.lineWidth=16;g.beginPath();g.ellipse(cx,cy,170,38,0,0,TAU);g.stroke();});
   for(let i=0;i<Math.min(L_BAN(),5);i++){const b=CVIL.lay.ban[i];add(b.y,()=>sprProp('banner',b.x,b.y,0,1.1));}}
@@ -3142,10 +3144,10 @@ const SIDE8={0:2,8:2,1:2,3:5,9:5,4:5,6:5,7:5};
   // top street: slot 7 is the north lane (kept open), slot 3 an alley behind a walled gate; slots 2/6 are wider courtyard lots
   L.alleys=[];for(let i=0,x=62;x<=1130;i++,x+=118){if(i===7)continue;if(i===3){L.alleys.push({x,y:150});continue;}
     L.houses.push({x:x+(i===2?22:i===6?-14:0)+R()*6-3,y:142+R()*4,v:R(),yard:i===2||i===6,shop:i===8});}
-  for(const y of[262,382,632,742])L.houses.push({x:66,y,v:R(),side:1});
-  for(let x=70;x<=430;x+=120)L.houses.push({x:x+R()*6,y:1062,v:R(),yard:x%240===70});
+  for(const y of[300,465,630,795])L.houses.push({x:66,y,v:R(),side:1});
+  for(let x=70;x<=430;x+=120)L.houses.push({x:x+R()*6,y:1072,row:1,v:R(),yard:x%240===70});
   L.houses.sort((a,b)=>Math.hypot(a.x-900,a.y-520)-Math.hypot(b.x-900,b.y-520));
-  for(const[x,y,v]of[[1150,60,1],[1790,370,0],[560,1090,3],[1300,1100,1],[620,720,0],[1150,720,4],[300,780,1],[1770,1090,3],[22,1000,1],[1190,350,0]])L.trees.push({x,y,v});
+  for(const[x,y,v]of[[1150,60,1],[1790,370,0],[560,1090,3],[1300,1100,1],[620,720,0],[1190,765,4],[142,490,1],[1770,1090,3],[22,1000,1],[1150,398,0]])L.trees.push({x,y,v});
   for(let i=0;i<10;i++)L.stalls.push({x:690+(i%5)*110,y:500+Math.floor(i/5)*130,c:['#c0301a','#2a6a9a','#d89a20','#3a8a4a','#8a3a8a'][i%5],g:i%6});
   for(let i=0;i<5;i++)L.ban.push({x:600+i*150,y:790});
   CVIL.lay=L;};}
@@ -3156,7 +3158,7 @@ function cvilStatic8(add,s,tier){
   for(let x=96;x<VWW;x+=192){if(Math.abs(x-900)<150)continue;add(VWH-8,()=>sprProp('vgate8',x,VWH-6,1,1));}
   add(VWH-4,()=>sprProp('vgate8',900,VWH-4,0,1));
   // The west civic compound is now the official treasury; retain the eastern shrine.
-  add(900,()=>sprProp('vcomp8',500,902,1,.8));
+  add(900,()=>sprProp('vcomp8',512,902,1,.8));
   add(600,()=>sprProp('vgate8',1240,600,4,.72));
   for(const a of (CVIL.lay.alleys||[])){add(a.y,()=>{for(const dx of[-52,-24,24,52])sprProp('cwall',a.x+dx,a.y,0,1);sprProp('cgate',a.x,a.y+4,0,1);});}}
 {const _f=cvil7Frame;cvil7Frame=function(dt){if(!v8ok())return _f(dt);if(CVIL.lay&&!CVIL.lay.v8){CVIL.lay=null;CVIL.wp=null;}
@@ -3167,14 +3169,14 @@ function cvil8Frame(dt){if(!CVIL.lay)cvilLayout();cvilPeople();CVIL.t+=dt;CVIL.h
   if(GROUNDS.vground)g.drawImage(GROUNDS.vground,0,0,VWW,VWH);else{g.fillStyle=GROUNDS.grass?g.createPattern(GROUNDS.grass,'repeat'):'#8a7a50';g.fillRect(0,0,VWW,VWH);}
   if(se===2){g.fillStyle='rgba(190,150,70,.10)';g.fillRect(0,0,VWW,VWH);}
   const Z=[];const add=(y,fn)=>Z.push({y,fn});
-  const nf=2+s.bld.farm;for(let i=0;i<nf;i++){const x=VZ.fld[0]+(i%3)*200,y=VZ.fld[1]+Math.floor(i/3)*130;add(y,()=>sprProp('field',x+95,y+120,se,1));}
+  for(const [fx,fy] of vfSlots(2+s.bld.farm))add(fy-120,()=>sprProp('field',fx,fy,se,.94));
   const vv=VHV8[Math.min(4,tier)];const nh=clamp(Math.round(4+s.pop/120),4,L.houses.length);
   for(let i=0;i<nh;i++){const h=L.houses[i];let v=vv[Math.floor(h.v*vv.length)%vv.length];if(h.side)v=SIDE8[v]??v;else if(h.yard&&tier>=3)v=6;else if(h.shop&&tier>=2)v=7;add(h.y,()=>sprProp('vhouse8',h.x,h.y,v,1));}
   const tv=[0,1,3,4];for(const tr of L.trees)add(tr.y,()=>sprProp('tree',tr.x,tr.y,se===3?2:tv[tr.v%4],1.25));
   add(VZ.well.y,()=>sprProp('well',VZ.well.x,VZ.well.y,0,1.1));
   cvilStatic8(add,s,tier);
   cvilStores7(add,g,s);cvilArmoury7(add,g,s);cvilYard7(add,g,s,t,dt);cvilMarket7(add,g,s,t,dt);cvilCaravans7(add,g,t,dt);cvilWorkshops7(add,g,s,t);cvilPaddock7(add,g,s,dt);
-  for(let i=0;i<Math.min(8,s.bld.farm*3+(se===2?3:0));i++){const x=VZ.fld[0]+20+i*70,y=VZ.fld[3]+16;add(y,()=>sprProp('haystack',x,y,i%3,1));}
+  {const hx1=typeof vlOn==='function'&&vlOn()?1540:1760;for(let i=0;i<Math.min(8,s.bld.farm*3+(se===2?3:0));i++){const x=VZ.fld[0]+20+i*70,y=VZ.fld[3]+72;if(x>hx1)break;add(y,()=>sprProp('haystack',x,y,i%3,1));}}
   for(const p of CVIL.peo){const mv=walkTo8(p,p.spr==='vil_e'?18:p.spr==='vil_k'?38:30,dt);if(p.load&&!p.spr0){p.spr0=p.spr;}let sp=p.load?'porter':(p.spr0||p.spr);if(!SPR[sp])sp='villager';
     const wk=!mv&&p.wk&&WORK8[p.wk];const fr=mv?frontierWalkFrame(sp,p.ph):wk?4+(Math.floor(t*1.3+p.ph*2)%2):0;const rr=sp==='vil_k'?7:9;add(p.y,()=>sprUnit(sp,p.x,p.y,rr,p.f,fr));}
   cvilWorkers8(add,s,tier,se,t);
@@ -3197,7 +3199,7 @@ function walkTo8(p,spd,dt){const d=Math.hypot(p.tx-p.x,p.ty-p.y);if(d<4){p.wait-
   const a=Math.atan2(p.ty-p.y,p.tx-p.x);p.x+=Math.cos(a)*Math.min(d,spd*dt);p.y+=Math.sin(a)*Math.min(d,spd*dt);p.f=a;p.ph+=dt*spd/30;return true;}
 // fixed working figures: farmers hoeing the plots, women winnowing at the threshing floor, porter at the storehouses, child + elder on the plaza
 function cvilWorkers8(add,s,tier,se,t){if(!SPR.vil_b||!SPR.vil_e)return;if(!CVIL.wk8||CVIL.wk8.id!==CVIL.id){const R=srand(77+[...CVIL.id].reduce((a,c)=>a+c.charCodeAt(0),0));const W=[];
-    const nf=2+s.bld.farm;for(let i=0;i<nf;i++){const x=VZ.fld[0]+(i%3)*200,y=VZ.fld[1]+Math.floor(i/3)*130;for(let k=0;k<2;k++)W.push({k:'field',sp:'vil_b',x:x+40+R()*110,y:y+50+R()*50,f:R()<.5?0:Math.PI,ph:R()*3,sd:1.25});}
+    for(const [fx,fy] of vfSlots(2+s.bld.farm)){const x=fx-95,y=fy-120;for(let k=0;k<2;k++)W.push({k:'field',sp:'vil_b',x:x+45+R()*100,y:y+60+R()*45,f:R()<.5?0:Math.PI,ph:R()*3,sd:1.25});}
     for(let k=0;k<2;k++)W.push({k:'thresh',sp:'vil_w',x:1240+(k?38:-42),y:600+(k?14:-10)+18,f:k?Math.PI:0,ph:R()*3,sd:1.0});
     W.push({k:'store',sp:'porter',x:420,y:450,f:Math.PI/2,ph:R()*3,sd:.55});W.push({k:'plaza',sp:'vil_k',x:820,y:640,f:0,ph:R()*3,sd:1.6,r:7});W.push({k:'plaza',sp:'vil_k',x:846,y:646,f:Math.PI,ph:R()*3,sd:1.4,r:7});
     W.push({k:'plaza',sp:'vil_e',x:1010,y:745,f:Math.PI*.8,ph:R()*3,sd:.45});W.push({k:'well',sp:'vil_w',x:968,y:735,f:Math.PI,ph:R()*3,sd:.9});W.push({k:'mkt',sp:'merchant',x:760,y:600,f:Math.PI/2,ph:R()*3,sd:.7});
@@ -4355,6 +4357,6 @@ window.__sw={
   cstart(o={}){CAMP=newCampaign();CAMP.done=[0];CAMP.next=1;CAMP.roster.militia=22;CAMP.res={grain:270,iron:120,silver:230};if(o.res)Object.assign(CAMP.res,o.res);campStart();if(o.tut==null)CG.tut=6;showCamp();return true;},
   cturn:cbotTurn,cg(){return CG;},cbot:{develop:cbotDevelop,recruit:cbotRecruit,march:cbotMarch,promote:cbotPromote},
 };
-</script><script src="frontier.js?v=0.21"></script><script src="campaign-ui.js"></script><script src="battlefields.js?v=0.23"></script><script src="song-music.js"></script><script src="medical.js"></script><script src="journey.js?v=0.15.1"></script><script src="supply.js"></script><script src="companions.js"></script><script src="refit.js"></script><script src="missions.js?v=0.15.1"></script><script src="frontier-war.js?v=0.20"></script><script src="production.js?v=0.16"></script><script src="spoils.js"></script><script src="history.js"></script><script src="jin-campaign.js?v=0.20"></script><script src="field-command.js"></script><script src="dynasty.js?v=0.25"></script><script src="realm-resources.js?v=0.17"></script><script src="dynasty-ui.js?v=0.25"></script><script src="council.js?v=0.18"></script><script src="town-models.js?v=0.17"></script><script src="production-cards.js?v=0.18"></script><script src="muster.js?v=0.18"></script><script src="banner-orders.js?v=0.19"></script><script src="banner-ui.js?v=0.19"></script><script src="npc-economy.js?v=0.20"></script><script src="campaign-art.js?v=0.21.1"></script><script src="chronicle-data.js?v=0.22"></script><script src="chronicle.js?v=0.22"></script><script src="chronicle-ui.js?v=0.22"></script><script src="tactics.js?v=0.23"></script><script src="tactics-ui.js?v=0.23"></script><script src="politics.js?v=0.25"></script><script src="politics-ui.js?v=0.24"></script><script src="map-cache.js?v=0.25"></script><script src="village-motion.js?v=0.25"></script><script src="balance.js?v=0.25"></script><script src="coach-fix.js?v=0.25"></script><script src="ledger.js?v=0.25"></script><script src="ui-fixes.js?v=0.29"></script>
-<script src="compound.js?v=0.34"></script><script src="village-life.js?v=0.34"></script><script src="village-yards.js?v=0.31"></script><script src="village-chains.js?v=0.34"></script>
-<script src="village-haul.js?v=0.34"></script><script src="village-unified.js?v=0.40"></script><script src="ui-system.js?v=0.37"></script><script src="realm-strategy.js?v=0.39"></script><script src="map-tiers.js?v=0.38"></script><script src="portraits.js?v=0.39"></script><script src="liveries.js?v=0.40"></script><script src="village-scale.js?v=0.32"></script></body></html>
+</script><script src="frontier.js?v=0.21"></script><script src="campaign-ui.js"></script><script src="battlefields.js?v=0.42"></script><script src="song-music.js"></script><script src="medical.js"></script><script src="journey.js?v=0.15.1"></script><script src="supply.js"></script><script src="companions.js"></script><script src="refit.js"></script><script src="missions.js?v=0.15.1"></script><script src="frontier-war.js?v=0.20"></script><script src="production.js?v=0.16"></script><script src="spoils.js"></script><script src="history.js"></script><script src="jin-campaign.js?v=0.20"></script><script src="field-command.js"></script><script src="dynasty.js?v=0.25"></script><script src="realm-resources.js?v=0.17"></script><script src="dynasty-ui.js?v=0.42"></script><script src="council.js?v=0.18"></script><script src="town-models.js?v=0.42"></script><script src="production-cards.js?v=0.18"></script><script src="muster.js?v=0.18"></script><script src="banner-orders.js?v=0.19"></script><script src="banner-ui.js?v=0.19"></script><script src="npc-economy.js?v=0.20"></script><script src="campaign-art.js?v=0.21.1"></script><script src="chronicle-data.js?v=0.22"></script><script src="chronicle.js?v=0.22"></script><script src="chronicle-ui.js?v=0.22"></script><script src="tactics.js?v=0.23"></script><script src="tactics-ui.js?v=0.23"></script><script src="politics.js?v=0.25"></script><script src="politics-ui.js?v=0.24"></script><script src="map-cache.js?v=0.25"></script><script src="village-motion.js?v=0.25"></script><script src="balance.js?v=0.25"></script><script src="coach-fix.js?v=0.25"></script><script src="ledger.js?v=0.25"></script><script src="ui-fixes.js?v=0.29"></script>
+<script src="village-life.js?v=0.42"></script><script src="village-yards.js?v=0.31"></script><script src="village-chains.js?v=0.42"></script>
+<script src="village-haul.js?v=0.42"></script><script src="village-unified.js?v=0.42"></script><script src="ui-system.js?v=0.37"></script><script src="realm-strategy.js?v=0.39"></script><script src="map-tiers.js?v=0.38"></script><script src="portraits.js?v=0.39"></script><script src="liveries.js?v=0.40"></script><script src="village-scale.js?v=0.42"></script><script src="village-people.js?v=0.43"></script></body></html>

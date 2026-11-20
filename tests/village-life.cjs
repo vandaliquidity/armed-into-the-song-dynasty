@@ -4,9 +4,9 @@ const {chromium}=require('playwright');const {startServer,browserOptions}=requir
 (async()=>{const {server,url}=await startServer();let browser;try{browser=await chromium.launch(browserOptions());const page=await browser.newPage({viewport:{width:1440,height:900}}),errors=[];page.on('pageerror',e=>errors.push(e.stack));
 await page.goto(url,{waitUntil:'networkidle'});await page.waitForFunction(()=>typeof sprReady!=='undefined'&&sprReady,null,{timeout:90000});
 const checks=await page.evaluate(async()=>{const checks=[],ok=(v,s)=>{if(!v)throw Error(s);checks.push(s);};const w=ms=>new Promise(r=>setTimeout(r,ms));coachSave({off:1,seen:{}});
- localStorage.removeItem('sw_cpd3');__sw.cstart();if(CG.evQ)CG.evQ.length=0;CPD.on=(localStorage.getItem('sw_cpd3')==='1');CAMP.bld.clinic=1;
+ __sw.cstart();if(CG.evQ)CG.evQ.length=0;CAMP.bld.clinic=1;
  const a=newUnit('spear',70,{loc:{v:HOME},wnd:45}),b=newUnit('xbow',80,{loc:{v:HOME},wnd:30});showCVil(HOME);
- ok(!cpdUse(),'the classic village is the default view');for(let i=0;i<200&&!(VL.img.ward&&VL.img.patients);i++){cvil8Frame(1/60);await w(100);}ok(VL.img.ward&&VL.img.patients,'ward art loads for the tier');
+ ok(typeof CPD==='undefined'&&typeof cpdUse==='undefined','the compound view is gone: the main village is the only view');for(let i=0;i<200&&!(VL.img.ward&&VP.img.patients);i++){cvil8Frame(1/60);await w(100);}ok(VL.img.ward&&VP.img.patients,'ward art and the patients (one people art set) load for the tier');
  for(let i=0;i<5;i++)cvil8Frame(.2);const W=vlWard(HOME),want=Math.ceil(45/20)+Math.ceil(30/20)+vlGroups(HOME).filter(g=>g.key!=='u'+a.id&&g.key!=='u'+b.id).reduce((n,g)=>n+Math.ceil(g.n/20),0);
  ok(W.pts.length===want,'one patient figure per 20 wounded of each company ('+W.pts.length+')');
  ok(W.pts.some(p=>p.key==='u'+a.id&&p.type==='spear')&&W.pts.some(p=>p.key==='u'+b.id&&p.type==='xbow'),'patients carry their company identity and livery');
