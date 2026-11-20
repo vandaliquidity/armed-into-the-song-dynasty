@@ -7,6 +7,7 @@ A browser strategy game.
 - Village loot and unload scenes draw carriers, carts and cargo from screen-scaled sprite rows (about 14 ms → 1 ms per frame); rows are prepared before the scene starts.
 - Carriers accelerate, ease into stops, turn smoothly and lift loads that arc into the cart; carts roll in and out with momentum; idle porters wait beside their cart. All motion is time-based.
 - The campaign camera glides per second rather than per frame, and any drag or wheel takes control back at once.
+- Chapter 1 lesson rebalanced: forty raiders in all (was 87). Skill hints come one at a time, at least 10 s apart, and Deadeye won't fire out of range during the lesson. Following the lesson wins; standing idle still loses the granary (tests/lesson.cjs).
 - The map's parchment, painted ground and vignette are baked once into cached tiles (same picture, roughly 7 ms less per frame).
 
 ### v0.24 — Power and Patronage

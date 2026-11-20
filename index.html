@@ -494,7 +494,7 @@ LORE.coach={
  },
  lesson:{
   title:{zh:'战术课：以少胜多',en:'Lesson: few against many'},
-  intro:{zh:'探马来报：西夏游骑近五十骑三路扑来，咱们只有十个乡勇、六张清河弩。硬拼必败——叠加优势才能赢。',en:'Scouts report: nearly fifty Xia raiders on three roads, and we have ten militia and six Qinghe crossbows. A straight fight loses; stack advantages to win.'},
+  intro:{zh:'探马来报：西夏游骑四十骑三路扑来，咱们只有十个乡勇、六张清河弩。硬拼必败——叠加优势才能赢。',en:'Scouts report: forty Xia raiders on three roads, and we have ten militia and six Qinghe crossbows. A straight fight loses; stack advantages to win.'},
   steps:[
    {id:'xsel',zh:'按 5 选中清河弩手。',en:'Press 5 to select the Qinghe crossbowmen.'},
    {id:'xcover',zh:'右键点粮仓北面的土垒（金圈）。垒后：中箭减半，弩箭伤害+25%。',en:'Right-click inside the earthwork north of the granary (gold ring). Behind it arrows do half damage and bolts hit 25% harder.'},
@@ -1228,7 +1228,7 @@ const SETUP={
 };
 const CH1_MILITIA=16,CH1_PREP=40,CH3_PREP=35;
 // one big assault (~55 incl. the raider chief): [infantry, archers, raiders] per road
-const CH1_ASSAULT={N:[16,5,2],W:[11,4,3],NE:[11,4,3]};
+const CH1_ASSAULT={N:[9,4,2],W:[7,3,2],NE:[7,3,2]};// t249: forty raiders including the chief
 function startBattle(chIdx){B=newBattle(chIdx);uidN=1;SETUP[CHAPTERS[chIdx].id]();B.ctrlBody=()=>B.truck&&B.truck.driver?B.truck:B.ctrl;
   for(const g of TROOP_ORDER)B.orders[g]={type:'follow'};B.form={};if(B.initOrders)for(const g in B.initOrders)B.orders[g]={...B.initOrders[g]};const L=B.camStart||B.ctrl;if(L.z)CAM.z=L.z;CAM.x=L.x-VW/2/CAM.z;CAM.y=L.y-VH/2/CAM.z;
   computeNarrow();renderTerrain();B.started=performance.now();}
@@ -4006,10 +4006,13 @@ function coachUI(){const old=$('cCoach');if(old){old.remove();return;}const s=co
   d.appendChild(Object.assign(btn('关闭','Close',()=>d.remove()),{style:'display:block;margin:10px auto 0'}));campEl().appendChild(d);}
 {const _cu=campUI;campUI=function(){const r=_cu.apply(this,arguments);try{const g=[...campEl().querySelectorAll('.btn')].find(b=>/教程|Guide/.test(b.textContent)&&!b.id);if(g&&!$('cCoachB')){const b=btn(LCO.menu.zh,LCO.menu.en,()=>coachUI());b.id='cCoachB';b.style.cssText='display:block;margin:4px';g.parentNode.insertBefore(b,g.nextSibling);}}catch(e){}return r;};}
 // marksman's Deadeye now turns to the cursor first (it used to fire wherever he faced)
-{const _us=useSkillE;useSkillE=function(u,m){if(u&&u.sd&&u.sd.id==='marks'&&m&&u.skE<=0)u.face=Math.atan2(m.y-u.y,m.x-u.x);const before=u.skE;_us(u,m);if(B&&B.les&&u.skE>0&&before<=0)lesUsed(u.sd.id,m);};}
+{const _us=useSkillE;useSkillE=function(u,m){if(B&&B.les&&u&&u.sd&&u.sd.id==='marks'&&m&&u.skE<=0&&Math.hypot(m.x-u.x,m.y-u.y)>WPN.sniper.range*.95){say('太远了——让老谢走近些再狙。','Too far: bring Old Xie closer before you take the shot.',2);return;}// t249: no wasted Deadeye in the lesson
+  if(u&&u.sd&&u.sd.id==='marks'&&m&&u.skE<=0)u.face=Math.atan2(m.y-u.y,m.x-u.x);const before=u.skE;_us(u,m);if(B&&B.les&&u.skE>0&&before<=0)lesUsed(u.sd.id,m);};}
 // ================================================================ chapter 1: the guided lesson
 const LLS=LCO.lesson;
-const LES_ASSAULT={N:[22,8,4],W:[16,6,4],NE:[16,6,4]};
+// t249: forty raiders in all (15 + the chief on the north road, 12 west, 12 north-east)
+const LES_ASSAULT={N:[9,4,2],W:[7,3,2],NE:[7,3,2]};
+const LES_HINT_GAP=10,LES_HINT_MIN=5;let LES_FOE_DMG=1;
 {const _s1=SETUP.ch1;SETUP.ch1=function(){const on=B.lesWant;if(!on)return _s1();const mx=CAMP.roster.xbow||0;CAMP.roster.xbow=Math.max(mx,6);_s1();
   // ten militia stay; the rest go home (the lesson is about few against many)
   let n=0;B.units=B.units.filter(u=>{if(u.team===0&&u.kind==='troop'&&u.type==='militia'){n++;return n<=10;}return true;});CAMP.roster.militia=10;
@@ -4031,6 +4034,7 @@ function lesUsed(id,m){const L=B.les;L.used[id]=(L.used[id]||0)+1;if(id==='marks
   if(u.team===0&&narrowBonus(u))tags.push(['lS',NARROW_DEF]);
   if(src&&src.team===1&&L.cap&&!L.cap.dead&&Math.hypot(src.x-L.cap.x,src.y-L.cap.y)<320)mul*=1.2;
   if(src&&src.team===1&&L.capDead)mul*=.85;
+  if(src&&src.team===1)mul*=LES_FOE_DMG;
   if(u===L.cap&&src&&src.type==='marks'&&B.t-(L.deadT??-9)<2)mul*=4;
   if(src&&src.team===0){if(src.type==='xbow'&&rng&&inCover(src)){mul*=1.25;tags.push(['cover',1.25]);}if(src.type==='xbow'&&B.form.xbow)tags.push(['volley',1.25]);
     if(B.buff.cry>0)tags.push(['cry',1.3]);if(B.marks.some(m=>Math.hypot(u.x-m.x,u.y-m.y)<m.r))tags.push(['flare',1.4]);}
@@ -4058,7 +4062,10 @@ function lesTick(dt){const L=B.les;if(!L||B.over)return;L.t+=dt;L.st=(L.st||0)+d
   if(!L.used.lead&&B.units.filter(o=>o.team===1&&!o.dead&&!o.rout&&ours.some(p=>Math.hypot(p.x-o.x,p.y-o.y)<90)).length>=5)want.push('cry');
   if(!L.used.medic&&(B.squad.some(u=>u.dead&&u.type!=='lead')||B.units.filter(u=>u.team===0&&u.kind==='troop'&&u.dead&&u.deadT<8).length>=2))want.push('revive');
   if(!L.used.comms){let best=0;for(const o of B.units){if(o.team!==1||o.dead||o.rout||!ours.some(p=>Math.hypot(p.x-o.x,p.y-o.y)<420))continue;let n=0;query(o.x,o.y,140,p=>{if(p.team===1&&!p.dead&&!p.rout)n++;});if(n>best){best=n;L.fpt={x:o.x,y:o.y};}}if(best>=6)want.push('flare');}
-  const h=want[0]||null;if(h!==L.hint){L.hint=h;L.hintT=0;if(h){const s=S.find(x=>x.id===h);say(s.zh,s.en,3);sfx('horn',.4);L.fired[h]=1;}}L.hintT+=dt;
+  // t249: one hint at a time, held at least LES_HINT_MIN s (or until used) and spaced LES_HINT_GAP s apart
+  const usedH={deadeye:'marks',cry:'lead',revive:'medic',flare:'comms'};const live=L.hint&&want.includes(L.hint)&&!L.used[usedH[L.hint]];
+  let h=L.hint;if(!live&&!(L.hint&&L.hintT<LES_HINT_MIN&&!L.used[usedH[L.hint]])){h=null;if(B.t-(L.hintAt??-99)>=LES_HINT_GAP)h=want.find(x=>!L.fired[x])||want.find(x=>!L.used[usedH[x]])||null;}
+  if(h!==L.hint){L.hint=h;L.hintT=0;if(h){L.hintAt=B.t;const s=S.find(x=>x.id===h);say(s.zh,s.en,3);sfx('horn',.4);L.fired[h]=1;}}L.hintT+=dt;
   L.slow=h==='deadeye'&&L.hintT<14?.35:0;}
 {const _uw=updWaves;updWaves=function(dt){if(B&&B.les)lesTick(dt);return _uw(dt);};}
 {const _ub=updateBattle;updateBattle=function(dt){return _ub(B&&B.les&&B.les.slow?dt*B.les.slow:dt);};}
