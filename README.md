@@ -12,6 +12,9 @@ A browser strategy game.
 - Xia pressure grows with the realm: raids scale with settlements and soldiers and are sized against the target's defence; larger realms draw extra raids.
 - Conquests settle slowly (50% of their yield, rising to 85% over about six months); their 200 local levies draw pay; capture loot is halved. Resource sites (×1.75) and trade roads (×1.6) pay more.
 - Coach: the bubble docks clear of its target and any open dialog, lessons wait 45 s between each other, steps complete on the actual purchase or march order, a step whose panel was closed returns to “open the panel”, and the trade lesson matches the Buy-only Trade tab.
+- One ledger: the top bar, realm panel and village panel quote the same season figures (output − troop pay − village upkeep = net); the village box says it is one village and gives the realm total.
+- Attack confirmations quote the same odds as the battle card and auto-resolve. Chapter 1 counts figures and men the same way in the briefing, scout report and HUD.
+- Controls and other pop-ups fit the window, scroll and close with Esc. Haulage cutscenes from earlier months are dropped (two queued at most) and the bar has Skip all. The edict scroll fills three times faster and the reward banner no longer covers the village title.
 - The map's parchment, painted ground and vignette are baked once into cached tiles (same picture, roughly 7 ms less per frame).
 
 ### v0.24 — Power and Patronage

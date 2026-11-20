@@ -24,7 +24,7 @@ const checks=await page.evaluate(()=>{const checks=[],ok=(v,s)=>{if(!v)throw Err
  ok(w.hints.every((t,i)=>!i||t-w.hints[i-1]>=LES_HINT_GAP-.05),'skill hints are at least '+LES_HINT_GAP+' s apart');
  const idle=play('idle');ok(!idle.win,'standing idle still loses the granary');
  ok(CH1_ASSAULT.N.concat(CH1_ASSAULT.W,CH1_ASSAULT.NE).reduce((a,b)=>a+b,0)+1===40,'the non-lesson chapter 1 assault also totals forty');
- ok(/forty Xia raiders/.test(LLS.intro.en)&&/四十/.test(LLS.intro.zh),'the scout report says forty raiders');
+ ok(/forty Xia figures/.test(LLS.intro.en)&&/四十/.test(LLS.intro.zh),'the scout report says forty Xia figures');
  return checks;});
 if(errors.length)throw Error(errors.join('\n'));console.log(JSON.stringify({checks,errors},null,2));
 }finally{if(browser)await browser.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});
