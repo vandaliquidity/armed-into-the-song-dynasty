@@ -3,8 +3,8 @@ const {chromium}=require('playwright');const {startServer,browserOptions}=requir
 (async()=>{const {server,url}=await startServer();let browser;try{browser=await chromium.launch(browserOptions());const page=await browser.newPage({viewport:{width:1440,height:900}}),errors=[];page.on('pageerror',e=>errors.push(e.stack));
 await page.goto(url,{waitUntil:'networkidle'});await page.waitForFunction(()=>typeof sprReady!=='undefined'&&sprReady,null,{timeout:90000});
 const checks=await page.evaluate(async()=>{const checks=[],ok=(v,s)=>{if(!v)throw Error(s);checks.push(s);};const w=ms=>new Promise(r=>setTimeout(r,ms));coachSave({off:1,seen:{}});
- __sw.cstart();if(CG.evQ)CG.evQ.length=0;CPD.on=true;showCVil(HOME);for(let i=0;i<40&&!(CPD.img.compound_base&&CPD.img.compound_rooms);i++)await w(100);
- ok(CPD.img.compound_base&&CPD.img.compound_rooms,'compound art loads for the current tier');ok(cpdUse(),'the home village shows as the compound');
+ __sw.cstart();if(CG.evQ)CG.evQ.length=0;CPD.on=true;showCVil(HOME);for(let i=0;i<40&&!(CPD.img.compound3_base&&CPD.img.compound3_rooms&&CPD.img.compound_workers);i++)await w(100);
+ ok(CPD.img.compound3_base&&CPD.img.compound3_rooms&&CPD.img.compound_workers,'compound art loads for the current tier');ok(cpdUse(),'the home village shows as the compound');
  const s=CG.T[HOME];s.businesses=s.businesses||{};s.businesses.brewery={...(s.businesses.brewery||{}),level:0};ok(!cpdRooms(s).brewery.on,'an unbuilt brewery shows a bare room');
  s.businesses.brewery.level=1;ok(cpdRooms(s).brewery.on,'building the brewery furnishes its room');CAMP.bld.forge=0;ok(!cpdRooms(s).smithy.on,'no forge, bare smithy');CAMP.bld.forge=1;ok(cpdRooms(s).smithy.on,'forge built, smithy furnished');
  await w(300);ok(CVIL.hot.some(h=>/Brewery/.test(h.t)),'each room has a hover note');
