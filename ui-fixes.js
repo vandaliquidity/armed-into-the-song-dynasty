@@ -96,3 +96,11 @@ function tagLayout(){if(TAG_FRAME===SPR_FRAME||!B)return;TAG_FRAME=SPR_FRAME;con
     for(let k=0;k<6;k++){const hit=put.some(p=>Math.abs(p.x-u.x)<(p.w+w)/2&&Math.abs((p.y+p.dy)-(u.y+dy))<12);if(!hit)break;dy-=12;}u._tagDy=dy;put.push({x:u.x,y:u.y,w,dy});}}
 {const P=CanvasRenderingContext2D.prototype;for(const f of ['fillText','strokeText']){const o=P[f];P[f]=function(s,x,y,...a){if(TAG_CUR&&TAG_CUR._tagDy&&this.font.startsWith('bold 11px'))y+=TAG_CUR._tagDy;return o.call(this,s,x,y,...a);};}}
 {const old=drawUnit;drawUnit=function(u){try{tagLayout();}catch(e){}TAG_CUR=u;try{return old.apply(this,arguments);}finally{TAG_CUR=null;}};}
+// Phone village view: the village fills the screen and its side panel becomes a drawer behind a Details button.
+function mobNarrow(){return innerWidth<=700;}
+{const old=cvil8Frame;cvil8Frame=function(dt){if(!mobNarrow())return old.apply(this,arguments);const v=VW;VW=v+360;try{return old.apply(this,arguments);}finally{VW=v;}};}
+{const old=cvilUI;cvilUI=function(){const r=old.apply(this,arguments);try{$('cvMobBtn')?.remove();if(!mobNarrow()||MODE!=='cvil')return r;const p=[...document.querySelectorAll('.panel')].find(x=>x.textContent.includes('Back to the map'));if(!p)return r;
+  p.classList.add('cv-panel');if(!document.body.classList.contains('cv-open'))p.style.display='none';const b=btn('ℹ 详情','ℹ Details',()=>{const on=!document.body.classList.contains('cv-open');document.body.classList.toggle('cv-open',on);p.style.display=on?'':'none';});
+  b.id='cvMobBtn';b.style.cssText='position:fixed;right:10px;bottom:12px;z-index:9000;min-width:0;padding:8px 14px';document.body.appendChild(b);
+  const back=btn('◀ 地图','◀ Map',()=>showCamp());back.style.cssText='position:fixed;left:10px;bottom:12px;z-index:9000;min-width:0;padding:8px 14px';back.id='cvMobBack';$('cvMobBack')?.remove();document.body.appendChild(back);}catch(e){}return r;};}
+{const old=show;show=function(id){const r=old.apply(this,arguments);try{if(MODE!=='cvil'){$('cvMobBtn')?.remove();$('cvMobBack')?.remove();document.body.classList.remove('cv-open');}}catch(e){}return r;};}

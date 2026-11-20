@@ -34,7 +34,7 @@ const CPD_WK={granary:[[200,150,'vil_b',1.6,'w'],[420,220,'vil_w',0,'w'],[640,17
   brewery:[[460,900,'vil_b',1.6,'w'],[640,920,'vil_w',3.1,'w']],tea:[[1150,910,'vil_e',-1.6,'w'],[1330,910,'vil_w',-1.6,'w'],[1600,900,'vil_k',1.6,'w']]};
 function cpdUse(){return CPD.on&&MODE==='cvil'&&CVIL.id===HOME&&!EDICT&&!(typeof LOGI!=='undefined'&&LOGI.cur);}
 function cpdFrame(dt){cpdLoad();const base=CPD.img.compound_base;if(!base)return false;const s=CG.T[CVIL.id],g=ctx,t=CVIL.t+=dt,se=seasonOf(CG.turn);CVIL.hot=[];
-  const aw=VW-360,z=CVIL.z||1,sc=Math.min(aw/VWW,VH/VWH)*z;CVIL._sc=sc;if(z<=1.001){CVIL.fx=VWW/2;CVIL.fy=VWH/2;}const hw=aw/2/sc,hh=VH/2/sc;
+  const side=(typeof mobNarrow==='function'&&mobNarrow())?0:360,aw=VW-side,z=CVIL.z||1,sc=Math.min(aw/VWW,VH/VWH)*z;CVIL._sc=sc;if(z<=1.001){CVIL.fx=VWW/2;CVIL.fy=VWH/2;}const hw=aw/2/sc,hh=VH/2/sc;
   CVIL.fx=clamp(CVIL.fx,Math.min(hw,VWW/2),Math.max(VWW-hw,VWW/2));CVIL.fy=clamp(CVIL.fy,Math.min(hh,VWH/2),Math.max(VWH-hh,VWH/2));const ox=aw/2-CVIL.fx*sc,oy=VH/2-CVIL.fy*sc;CVIL._ox=ox;CVIL._oy=oy;
   g.setTransform(DPR,0,0,DPR,0,0);g.fillStyle='#1a1008';g.fillRect(0,0,VW,VH);g.save();g.beginPath();g.rect(0,0,aw,VH);g.clip();g.translate(ox,oy);g.scale(sc,sc);
   g.imageSmoothingQuality='high';g.drawImage(base,0,0,VWW,VWH);const cut=cpdCut(),rooms=cpdRooms(s);
@@ -60,10 +60,10 @@ function cpdFrame(dt){cpdLoad();const base=CPD.img.compound_base;if(!base)return
   g.restore();
   const nm=Tz('清河本寨','Qinghe compound');g.fillStyle='rgba(30,16,8,.85)';g.fillRect(16,14,420,64);g.strokeStyle='#b8862e';g.lineWidth=2;g.strokeRect(16,14,420,64);txt(nm,30,44,26,'#ffe7a0','left','bold ');
   txt(`${Ts(CL.tiers[tier][0],CL.tiers[tier][1])} · 👥${s.pop} · ⚔${garrison(CVIL.id)} · ${dateTxt(CG.turn)}`,30,68,13,'#e8d8b0','left');
-  cvilTip(g);return true;}
+  if(side===0){const v=VW;VW=v+360;try{cvilTip(g);}finally{VW=v;}}else cvilTip(g);return true;}
 {const old=cvil8Frame;cvil8Frame=function(dt){if(cpdUse()){try{if(cpdFrame(dt))return;}catch(e){console.warn(e);CPD.on=false;}}return old.apply(this,arguments);};}
 // click an unbuilt room to go and build it
-addEventListener('pointerdown',e=>{if(!cpdUse()||!CVIL._sc||e.clientX>VW-360||e.button!==0)return;const wx=(e.clientX-CVIL._ox)/CVIL._sc,wy=(e.clientY-CVIL._oy)/CVIL._sc;
+addEventListener('pointerdown',e=>{if(!cpdUse()||!CVIL._sc||(e.clientX>VW-360&&!(typeof mobNarrow==='function'&&mobNarrow()))||e.button!==0)return;if(e.target?.closest?.('.panel,.btn'))return;const wx=(e.clientX-CVIL._ox)/CVIL._sc,wy=(e.clientY-CVIL._oy)/CVIL._sc;
   for(const [id,[x0,y0,x1,y1]] of Object.entries(CPD.R)){if(wx<x0||wx>x1||wy<y0||wy>y1)continue;const R=cpdRooms(CG.T[HOME])[id];if(R.on)return;
     if(id==='smithy'||id==='dye')dynastyUI(HOME,'production');else if(id==='granary'||id==='treasury')settleUI(HOME,'store');else dynastyUI(HOME,'business');return;}},true);
 // the toggle in the village panel
