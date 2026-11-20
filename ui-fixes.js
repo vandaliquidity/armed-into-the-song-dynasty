@@ -81,11 +81,11 @@ lesCard=function(){const L=B.les,S=LLS.steps;if(B.tut&&!B.tut.done)return;const 
     else{ctx.save();ctx.beginPath();ctx.rect(x,yy-16,w-8,rh);ctx.clip();dual(m+short(LANG==='en'?r.s.en:r.s.zh,LANG==='en'?74:38),'   '+short(r.s.en,80),x+14,yy,11.5,c);ctx.restore();yy+=rh;}}};
 // Promotion choices: no rank offers the same ability twice (Old Xie's first rank was Overwatch/Overwatch; Su's was Rally/Rally).
 {for(const m in PERKS)for(const r in PERKS[m]){const c=PERKS[m][r];if(c.length===2&&c[0].t===c[1].t){const alt={marks:'volley',medic:'drums',lead:'drums',eng:'volley',comms:'drums'}[m]||'rally';c[1].t=alt===c[0].t?'rally':alt;}}}
-// Ch.2: the Shi clan only joins if you actually rescued it; otherwise it stays free and the log says so.
-{const old=campAfterStory;campAfterStory=function(i,win){const missed=i===1&&win&&typeof B!=='undefined'&&B&&!B.rescued;if(!missed)return old.apply(this,arguments);
-  const oc=claimTerr,ev=CL.ev.ch2win;claimTerr=function(id){if(id==='shijia')return;return oc.apply(this,arguments);};CL.ev.ch2win={zh:'秦州、清水县准许互市；石家部未获救援，仍未归附',en:'Qinzhou and Qingshui grant trade; the Shi clan was not rescued and has not joined'};
-  try{return old.apply(this,arguments);}finally{claimTerr=oc;CL.ev.ch2win=ev;}};}
-{const g=LORE.chapters?.[1]?.goal;if(g&&!/bonus|奖励/.test(g.en)){g.zh=g.zh.replace('；沿途救援石家部','；（附加）沿途救援石家部，他们才会归附');g.en=g.en.replace('; rescue the Shi clan settlement on the way','; bonus: rescue the Shi clan settlement on the way, or it will not join you');}}
+// Ch.2 (user decision, t249): rescuing the Shi clan is REQUIRED. The convoy getting through without the rescue is not a victory.
+{const old=SETUP.ch2;SETUP.ch2=function(){const r=old.apply(this,arguments);const w=B.win,l=B.lose;
+  B.win=()=>!!(w()&&B.hamlet&&B.hamlet.done);
+  B.lose=()=>l()||(w()&&B.hamlet&&!B.hamlet.done?Ts('车队抵达，但石家部未获救援——任务失败','The convoy got through, but the Shi clan was not rescued: mission failed'):undefined);return r;};}
+{const g=LORE.chapters?.[1]?.goal;if(g){g.zh='护送车队向东抵达秦州方向（至少一辆），并且必须救下沿途的石家部';g.en='Get the wagons east toward Qinzhou (at least one) and rescue the Shi clan settlement on the way (required)';}}
 // Chapter map: once a chapter is won, the panel moves on to the next one even if you had picked a chapter by hand.
 let MAP_SEEN_NEXT=null;
 {const old=showMap;showMap=function(){try{if(CAMP&&MAP_SEEN_NEXT!==null&&CAMP.next!==MAP_SEEN_NEXT&&SEL_CH<CAMP.next)MAP_PICKED=0;MAP_SEEN_NEXT=CAMP?CAMP.next:null;}catch(e){}return old.apply(this,arguments);};}
