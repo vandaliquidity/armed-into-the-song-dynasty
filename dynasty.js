@@ -82,8 +82,10 @@ function dynastyInfluence(id){return dynastyState().influence[id]||0;}
 function dynastyNote(zh,en){const d=dynastyState();d.ledger.unshift({month:campaignMonth(),zh,en});d.ledger.length=Math.min(30,d.ledger.length);}
 function dynastyDonate(id){const near=dynastyNearest(id,3);if(!dynastyPlanning()||CG.T[id]?.own!=='song'||!near||dynastyInfluence(id)>=100||!dynastyPay(near.to,{silver:40,grain:60}))return false;const d=dynastyState();d.influence[id]=Math.min(100,dynastyInfluence(id)+20);CG.T[id].st.grain+=60;saveGame();return true;}
 function dynastyShipment(kind,from,to,goods,extra={}){const path=supplyPath(from,to);if(!path)return null;return shipNew(kind,from,to,goods,{dynasty:true,path,trail:[from],at:from,step:0,speed:1,eta:Math.max(1,path.length-1),left:Math.max(1,path.length-1),...extra});}
+// v0.25 (t249): each market prices its own goods (±10%, fixed per town and good) and distance adds 6% per extra month of road
+function dyTradePrice(from,to,k,n){const base=(DY_PRICE[k]||99)*n*1.15,d=Math.max(0,((supplyPath(from,to)||[]).length||2)-2);let h=7;for(const c of from+'|'+k)h=(h*31+c.charCodeAt(0))>>>0;return Math.ceil(base*(.9+(h%21)/100)*(1+.06*d));}
 function dynastyTrade(from,to,k,n=20){
- const s=CG.T[from],box=EQ.includes(k)?s?.eq:s?.st,price=Math.ceil((DY_PRICE[k]||99)*n*1.15);
+ const s=CG.T[from],box=EQ.includes(k)?s?.eq:s?.st,price=dyTradePrice(from,to,k,n);
  if(!dynastyPlanning()||s?.own!=='song'||!owned(to)||!DY_PRICE[k]||!supplyPath(from,to)||!dynastyNearest(from,4)||box[k]<n||(EQ.includes(k)&&dynastyInfluence(from)<40)||!dynastyCanPay(to,{silver:price}))return false;
  dynastyPay(to,{silver:price});box[k]-=n;dynastyShipment('dynTrade',from,to,{[k]:n},{purchase:true});saveGame();return true;
 }

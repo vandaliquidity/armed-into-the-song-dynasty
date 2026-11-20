@@ -23,7 +23,7 @@ function politicsReason(k,target,home){
  if(k==='command'&&p.seal)return Tz('军印已授。','Command seal already awarded.');
  if(k==='works'&&CG.T[target].canal&&CG.T[target].canal2)return Tz('水利已完备。','Both irrigation improvements are complete.');
  if((k==='market'&&p.markets[target]>campaignMonth())||(k==='compact'&&p.pacts[target]>campaignMonth()))return Tz('特许仍有效。','This charter is still in force.');
- for(const [f,n]of Object.entries(d.gate))if(CG.fac[f]<n)return `${f}: ${Math.floor(CG.fac[f])}/${n}`;
+ for(const [f,n]of Object.entries(d.gate))if(CG.fac[f]<n)return `${Tz(...({court:['朝官支持','Court support'],gentry:['乡绅支持','Gentry support'],qiang:['羌部支持','Qiang support']}[f]||[f,f]))} ${Math.floor(CG.fac[f])}/${n}`;
  if(politicsAvailable()<d.merit)return Tz(`可用功绩不足：${politicsAvailable()}/${d.merit}`,`Available merit: ${politicsAvailable()}/${d.merit}`);
  for(const [r,n]of Object.entries(d.cost))if(supplyLocal(home,r)<n)return `${Tz(...RES_N[r])}: ${Math.floor(supplyLocal(home,r))}/${n}`;
  if(k==='procurement'&&!politicsSource(home))return Tz('连通宋城无多余弩。','No connected Song arsenal has spare crossbows.');return '';

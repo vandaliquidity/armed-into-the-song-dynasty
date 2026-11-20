@@ -1,0 +1,20 @@
+/* v0.25 phone layout for the campaign screen (t249): compact top bar, drawers for the menu, inspector and dispatches */
+#mobDock{display:none}
+@media (max-width:700px){
+ html,body{overflow:hidden!important;max-width:100vw!important}
+ #campUI *{box-sizing:border-box}
+ #campUI .campaign-top{left:4px!important;right:4px!important;top:4px!important;width:auto!important;max-width:calc(100vw - 8px)!important;min-width:0!important;padding:6px 8px!important;display:flex!important;flex-direction:column!important;gap:4px!important;height:auto!important}
+ #campUI .campaign-top .campaign-brand,#campUI .campaign-top .cadence{display:none!important}
+ #campUI .campaign-resources{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;gap:4px!important;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+ #campUI .resource-tile{flex:0 0 auto!important;min-width:62px!important;padding:3px 6px!important}
+ #campUI .resource-tile b{font-size:15px!important}#campUI .resource-tile .label{font-size:10px!important;white-space:nowrap}#campUI .resource-tile .delta{font-size:9px!important;white-space:nowrap}
+ #campUI .campaign-date{font-size:11px!important;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+ #campUI .campaign-action,#campUI .campaign-top .btn.gold{position:static!important;width:auto!important;min-height:0!important;padding:6px 10px!important;font-size:13px!important;margin:0!important}
+ #campUI .campaign-nav,#campUI .realm-inspector,#campUI .campaign-log{display:none!important}
+ body.mob-nav #campUI .campaign-nav,body.mob-insp #campUI .realm-inspector,body.mob-log #campUI .campaign-log{display:block!important;position:fixed!important;left:6px!important;right:6px!important;top:auto!important;bottom:58px!important;width:auto!important;max-width:none!important;max-height:58vh!important;overflow:auto!important;z-index:30}
+ #campUI .campaign-minimap,#campUI .chapter-strip,#campUI #cIntel{display:none!important}
+ #mobDock{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:9000;gap:6px;justify-content:center;padding:6px;background:linear-gradient(transparent,rgba(10,18,14,.85))}
+ #mobDock .btn{flex:1 1 0;max-width:120px;padding:8px 4px!important;font-size:13px!important;text-align:center;margin:0!important}
+ #mobDock .btn.on{background:#7c6a2c!important;color:#fff3c8!important}
+ #cEdictGo{left:50%!important;right:auto!important;transform:translateX(-50%)!important;bottom:62px!important;top:auto!important}
+}

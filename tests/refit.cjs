@@ -39,6 +39,6 @@ const {startServer,browserOptions}=require('./server.cjs');
  // Select the known fresh veteran directly if another card was ordered last by the existing UI.
  await page.evaluate(()=>refitUI(window.refitTestId));await page.locator('#refitType').selectOption('arch');await page.locator('#refitArmour').selectOption('0');
  fs.mkdirSync('test-results',{recursive:true});await page.screenshot({path:'test-results/veteran-refit.png'});
- await page.locator('#refitApply').click();checks.push(...await page.evaluate(()=>{const u=CG.U[window.refitTestId];if(u.type!=='arch'||u.exp!==9||chev(u)!==3||u.mor!==81)throw Error('UI did not retain veteran rank');return ['actual upgrade button converts veteran militia to archers without changing rank'];}));
+ await page.locator('#refitApply').click();checks.push(...await page.evaluate(()=>{const u=CG.U[window.refitTestId];if(u.type!=='arch'||u.exp!==9||chev(u)!==chev({exp:9})||u.mor!==81)throw Error('UI did not retain veteran rank');return ['actual upgrade button converts veteran militia to archers without changing rank'];}));
  console.log(JSON.stringify({checks,errors},null,2));if(errors.length)throw Error('Browser errors');
  }finally{if(browser)await browser.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});
