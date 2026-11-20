@@ -27,12 +27,12 @@ function vcLen(P){let n=0;for(let j=0;j<P.length-1;j++)n+=Math.hypot(P[j+1][0]-P
 function vcState(s){if(!CVIL.vc||CVIL.vc.id!==CVIL.id)CVIL.vc={id:CVIL.id,ag:[],plan:null,pt:0,clk:{},life:null};return CVIL.vc;}
 function vcName(k){return RAWN[k]?Ts(RAWN[k][0],RAWN[k][1]):EQN[k]?Ts(EQN[k][0],EQN[k][1]):k;}
 function vcShopName(k){return DEV[k]?Ts(DEV[k].zh,DEV[k].en):k;}
-function vcLoad(g,x,y,leg){if(leg.kind==='raw'&&CARGO_V[leg.k]!==undefined){sprProp('stk',x,y,CARGO_V[leg.k],.3);return;}
+function vcLoad(g,x,y,leg){if(leg.k==='silver'){sprProp('stk8',x,y,14,.22);return;}if(leg.kind==='harvest'){sprProp('stk',x,y,CARGO_V.grain,.26);return;}if(leg.kind==='raw'&&CARGO_V[leg.k]!==undefined){sprProp('stk',x,y,CARGO_V[leg.k],.3);return;}
   g.fillStyle=VC_COL[leg.k]||'#8a8a90';g.strokeStyle='rgba(30,18,8,.85)';g.lineWidth=1;g.fillRect(x-7,y-9,14,9);g.strokeRect(x-7,y-9,14,9);
   if(EQN[leg.k]){g.font='9px sans-serif';g.textAlign='center';g.fillText(EQN[leg.k][2],x,y-11);}}
 function vcChains(add,g,s,t,dt){const V=vcState(s);V.pt-=dt;if(V.pt<=0||!V.plan){V.plan=vcPlan(s);V.pt=2;}const P=V.plan,cap=vcCap();
   // spawn: each leg runs trips = units / LOAD per season, spread over VC.SEASON seconds
-  for(const leg of P.legs){const key=leg.kind+leg.k+(leg.to||leg.from),per=VC.SEASON/Math.max(1,leg.units/VC.LOAD);V.clk[key]=(V.clk[key]??Math.random()*per)-dt;
+  for(const leg of P.legs){const key=leg.key||leg.kind+leg.k+(leg.to||leg.from),per=VC.SEASON/Math.max(1,leg.units/(leg.load||VC.LOAD));V.clk[key]=(V.clk[key]??Math.random()*per)-dt;
     if(V.clk[key]<=0){V.clk[key]+=Math.max(3,per);if(V.ag.length<cap)V.ag.push({leg,d:0,L:vcLen(leg.P),st:0,back:0,ph:Math.random()*9,per});}}
   // artisans at their workshops: work while the shop produces, stand idle (and the label says why) when it is short
   const WK=VL?.img?.compound_workers,WM=typeof CPD_META!=='undefined'?CPD_META.wk:null;
@@ -43,8 +43,8 @@ function vcChains(add,g,s,t,dt){const V=vcState(s);V.pt-=dt;if(V.pt<=0||!V.plan)
   // carriers: walk the lanes loaded, set the load down, walk back empty
   for(const a of V.ag){if(a.st>0){a.st-=dt;if(a.st<=0)a.back=1;}else if(!a.back){a.d+=dt*36;if(a.d>=a.L){a.d=a.L;a.st=1.2;}}else a.d-=dt*42;
     const q=vcAlong(a.leg.P,Math.max(0,Math.min(a.L,a.d))),loaded=!a.back,face=a.back?q.f+Math.PI:q.f,fr=a.st>0?4+(Math.floor(t*3)%2):frontierWalkFrame('porter',a.d/14+a.ph);
-    add(q.y,()=>{sprUnit(SPR.porter?'porter':'villager',q.x,q.y,10,face,fr);if(loaded&&a.st<=0)vcLoad(g,q.x,q.y-30,a.leg);else if(a.st>0)vcLoad(g,q.x+10,q.y-2,a.leg);});
-    if(loaded){const L=a.leg;CVIL.hot.unshift({r:[q.x-10,q.y-30,q.x+10,q.y+4],t:L.kind==='raw'?`${Ts('搬运','Carrying')} ${vcName(L.k)} ${VC.LOAD} → ${vcShopName(L.to)}\n${Ts('来自','From')} ${L.from==='store'?Ts('仓廒','the storehouse'):vcShopName('tannery')} · ${Ts('本季需','needed this season')} ${Math.round(L.units)}`:`${Ts('送交','Delivering')} ${vcName(L.k)} ${VC.LOAD} → ${L.to==='armoury'?Ts('武库','the armoury'):Ts('仓廒','the storehouse')}\n${Ts('本季产出','This season')} ${L.units}`});}}
+    add(q.y,()=>{sprUnit(a.leg.spr&&SPR_META[a.leg.spr]?a.leg.spr:SPR.porter?'porter':'villager',q.x,q.y,10,face,fr);if(loaded&&a.st<=0)vcLoad(g,q.x,q.y-30,a.leg);else if(a.st>0)vcLoad(g,q.x+10,q.y-2,a.leg);});
+    if(loaded){const L=a.leg;CVIL.hot.unshift({r:[q.x-10,q.y-30,q.x+10,q.y+4],t:L.kind==='harvest'?`${Ts('收割','Harvest')}: ${vcName('grain')} ${L.load} → ${Ts('粮仓','the grain bin')}\n${Ts('来自田地','From the fields')} · ${Ts('本季收成','this season')} ${Math.round(P.inc.farm)}`:L.kind==='tax'?`${Ts('税吏','Tax clerk')}: ${Ts('银','silver')} ${L.load} → ${Ts('大宋官库','the treasury')}\n${Ts('各户赋税','Household tax')} · ${Ts('本季','this season')} ${P.inc.tax}`:L.kind==='trade'?`${Ts('商贾','Merchant')}: ${Ts('银','silver')} ${L.load} → ${Ts('大宋官库','the treasury')}\n${Ts('商路收入','Trade-route income')} · ${Ts('本季','this season')} ${P.inc.trade}`:L.kind==='raw'?`${Ts('搬运','Carrying')} ${vcName(L.k)} ${VC.LOAD} → ${vcShopName(L.to)}\n${Ts('来自','From')} ${L.from==='store'?Ts('仓廒','the storehouse'):vcShopName('tannery')} · ${Ts('本季需','needed this season')} ${Math.round(L.units)}`:`${Ts('送交','Delivering')} ${vcName(L.k)} ${VC.LOAD} → ${L.to==='armoury'?Ts('武库','the armoury'):Ts('仓廒','the storehouse')}\n${Ts('本季产出','This season')} ${L.units}`});}}
   V.ag=V.ag.filter(a=>!(a.back&&a.d<=0));}
 // ---------------------------------------------------------------- everyday life
 function vcLifeInit(s){const L=CVIL.lay,R=srand(91+[...CVIL.id].reduce((a,c)=>a+c.charCodeAt(0),0)),hs=(L.houses||[]).slice(0,clamp(Math.round(4+s.pop/120),4,(L.houses||[]).length));

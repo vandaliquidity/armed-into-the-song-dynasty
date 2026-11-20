@@ -9,14 +9,14 @@ const checks=await page.evaluate(async()=>{const checks=[],ok=(v,s)=>{if(!v)thro
  __vu.set(true);for(let i=0;i<200&&!__vu.on();i++){cvil8Frame(1/60);await new Promise(r=>setTimeout(r,100));}ok(__vu.on(),'flag on: the unified atlas and ground plate load for the tier');
  for(let i=0;i<80&&!(SPR.vu_villager&&SPR.vu_porter&&SPR.vu_song_militia);i++){cvil8Frame(1/60);await new Promise(r=>setTimeout(r,100));}ok(!!SPR.vu_villager,'re-rendered villagers load');
  const names={};const _d=vuDraw;vuDraw=function(n){const r=_d.apply(this,arguments);if(r)names[n.replace(/_\d+$/,'')]=(names[n.replace(/_\d+$/,'')]||0)+1;return r;};
- let gr=0,vu=0;const VK=Object.keys(SPR).filter(k=>k.startsWith('vu_'));for(const k of VK){const v=SPR[k];Object.defineProperty(SPR,k,{configurable:true,enumerable:true,get(){vu++;return v;},set(n){}});}const _di=ctx.drawImage;ctx.drawImage=function(im){if(im===VU.ground)gr++;return _di.apply(this,arguments);};
+ let gr=0,vu=0;const VK=Object.keys(SPR).filter(k=>k.startsWith('vu_'));for(const k of VK){const v=SPR[k];Object.defineProperty(SPR,k,{configurable:true,enumerable:true,get(){vu++;return v;},set(n){}});}const _di=ctx.drawImage;ctx.drawImage=function(im){if(im===VU.ground||Object.values(VU.G||{}).some(o=>o&&o.c===im))gr++;return _di.apply(this,arguments);};
  const us={};const _su=sprUnit;sprUnit=function(n){us[n]=(us[n]||0)+1;return _su.apply(this,arguments);};
  cvil8Frame(1/60);for(const k of VK){const v=SPR[k];Object.defineProperty(SPR,k,{value:v,writable:true,configurable:true,enumerable:true});}vuDraw=_d;ctx.drawImage=_di;sprUnit=_su;
  ok(gr===1,'the unified ground plate replaces the painted ground');
  for(const k of ['store8','tree8','field','stall8','rack8','stk8','vgate8','vcomp8','fence8','cwall'])ok(names[k]>0,k+' draws from the unified kit ('+names[k]+')');
  ok(vu>0,'village people draw from the re-rendered atlases ('+vu+')');
  const h1=hot(),miss=hot0.filter(x=>!h1.has(x));ok(hot0.length>10&&!miss.length,'all '+hot0.length+' fixed click boxes are identical with the flag on and off'+(miss.length?' missing '+miss.slice(0,3):''));
- const I=VU_META.items;const m=SPR_META.tree8.t.hi;ok(Math.abs(I.store8_0.ax-116.7)<1&&Math.abs((I.tree8_0.H-I.tree8_0.ay)-(m.h-m.ay)/m.P)<1.5,'items keep the old sprites\' ground anchors');
+ const I=VU_META.items;const m=SPR_META.store8.t.hi;ok(Math.abs(I.store8_0.ax+I.store8_0.ox-m.ax/m.P)<1&&Object.values(I).every(i=>i.W>0&&i.H>0&&i.ay>0),'items keep the old sprites\' ground anchors');
  ok(typeof vlOn==='function'&&vlOn()&&!!CVIL.vc,'hospital ward and production chains still run');
  const t0=performance.now();for(let i=0;i<30;i++)cvil8Frame(1/60);const ms=(performance.now()-t0)/30;ok(ms<12,'unified village frame '+ms.toFixed(2)+' ms (budget 12)');
  __vu.set(false);return checks;});

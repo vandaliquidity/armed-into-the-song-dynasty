@@ -13,6 +13,7 @@ const checks=await page.evaluate(async()=>{const checks=[],ok=(v,s)=>{if(!v)thro
  ok(CVIL.hot.some(h=>/Idle: short of materials/.test(h.t)),'and its artisan says why');
  s.st.ore=600;CVIL.vc.pt=0;for(let i=0;i<60*90;i++)cvil8Frame(1/30);ok(CVIL.vc.ag.length>0&&CVIL.vc.ag.length<=vcCap(),'carriers run the routes within the tier cap ('+CVIL.vc.ag.length+'/'+vcCap()+')');
  const L=CVIL.vc.life;ok(L.ch.length>=4&&L.kids.length>=2&&L.chim.length>0,'chickens, children and chimneys are placed');
+ for(let i=0;i<150&&window.__vu&&!__vu.on();i++){cvil8Frame(1/60);await new Promise(r=>setTimeout(r,40));}for(let i=0;i<150&&typeof VU!=='undefined'&&VU.U&&Object.keys(VU.U).some(k=>!SPR['vu_'+k]);i++){cvil8Frame(1/60);await new Promise(r=>setTimeout(r,40));}for(let i=0;i<40;i++){cvil8Frame(1/60);await new Promise(r=>setTimeout(r,40));}
  const t0=performance.now();for(let i=0;i<30;i++)cvil8Frame(1/60);const ms=(performance.now()-t0)/30;ok(ms<12,'village frame with chains and life '+ms.toFixed(2)+' ms (budget 12)');
  for(let i=0;i<100&&!VY.img;i++){cvil8Frame(1/60);await new Promise(r=>setTimeout(r,100));}ok(VY.img&&vyOn(),'village yard plates load for the tier');
  let hit=0;const _d=vyDraw;vyDraw=function(){hit++;return _d.apply(this,arguments);};cvil8Frame(1/60);vyDraw=_d;ok(hit>=5,'houses, workshops and the armoury draw as yard plates ('+hit+')');

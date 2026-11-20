@@ -21,7 +21,7 @@ const checks=await page.evaluate(async()=>{const checks=[],ok=(v,s)=>{if(!v)thro
  for(const u of Object.values(CG.U))u.wnd=0;CVIL.vl.sync=0;cvil8Frame(1/30);ok(CVIL.vl.ready.length>0,'healed patients get up and walk to the drill yard');
  for(let i=0;i<60*30;i++)cvil8Frame(1/30);ok(CVIL.vl.ready.some(r=>vlAlong(r.P,r.d).end),'and stand ready for deployment');
  // let async decodes/bitmaps settle (the real game loop yields every frame), then time steady-state frames
- for(let i=0;i<20;i++){cvil8Frame(1/60);await w(40);}
+ for(let i=0;i<150&&window.__vu&&!__vu.on();i++){cvil8Frame(1/60);await new Promise(r=>setTimeout(r,40));}for(let i=0;i<150&&typeof VU!=='undefined'&&VU.U&&Object.keys(VU.U).some(k=>!SPR['vu_'+k]);i++){cvil8Frame(1/60);await new Promise(r=>setTimeout(r,40));}for(let i=0;i<40;i++){cvil8Frame(1/60);await new Promise(r=>setTimeout(r,40));}
  const t0=performance.now();for(let i=0;i<30;i++)cvil8Frame(1/60);const ms=(performance.now()-t0)/30;ok(ms<12,'village frame with the ward '+ms.toFixed(2)+' ms (budget 12)');
  return checks;});
 if(errors.length)throw Error(errors.join('\n'));console.log(JSON.stringify({checks,errors},null,2));
