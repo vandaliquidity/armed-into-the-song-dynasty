@@ -8,6 +8,10 @@ A browser strategy game.
 - Carriers accelerate, ease into stops, turn smoothly and lift loads that arc into the cart; carts roll in and out with momentum; idle porters wait beside their cart. All motion is time-based.
 - The campaign camera glides per second rather than per frame, and any drag or wheel takes control back at once.
 - Chapter 1 lesson rebalanced: forty raiders in all (was 87). Skill hints come one at a time, at least 10 s apart, and Deadeye won't fire out of range during the lesson. Following the lesson wins; standing idle still loses the granary (tests/lesson.cjs).
+- Difficulty (Easy/Normal/Hard Xia aggression) is chosen at New campaign; Court & government shows it read-only.
+- Xia pressure grows with the realm: raids scale with settlements and soldiers and are sized against the target's defence; larger realms draw extra raids.
+- Conquests settle slowly (50% of their yield, rising to 85% over about six months); their 200 local levies draw pay; capture loot is halved. Resource sites (×1.75) and trade roads (×1.6) pay more.
+- Coach: the bubble docks clear of its target and any open dialog, lessons wait 45 s between each other, steps complete on the actual purchase or march order, a step whose panel was closed returns to “open the panel”, and the trade lesson matches the Buy-only Trade tab.
 - The map's parchment, painted ground and vignette are baked once into cached tiles (same picture, roughly 7 ms less per frame).
 
 ### v0.24 — Power and Patronage
