@@ -6,8 +6,8 @@
 // and stand ready for deployment. Capacity matters: beds hold HOSP_CAP men per hospital level; the overflow waits outside and heals at
 // the no-hospital rate (see the woundTick wrapper). Art: art/ward.py + art/patients.py (Blender) -> assets/<tier>/ward.webp, patients.webp.
 'use strict';
-const VL_META={"W":220,"H":310,"oy":60,"beds":[[62,88],[62,124],[62,160],[62,196],[158,88],[158,124],[158,160],[158,196]],"stations":[[168,228,"stir",3],[110,230,"count",3]],"pt":{"types":["mil","spear","dao","arch","xbow","cav","fire"],"nf":5,"w":53.2,"h":36.4,"ax":28.0,"ay":31.7,"liv":{"mil":"#8c6e4a","spear":"#9a2a22","dao":"#7a2440","arch":"#3f6a3a","xbow":"#2c447a","cav":"#6a4a2a","fire":"#3a3a40"}}};
-const VL={img:{},tier:null,V:'t252a',X:1560,Y:60,FIG:20};
+const VL_META={"W":220,"H":310,"oy":60,"beds":[[62,88],[62,124],[62,160],[62,196],[158,88],[158,124],[158,160],[158,196]],"stations":[[168,228,"stir",3],[110,230,"count",3]],"pt":{"types":["mil","spear","dao","arch","xbow","cav","fire"],"nf":5,"w":48.4,"h":35.8,"ax":27.7,"ay":31.4,"liv":{"mil":"#8c6e4a","spear":"#9a2a22","dao":"#7a2440","arch":"#3f6a3a","xbow":"#2c447a","cav":"#6a4a2a","fire":"#3a3a40"}}};
+const VL={img:{},tier:null,V:'t254a',X:1560,Y:60,FIG:20};
 const HOSP_CAP=[0,160,240];
 function hospCap(id){return HOSP_CAP[hospLv(id)]||0;}
 function vlLoad(){const t=GFX.tier||'md';if(VL.tier===t)return;VL.tier=t;VL.img={};

@@ -1,0 +1,24 @@
+// t254 unified classic-village art: flag, every item lands on the old sprite's anchor, click boxes and gameplay hooks unchanged, budget.
+const {chromium}=require('playwright');const {startServer,browserOptions}=require('./server.cjs');
+(async()=>{const {server,url}=await startServer();let browser;try{browser=await chromium.launch(browserOptions());const page=await browser.newPage({viewport:{width:1440,height:900}}),errors=[];page.on('pageerror',e=>errors.push(e.stack));
+await page.goto(url,{waitUntil:'networkidle'});await page.waitForFunction(()=>typeof sprReady!=='undefined'&&sprReady,null,{timeout:90000});
+const checks=await page.evaluate(async()=>{const checks=[],ok=(v,s)=>{if(!v)throw Error(s);checks.push(s);};coachSave({off:1,seen:{}});
+ __sw.cstart();if(CG.evQ)CG.evQ.length=0;const s=CG.T[HOME];s.bld.smithy=1;s.bld.armour=1;s.bld.stable=1;s.st.horse=40;CAMP.bld.clinic=1;unitsAt(HOME)[0].wnd=40;
+ const hot=()=>new Set(CVIL.hot.map(h=>JSON.stringify(h.r)+h.t.split('\n')[0]));
+ __vu.set(false);showCVil(HOME);for(let i=0;i<150&&!(typeof vyOn==='function'&&vyOn());i++){cvil8Frame(1/60);await new Promise(r=>setTimeout(r,100));}for(let i=0;i<5;i++)cvil8Frame(1/60);ok(!__vu.on(),'flag off: the classic village keeps its current art');const hA=hot();cvil8Frame(1/60);const hB=hot(),hot0=[...hA].filter(x=>hB.has(x));
+ __vu.set(true);for(let i=0;i<200&&!__vu.on();i++){cvil8Frame(1/60);await new Promise(r=>setTimeout(r,100));}ok(__vu.on(),'flag on: the unified atlas and ground plate load for the tier');
+ for(let i=0;i<80&&!(SPR.vu_villager&&SPR.vu_porter&&SPR.vu_song_militia);i++){cvil8Frame(1/60);await new Promise(r=>setTimeout(r,100));}ok(!!SPR.vu_villager,'re-rendered villagers load');
+ const names={};const _d=vuDraw;vuDraw=function(n){const r=_d.apply(this,arguments);if(r)names[n.replace(/_\d+$/,'')]=(names[n.replace(/_\d+$/,'')]||0)+1;return r;};
+ let gr=0,vu=0;const VK=Object.keys(SPR).filter(k=>k.startsWith('vu_'));for(const k of VK){const v=SPR[k];Object.defineProperty(SPR,k,{configurable:true,enumerable:true,get(){vu++;return v;},set(n){}});}const _di=ctx.drawImage;ctx.drawImage=function(im){if(im===VU.ground)gr++;return _di.apply(this,arguments);};
+ const us={};const _su=sprUnit;sprUnit=function(n){us[n]=(us[n]||0)+1;return _su.apply(this,arguments);};
+ cvil8Frame(1/60);for(const k of VK){const v=SPR[k];Object.defineProperty(SPR,k,{value:v,writable:true,configurable:true,enumerable:true});}vuDraw=_d;ctx.drawImage=_di;sprUnit=_su;
+ ok(gr===1,'the unified ground plate replaces the painted ground');
+ for(const k of ['store8','tree8','field','stall8','rack8','stk8','vgate8','vcomp8','fence8','cwall'])ok(names[k]>0,k+' draws from the unified kit ('+names[k]+')');
+ ok(vu>0,'village people draw from the re-rendered atlases ('+vu+')');
+ const h1=hot(),miss=hot0.filter(x=>!h1.has(x));ok(hot0.length>10&&!miss.length,'all '+hot0.length+' fixed click boxes are identical with the flag on and off'+(miss.length?' missing '+miss.slice(0,3):''));
+ const I=VU_META.items;const m=SPR_META.tree8.t.hi;ok(Math.abs(I.store8_0.ax-116.7)<1&&Math.abs((I.tree8_0.H-I.tree8_0.ay)-(m.h-m.ay)/m.P)<1.5,'items keep the old sprites\' ground anchors');
+ ok(typeof vlOn==='function'&&vlOn()&&!!CVIL.vc,'hospital ward and production chains still run');
+ const t0=performance.now();for(let i=0;i<30;i++)cvil8Frame(1/60);const ms=(performance.now()-t0)/30;ok(ms<12,'unified village frame '+ms.toFixed(2)+' ms (budget 12)');
+ __vu.set(false);return checks;});
+if(errors.length)throw Error(errors.join('\n'));console.log(JSON.stringify({checks,errors},null,2));
+}finally{if(browser)await browser.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});
