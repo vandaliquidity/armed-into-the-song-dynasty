@@ -6,7 +6,7 @@
 const CPD={W:1800,H:1120,img:{},tier:null,on:(()=>{try{return localStorage.getItem('sw_compound')!=='0';}catch(e){return true;}})(),wk:null,
   // room rects in village world px (match art/compound.py ROOMS); crop rects add the north wall and a little margin
   R:{granary:[90,70,830,300],treasury:[990,70,1710,300],smithy:[90,310,830,510],kiln:[990,310,1710,510],press:[90,610,830,790],dye:[990,610,1710,790],brewery:[90,800,830,950],tea:[990,800,1710,950]},
-  V:'t250a'};
+  V:'t250b'};
 CPD.NAME={granary:['粮仓','Granary'],treasury:['大宋官库','Treasury'],smithy:['铁匠铺','Smithy'],kiln:['炭窑与陶作','Charcoal kiln & pottery'],press:['香膏油坊','Oil press & beauty workshop'],
   dye:['织染坊','Loom & dye house'],brewery:['酒坊','Brewery'],tea:['清河酒楼','Tea house & restaurant']};
 function cpdBiz(s,k){return s?.businesses?.[k]?.level||0;}
