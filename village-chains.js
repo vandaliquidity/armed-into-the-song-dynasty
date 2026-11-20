@@ -1,4 +1,4 @@
-// v0.30 (t252) village life, part 2: visible production chains and everyday life in the classic village.
+// v0.31 (t252/t253) village life, part 2: visible production chains and everyday life in the classic village.
 // Chains follow the real workshop plans (wkPlan): for every workshop that is producing this season, carriers take each raw material
 // from its storehouse bin (or leather from the tannery: one workshop's product is the next one's input) to the artisan, the artisan works
 // his station with a looping work animation, and the finished pieces are carried to the armoury (weapons, armour, saddles) or back to the
@@ -36,8 +36,8 @@ function vcChains(add,g,s,t,dt){const V=vcState(s);V.pt-=dt;if(V.pt<=0||!V.plan)
     if(V.clk[key]<=0){V.clk[key]+=Math.max(3,per);if(V.ag.length<cap)V.ag.push({leg,d:0,L:vcLen(leg.P),st:0,back:0,ph:Math.random()*9,per});}}
   // artisans at their workshops: work while the shop produces, stand idle (and the label says why) when it is short
   const WK=VL?.img?.compound_workers,WM=typeof CPD_META!=='undefined'?CPD_META.wk:null;
-  for(const {k,p,S} of P.shops){const x=S.x-34,y=S.y+8,act=VC_ACT[k]||'hammer',busy=p.n>0;
-    if(WK&&WM){add(y,()=>{const sk=.4,row=WM.acts.indexOf(act)*4,cw=WK.width/WM.nf,ch=WK.height/(WM.acts.length*4),f=busy?Math.floor(t*5+S.x)%WM.nf:0;g.drawImage(WK,f*cw,row*ch,cw,ch,x-WM.ax*sk,y-WM.ay*sk,WM.w*sk,WM.h*sk);});}
+  for(const {k,p,S} of P.shops){const st=typeof vyOn==='function'&&vyOn()?vyStation(VY_WK[WKV[k]],S.x,S.y+40):null;const x=st?st.x:S.x-34,y=st?st.y:S.y+8,act=st?st.act:(VC_ACT[k]||'hammer'),dir=st?st.dir:0,busy=p.n>0;
+    if(WK&&WM){add(y,()=>{const sk=.4,row=WM.acts.indexOf(act)*4+dir,cw=WK.width/WM.nf,ch=WK.height/(WM.acts.length*4),f=busy?Math.floor(t*5+S.x)%WM.nf:0;g.drawImage(WK,f*cw,row*ch,cw,ch,x-WM.ax*sk,y-WM.ay*sk,WM.w*sk,WM.h*sk);});}
     const ins=Object.entries(p.R).map(([r,q])=>`${vcName(r)} ${q}`).join(' + ');
     CVIL.hot.unshift({r:[x-16,y-34,x+16,y+4],t:`${vcShopName(k)} · ${Ts('匠人','artisan')}\n${busy?`${Ts('本季','This season')}: ${vcName(p.item)} ${p.n}/${p.cap}`:Ts('缺料停工','Idle: short of materials')+': '+p.short.map(vcName).join(', ')}\n${Ts('每百件用料','Per 100 pieces')}: ${ins}`});}
   // carriers: walk the lanes loaded, set the load down, walk back empty

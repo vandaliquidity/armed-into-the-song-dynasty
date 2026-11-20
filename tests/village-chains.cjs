@@ -14,6 +14,8 @@ const checks=await page.evaluate(async()=>{const checks=[],ok=(v,s)=>{if(!v)thro
  s.st.ore=600;CVIL.vc.pt=0;for(let i=0;i<60*90;i++)cvil8Frame(1/30);ok(CVIL.vc.ag.length>0&&CVIL.vc.ag.length<=vcCap(),'carriers run the routes within the tier cap ('+CVIL.vc.ag.length+'/'+vcCap()+')');
  const L=CVIL.vc.life;ok(L.ch.length>=4&&L.kids.length>=2&&L.chim.length>0,'chickens, children and chimneys are placed');
  const t0=performance.now();for(let i=0;i<30;i++)cvil8Frame(1/60);const ms=(performance.now()-t0)/30;ok(ms<12,'village frame with chains and life '+ms.toFixed(2)+' ms (budget 12)');
+ for(let i=0;i<100&&!VY.img;i++){cvil8Frame(1/60);await new Promise(r=>setTimeout(r,100));}ok(VY.img&&vyOn(),'village yard plates load for the tier');
+ let hit=0;const _d=vyDraw;vyDraw=function(){hit++;return _d.apply(this,arguments);};cvil8Frame(1/60);vyDraw=_d;ok(hit>=5,'houses, workshops and the armoury draw as yard plates ('+hit+')');
  return checks;});
 if(errors.length)throw Error(errors.join('\n'));console.log(JSON.stringify({checks,errors},null,2));
 }finally{if(browser)await browser.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});
