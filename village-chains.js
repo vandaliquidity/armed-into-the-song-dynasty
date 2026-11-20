@@ -11,7 +11,7 @@ const VC={SEASON:60,LOAD:50,CAP:{hi:34,md:24,lo:12},DAY:150};
 const VC_ACT={tannery:'stir',smithy:'hammer',bowyer:'weave',armour:'hammer',saddle:'weave',fire:'tend'};
 const VC_WKPOS=[[1400,880],[1560,880],[1710,880],[1400,1030],[1560,1030],[1710,1030]];
 const VC_COL={grain:'#d8b050',timber:'#8a5a30',stone:'#a8a8a0',ore:'#4a4a50',hide:'#b08060',leather:'#7a4a28',nitre:'#e0e0d0',salt:'#f0f0f0'};
-function vcCap(){return VC.CAP[GFX.tier||'md']||20;}
+function vcCap(){const c=VC.CAP[GFX.tier||'md']||20;return typeof mobNarrow==='function'&&mobNarrow()?Math.ceil(c/2):c;}
 // places: a door, plus the lane points that join it to the main east-west road (y 470)
 function vcBin(k){const i=STK_BINS.findIndex(b=>b.includes(k)),gap=(VZ.store[2]-VZ.store[0])/4,x=VZ.store[0]+gap*((i<0?0:i)+.5);return {d:[x,452],via:[],port:[x,470]};}
 function vcShop(s,k){const ws=WK_ORDER.filter(w=>s.bld[w]),i=ws.indexOf(k);if(i<0)return null;const [x,y]=VC_WKPOS[i];return {d:[x-30,y+16],via:[[1320,y+16]],port:[1320,470],x,y};}
@@ -37,18 +37,18 @@ function vcChains(add,g,s,t,dt){const V=vcState(s);V.pt-=dt;if(V.pt<=0||!V.plan)
   // artisans at their workshops: work while the shop produces, stand idle (and the label says why) when it is short
   const WK=VL?.img?.compound_workers,WM=typeof CPD_META!=='undefined'?CPD_META.wk:null;
   for(const {k,p,S} of P.shops){const st=typeof vyOn==='function'&&vyOn()?vyStation(VY_WK[WKV[k]],S.x,S.y+40):null;const x=st?st.x:S.x-34,y=st?st.y:S.y+8,act=st?st.act:(VC_ACT[k]||'hammer'),dir=st?st.dir:0,busy=p.n>0;
-    if(WK&&WM){add(y,()=>{const sk=.4,row=WM.acts.indexOf(act)*4+dir,cw=WK.width/WM.nf,ch=WK.height/(WM.acts.length*4),f=busy?Math.floor(t*5+S.x)%WM.nf:0;g.drawImage(WK,f*cw,row*ch,cw,ch,x-WM.ax*sk,y-WM.ay*sk,WM.w*sk,WM.h*sk);});}
+    if(WK&&WM){add(y,()=>{const sk=.62,row=WM.acts.indexOf(act)*4+dir,cw=WK.width/WM.nf,ch=WK.height/(WM.acts.length*4),f=busy?Math.floor(t*5+S.x)%WM.nf:0;g.drawImage(WK,f*cw,row*ch,cw,ch,x-WM.ax*sk,y-WM.ay*sk,WM.w*sk,WM.h*sk);});}
     const ins=Object.entries(p.R).map(([r,q])=>`${vcName(r)} ${q}`).join(' + ');
     CVIL.hot.unshift({r:[x-16,y-34,x+16,y+4],t:`${vcShopName(k)} · ${Ts('匠人','artisan')}\n${busy?`${Ts('本季','This season')}: ${vcName(p.item)} ${p.n}/${p.cap}`:Ts('缺料停工','Idle: short of materials')+': '+p.short.map(vcName).join(', ')}\n${Ts('每百件用料','Per 100 pieces')}: ${ins}`});}
   // carriers: walk the lanes loaded, set the load down, walk back empty
   for(const a of V.ag){if(a.st>0){a.st-=dt;if(a.st<=0)a.back=1;}else if(!a.back){a.d+=dt*36;if(a.d>=a.L){a.d=a.L;a.st=1.2;}}else a.d-=dt*42;
     const q=vcAlong(a.leg.P,Math.max(0,Math.min(a.L,a.d))),loaded=!a.back,face=a.back?q.f+Math.PI:q.f,fr=a.st>0?4+(Math.floor(t*3)%2):frontierWalkFrame('porter',a.d/14+a.ph);
-    add(q.y,()=>{sprUnit(SPR.porter?'porter':'villager',q.x,q.y,11,face,fr);if(loaded&&a.st<=0)vcLoad(g,q.x,q.y-20,a.leg);else if(a.st>0)vcLoad(g,q.x+10,q.y-2,a.leg);});
+    add(q.y,()=>{sprUnit(SPR.porter?'porter':'villager',q.x,q.y,10,face,fr);if(loaded&&a.st<=0)vcLoad(g,q.x,q.y-30,a.leg);else if(a.st>0)vcLoad(g,q.x+10,q.y-2,a.leg);});
     if(loaded){const L=a.leg;CVIL.hot.unshift({r:[q.x-10,q.y-30,q.x+10,q.y+4],t:L.kind==='raw'?`${Ts('搬运','Carrying')} ${vcName(L.k)} ${VC.LOAD} → ${vcShopName(L.to)}\n${Ts('来自','From')} ${L.from==='store'?Ts('仓廒','the storehouse'):vcShopName('tannery')} · ${Ts('本季需','needed this season')} ${Math.round(L.units)}`:`${Ts('送交','Delivering')} ${vcName(L.k)} ${VC.LOAD} → ${L.to==='armoury'?Ts('武库','the armoury'):Ts('仓廒','the storehouse')}\n${Ts('本季产出','This season')} ${L.units}`});}}
   V.ag=V.ag.filter(a=>!(a.back&&a.d<=0));}
 // ---------------------------------------------------------------- everyday life
 function vcLifeInit(s){const L=CVIL.lay,R=srand(91+[...CVIL.id].reduce((a,c)=>a+c.charCodeAt(0),0)),hs=(L.houses||[]).slice(0,clamp(Math.round(4+s.pop/120),4,(L.houses||[]).length));
-  const ch=[];for(let i=0;i<Math.min(12,4+hs.length);i++){const h=hs[Math.floor(R()*hs.length)]||{x:900,y:600};ch.push({hx:h.x,hy:h.y+26,x:h.x+(R()-.5)*50,y:h.y+26+R()*24,a:R()*TAU,t:R()*3,c:R()<.3?'#f4efe4':R()<.6?'#b8642e':'#6a3a20'});}
+  const mob=typeof mobNarrow==='function'&&mobNarrow(),ch=[];for(let i=0;i<Math.min(mob?6:12,4+hs.length);i++){const h=hs[Math.floor(R()*hs.length)]||{x:900,y:600};ch.push({hx:h.x,hy:h.y+26,x:h.x+(R()-.5)*50,y:h.y+26+R()*24,a:R()*TAU,t:R()*3,c:R()<.3?'#f4efe4':R()<.6?'#b8642e':'#6a3a20'});}
   const lines=[];for(let i=0;i<Math.min(4,Math.floor(hs.length/3));i++){const h=hs[i*3];if(!h||h.side)continue;lines.push({x:h.x-30,y:h.y+34,w:60,c:[...Array(4)].map(()=>['#2f4f8f','#e8e0c8','#9a2b2b','#c7a23a','#5a7fae','#4a7a4a'][Math.floor(R()*6)])});}
   const kids=[];for(let i=0;i<clamp(2+tierOf(s.prosp),2,5);i++)kids.push({x:820+R()*120,y:620+R()*60,ph:R()*TAU,r:30+R()*30});
   const chim=hs.filter(h=>!h.side).slice(0,10).map(h=>({x:h.x+12,y:h.y-46}));
@@ -56,7 +56,7 @@ function vcLifeInit(s){const L=CVIL.lay,R=srand(91+[...CVIL.id].reduce((a,c)=>a+
 function vcLife(add,g,s,t,dt,se){const V=vcState(s);if(!V.life)V.life=vcLifeInit(s);const F=V.life,day=(t/VC.DAY+.3)%1;
   // chickens peck about the house fronts
   for(const c of F.ch){c.t-=dt;if(c.t<0){c.t=1+Math.random()*3;c.a=Math.atan2(c.hy+Math.random()*30-c.y,c.hx+(Math.random()-.5)*70-c.x);c.mv=Math.random()<.5?.8:0;}if(c.mv>0){c.mv-=dt;c.x+=Math.cos(c.a)*dt*16;c.y+=Math.sin(c.a)*dt*16;}
-    const peck=c.mv<=0&&Math.sin(t*7+c.hx)>.2;add(c.y,()=>{g.fillStyle='rgba(0,0,0,.18)';g.beginPath();g.ellipse(c.x,c.y+1,5,2,0,0,TAU);g.fill();g.fillStyle=c.c;g.beginPath();g.ellipse(c.x,c.y-4,5,3.6,0,0,TAU);g.fill();const hx=c.x+Math.cos(c.a)*4,hy=c.y-(peck?3:8);g.beginPath();g.arc(hx,hy,2.2,0,TAU);g.fill();g.fillStyle='#c0301a';g.fillRect(hx-1,hy-3.2,2,1.6);g.fillStyle='#e0a030';g.fillRect(hx+(Math.cos(c.a)>0?1.6:-3),hy-.5,1.6,1.2);});}
+    const peck=c.mv<=0&&Math.sin(t*7+c.hx)>.2;add(c.y,()=>{g.save();g.translate(c.x,c.y);g.scale(1.5,1.5);g.translate(-c.x,-c.y);g.fillStyle='rgba(0,0,0,.18)';g.beginPath();g.ellipse(c.x,c.y+1,5,2,0,0,TAU);g.fill();g.fillStyle=c.c;g.beginPath();g.ellipse(c.x,c.y-4,5,3.6,0,0,TAU);g.fill();const hx=c.x+Math.cos(c.a)*4,hy=c.y-(peck?3:8);g.beginPath();g.arc(hx,hy,2.2,0,TAU);g.fill();g.fillStyle='#c0301a';g.fillRect(hx-1,hy-3.2,2,1.6);g.fillStyle='#e0a030';g.fillRect(hx+(Math.cos(c.a)>0?1.6:-3),hy-.5,1.6,1.2);g.restore();});}
   // laundry lines between house fronts
   for(const l of F.lines)add(l.y+2,()=>{g.strokeStyle='rgba(60,40,20,.8)';g.lineWidth=.8;g.beginPath();g.moveTo(l.x,l.y-18);g.quadraticCurveTo(l.x+l.w/2,l.y-14,l.x+l.w,l.y-18);g.stroke();
     l.c.forEach((c,i)=>{const x=l.x+8+i*13,sw=Math.sin(t*2+i)*1.5;g.fillStyle=c;g.fillRect(x+sw*.3,l.y-17,9,10+sw);g.strokeStyle='rgba(30,20,10,.5)';g.strokeRect(x+sw*.3,l.y-17,9,10+sw);});});
