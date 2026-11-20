@@ -2,6 +2,13 @@
 
 A browser strategy game.
 
+### v0.25 — Smooth Haulage (in progress)
+
+- Village loot and unload scenes draw carriers, carts and cargo from screen-scaled sprite rows (about 14 ms → 1 ms per frame); rows are prepared before the scene starts.
+- Carriers accelerate, ease into stops, turn smoothly and lift loads that arc into the cart; carts roll in and out with momentum; idle porters wait beside their cart. All motion is time-based.
+- The campaign camera glides per second rather than per frame, and any drag or wheel takes control back at once.
+- The map's parchment, painted ground and vignette are baked once into cached tiles (same picture, roughly 7 ms less per frame).
+
 ### v0.24 — Power and Patronage
 
 Court favour now funds six visible commissions in **Commerce & Council → Court & government**. Available merit is earned favour minus committed merit; spending it never reduces lifetime rank. Successful petitions earn 8 additional base favour, subject to the existing court-support multiplier.
