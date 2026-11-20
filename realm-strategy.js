@@ -135,7 +135,7 @@ function rsDrawLayers(g){if(!CG)return;const L=rsLayer(),sc=iconScale(),B=bdStat
 // ---- panels
 function rsEl(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;}
 function rsBtn(zh,en,fn,dis){const b=btn(zh,en,()=>{if(dis)return;fn();},'sw-btn'+(dis?' dis':''));return b;}
-function bdPanel(id){const b=bdGet(id),d=bdDef(id),w=rsEl('div','sw-card');const k=bdFaction(b),base=bdActive(b)&&bdBase(b);
+function bdPanel(id){const b=bdGet(id),d=bdDef(id),w=rsEl('div','sw-card');w.dataset.bd=id;const k=bdFaction(b),base=bdActive(b)&&bdBase(b);
   w.appendChild(rsEl('div','sw-h',`🏴 ${Ts(d.zh,d.en)}`));
   if(!bdActive(b)){w.appendChild(rsEl('div','sw-p',Ts(`山寨已平。约${BD.RESPAWN-b.cleared}月后或有余党复聚。`,`Cleared. Stragglers may regroup in about ${BD.RESPAWN-b.cleared} months.`)));return w;}
   const near=bdNear(b,BD.RAID_R),thr=[...near.filter(owned),...near.filter(i=>!owned(i)&&CT[i].kind!=='district')].slice(0,4).map(i=>(owned(i)?'⚑':'')+Tz(CT[i].zh,CT[i].en));
@@ -149,7 +149,7 @@ function bdPanel(id){const b=bdGet(id),d=bdDef(id),w=rsEl('div','sw-card');const
   w.appendChild(rsEl('div','sw-note',Ts('剿灭以驻军战力对寨中兵力×1.25自动结算；招安编为乡兵，宣抚司不喜；纳贡则三月不扰。开局两季山寨只观望不劫掠。','Suppression is resolved from garrison power against the band ×1.25 behind its palisade. Amnesty makes the band a militia company (the Commission dislikes it). Tribute buys three quiet months. For the first two seasons the bands only watch and do not raid.')));return w;}
 function sfPanel(){const S=sfState(),w=rsEl('div','sw-card');w.appendChild(rsEl('div','sw-h',Ts('宋廷诸派','The Song factions')));
   w.appendChild(rsEl('div','sw-note',Ts('西北宋军并非一体。各路将门与宣抚司各有所好、各有宿怨；与一派交好，其对头便会疏远。','The northwest Song is not one body. Each circuit\'s military family and the Pacification Commission have their own interests and feuds; courting one cools its rivals.')));
-  for(const k in SF_DEF){const F=SF_DEF[k],v=S.rel[k],m=sfMood(v),ts=sfTowns(k),c=rsEl('div','sw-fac');c.style.borderLeftColor=F.col;
+  for(const k in SF_DEF){const F=SF_DEF[k],v=S.rel[k],m=sfMood(v),ts=sfTowns(k),c=rsEl('div','sw-fac');c.dataset.sf=k;c.style.borderLeftColor=F.col;
     const riv=Object.entries(SF_RIV[k]||{}).map(([o,x])=>`<span style="color:${x<0?'#ff9a80':'#a8e090'}">${x<0?'⚔':'🤝'} ${Ts(SF_DEF[o].zh,SF_DEF[o].en)}</span>`).join(' ');
     c.innerHTML=`<div class="sw-fh"><b style="color:${F.col}">${Ts(F.zh,F.en)}</b><span>${Ts(F.lead[0],F.lead[1])}</span></div>
      <div class="sw-bar"><i style="left:50%;width:0"></i><u style="left:${v>=0?50:50+v/2}%;width:${Math.abs(v)/2}%;background:${m[2]}"></u></div>
