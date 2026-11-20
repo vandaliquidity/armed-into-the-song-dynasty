@@ -60,3 +60,39 @@ function marketFold(){const d=$('cDynasty');if(!d)return;const rows=[...d.queryS
   const mk=document.createElement('span');mk.className='sw-mk';mk.style.cssText='color:#f4d27a;font-size:12px';h.appendChild(mk);h.style.cursor='pointer';const open=MKT_OPEN[key]??(i<3);set(open);
   h.onclick=()=>{MKT_OPEN[key]=btns[0].style.display==='none';set(MKT_OPEN[key]);};});}
 {const old=dynastyUI;dynastyUI=function(){const r=old.apply(this,arguments);try{marketFold();}catch(e){}return r;};}
+// 9. Smaller bugs.
+// Battle cards (basic tutorial, Ch.1 lesson) sit left of the tactics panel and below the centre banner; the lesson's current step is shown in full.
+function cardSpot(w){const tb=document.querySelector('.tb-header')?.parentElement;let right=VW-14;if(tb){const r=tb.getBoundingClientRect(),k=VW/Math.max(1,innerWidth);if(r.width&&r.height&&getComputedStyle(tb).display!=='none'&&r.top<innerHeight*.6)right=Math.min(right,r.left*k-10);}
+  return {x:Math.max(10,right-w),top:Math.round(VH*.2+36)};}
+{const old=drawTutorial;drawTutorial=function(){const w=Math.min(VW-40,560),s=cardSpot(w),dx=s.x-(VW-w-14),dy=Math.max(0,s.top-Math.min(150,VH-(34+4*(LANG==='both'?34:24)+58)-240));
+  ctx.save();ctx.translate(dx,dy);try{return old.apply(this,arguments);}finally{ctx.restore();}};}
+function wrapLines(s,maxW,font){ctx.font=font;const out=[];let cur='';const parts=/[\u4e00-\u9fff]/.test(s)?[...s]:s.split(/(?<=\s)/);
+  for(const p of parts){if(ctx.measureText(cur+p).width>maxW&&cur){out.push(cur.trimEnd());cur=p.trimStart();}else cur+=p;}if(cur)out.push(cur);return out;}
+lesCard=function(){const L=B.les,S=LLS.steps;if(B.tut&&!B.tut.done)return;const both=LANG==='both',rh=both?30:21,prep=S.slice(0,6),bat=S.slice(6);
+  const w=Math.min(VW-40,520),sp=cardSpot(w),x=sp.x,F='"Segoe UI","Microsoft YaHei",sans-serif';const map={deadeye:'marks',cry:'lead',revive:'medic',flare:'comms'};
+  const rows=[...prep.map((s,k)=>({s,done:k<L.i,cur:k===L.i,col:'#fff'})),...bat.map(s=>({s,done:!!L.used[map[s.id]],cur:L.hint===s.id,col:'#ffd060',hint:1}))];
+  const short=(a,n)=>a.length>n?a.slice(0,n-1)+'…':a;let extra=0;
+  for(const r of rows){if(!r.cur)continue;const zh=LANG==='en'?r.s.en:r.s.zh;r.zl=wrapLines(zh,w-40,`bold 13px ${F}`);r.el=both?wrapLines(r.s.en,w-40,`9.4px ${F}`):[];extra+=(r.zl.length-1)*15+Math.max(0,r.el.length-1)*11;}
+  const h=36+rows.length*rh+12+extra,y=Math.max(60,Math.min(sp.top,VH-h-200));
+  panel(x,y,w,h,.86);ctx.strokeStyle='#f0c060';ctx.lineWidth=2;ctx.strokeRect(x,y,w,h);txt(Tz(LLS.title.zh,LLS.title.en),x+12,y+22,15,'#f4d27a','left','bold ');
+  if(L.slow)txt('⏱ '+Tz(LLS.slow.zh,LLS.slow.en),x+w-12,y+22,13,'#9fe0ff','right','bold ');
+  let yy=y+44;for(const r of rows){const m=r.done?'✔ ':r.cur?(r.hint?'❗ ':'▶ '):'· ',c=r.done?'#8fd080':r.cur?r.col:'#998';
+    if(r.cur){r.zl.forEach((l,i)=>txt((i?'   ':m)+l,x+14,yy+i*15,13,c,'left','bold '));const y2=yy+(r.zl.length-1)*15;r.el.forEach((l,i)=>txt('   '+l,x+14,y2+12.4+i*11,9.4,'rgba(240,226,196,.7)'));yy+=rh+(r.zl.length-1)*15+Math.max(0,r.el.length-1)*11;}
+    else{ctx.save();ctx.beginPath();ctx.rect(x,yy-16,w-8,rh);ctx.clip();dual(m+short(LANG==='en'?r.s.en:r.s.zh,LANG==='en'?74:38),'   '+short(r.s.en,80),x+14,yy,11.5,c);ctx.restore();yy+=rh;}}};
+// Promotion choices: no rank offers the same ability twice (Old Xie's first rank was Overwatch/Overwatch; Su's was Rally/Rally).
+{for(const m in PERKS)for(const r in PERKS[m]){const c=PERKS[m][r];if(c.length===2&&c[0].t===c[1].t){const alt={marks:'volley',medic:'drums',lead:'drums',eng:'volley',comms:'drums'}[m]||'rally';c[1].t=alt===c[0].t?'rally':alt;}}}
+// Ch.2: the Shi clan only joins if you actually rescued it; otherwise it stays free and the log says so.
+{const old=campAfterStory;campAfterStory=function(i,win){const missed=i===1&&win&&typeof B!=='undefined'&&B&&!B.rescued;if(!missed)return old.apply(this,arguments);
+  const oc=claimTerr,ev=CL.ev.ch2win;claimTerr=function(id){if(id==='shijia')return;return oc.apply(this,arguments);};CL.ev.ch2win={zh:'秦州、清水县准许互市；石家部未获救援，仍未归附',en:'Qinzhou and Qingshui grant trade; the Shi clan was not rescued and has not joined'};
+  try{return old.apply(this,arguments);}finally{claimTerr=oc;CL.ev.ch2win=ev;}};}
+{const g=LORE.chapters?.[1]?.goal;if(g&&!/bonus|奖励/.test(g.en)){g.zh=g.zh.replace('；沿途救援石家部','；（附加）沿途救援石家部，他们才会归附');g.en=g.en.replace('; rescue the Shi clan settlement on the way','; bonus: rescue the Shi clan settlement on the way, or it will not join you');}}
+// Chapter map: once a chapter is won, the panel moves on to the next one even if you had picked a chapter by hand.
+let MAP_SEEN_NEXT=null;
+{const old=showMap;showMap=function(){try{if(CAMP&&MAP_SEEN_NEXT!==null&&CAMP.next!==MAP_SEEN_NEXT&&SEL_CH<CAMP.next)MAP_PICKED=0;MAP_SEEN_NEXT=CAMP?CAMP.next:null;}catch(e){}return old.apply(this,arguments);};}
+// Battle: squad name tags that would overlap are lifted into a small stack instead of printing on top of each other.
+let TAG_FRAME=-1,TAG_CUR=null;
+function tagLayout(){if(TAG_FRAME===SPR_FRAME||!B)return;TAG_FRAME=SPR_FRAME;const us=B.units.filter(u=>!u.dead&&(u.kind==='squad'||u.def?.boss||u.name)).sort((a,b)=>a.y-b.y||a.x-b.x);const put=[];
+  for(const u of us){const w=(u.sd?Tz(u.sd.zh,u.sd.en):u.name?Tz(u.name[0],u.name[1]):Tz(u.def.zh,u.def.en)).length*(LANG==='en'?6.2:11)+6;let dy=0;
+    for(let k=0;k<6;k++){const hit=put.some(p=>Math.abs(p.x-u.x)<(p.w+w)/2&&Math.abs((p.y+p.dy)-(u.y+dy))<12);if(!hit)break;dy-=12;}u._tagDy=dy;put.push({x:u.x,y:u.y,w,dy});}}
+{const P=CanvasRenderingContext2D.prototype;for(const f of ['fillText','strokeText']){const o=P[f];P[f]=function(s,x,y,...a){if(TAG_CUR&&TAG_CUR._tagDy&&this.font.startsWith('bold 11px'))y+=TAG_CUR._tagDy;return o.call(this,s,x,y,...a);};}}
+{const old=drawUnit;drawUnit=function(u){try{tagLayout();}catch(e){}TAG_CUR=u;try{return old.apply(this,arguments);}finally{TAG_CUR=null;}};}
