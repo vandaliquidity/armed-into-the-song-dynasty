@@ -67,10 +67,10 @@ function vlDraw(add,s,t,dt){vlLoad();const A=VL.img.ward,id=CVIL.id,lv=hospLv(id
     const used=W.pts.filter(p=>p.slot>=0&&!p.arr).length,cap=hospCap(id),label=`${Tz('医馆','Hospital')}${lv?' Lv'+lv:''} · ${Tz('床','beds')} ${Math.min(used*VL.FIG,woundedAt(id))}/${cap}`;
     g.font='bold 12px "Noto Serif SC",serif';const w=g.measureText(label).width+14;g.fillStyle='rgba(70,28,14,.9)';g.fillRect(X+8,Y+M.oy-8,w,19);g.strokeStyle='#d9a54a';g.lineWidth=1;g.strokeRect(X+8,Y+M.oy-8,w,19);g.fillStyle='#ffe7a0';g.textAlign='left';g.fillText(label,X+15,Y+M.oy+6);});
   CVIL.hot.push({r:[X,Y+M.oy-10,X+M.W,Y+M.H],t:`${Ts('医馆','Hospital')}${lv?' Lv'+lv:` · ${Ts('未建','not built')}`}\n${Ts('伤兵','Wounded')} ${woundedAt(id)} · ${Ts('床位','Beds')} ${hospCap(id)}\n${Ts('每季康复率','Recovery per season')} ${Math.round(HEALR[lv]*100)}%${woundedAt(id)>hospCap(id)?`\n${Ts('超出床位者在外候诊，按无医馆疗效','Overflow waits outside at the no-hospital rate')}`:''}`});
-  const PR=(p,x,y,fr)=>vpPatient(g,p.type,x,y,fr);   // t255: one people standard (village-people.js)
+  const PR=(p,x,y,fr)=>typeof vpPatient==='function'&&vpPatient(g,p.type,x,y,fr);   // t255: one people standard (village-people.js)
   // physician + helper move between the occupied beds; the apprentice tends the stove
   const inbed=W.pts.filter(p=>!p.arr),occ=inbed.filter(p=>p.slot>=0).map(p=>({p,q:vlPos(id,p,lv)}));const tend=new Set();
-  if(lv){{const dw=(x,y,act,dir,ph)=>vpWorker(g,x,y,act,dir,Math.floor(t*5+ph));
+  if(lv){{const dw=(x,y,act,dir,ph)=>typeof vpWorker==='function'&&vpWorker(g,x,y,act,dir,Math.floor(t*5+ph));
     for(const [sx,sy,act,dir] of M.stations)add(Y+M.oy+sy,()=>dw(X+sx,Y+M.oy+sy,act,dir,sx));
     if(occ.length){for(const [k,act,per] of [[0,'count',7],[1,'pour',5.3]]){if(k&&occ.length<2)break;const i=(Math.floor(t/per)+k*Math.ceil(occ.length/2))%occ.length,o=occ[i];tend.add(o.p.fid);const x=o.q.x+(k?-26:26),y=o.q.y+12;add(y,()=>dw(x,y,act,k?0:2,k*3));}}}}
   // patients: breathing in bed, stirring when tended, sitting up when nearly healed; hover names

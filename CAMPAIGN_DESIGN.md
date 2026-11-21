@@ -2,6 +2,25 @@
 
 Implemented 2026-11-18, v0.22. Three opening missions continue into 27 new chapters. Campaign quantities, schematic geography and the 1120 start are gameplay accommodations. The source is the unfinished serial by 茶根儿; the documented reading ledger reaches IV:165. The last act below connects to the game's existing historical crisis and does not claim a novel ending.
 
+## v0.51 mission detail update — 21 November 2026
+
+Every continuing chapter now has authored orders, stages that cover each existing goal exactly once, contextual help, an optional feat and a persistent acceptance honour. The next two chapters’ requirements and cargo are previewable for forward staging. These stages organise real work; they add no separate phase locks. Chapters with choices show their effects before beginning.
+
+| Mission | Detailed execution | Optional feat | Concrete result beyond ordinary chapter merit |
+| --- | --- | --- | --- |
+| IV County reform | Audit 400 fit soldiers, upgrade Qinghe barracks to level 2, retain the local fee, prepare one month | Finish training 100 fresh soldiers after starting | Existing Longcheng administration/garrison transfer and +2 command companies |
+| V Stronghold | Stage at or next to Longcheng, assault distinct fortress posts, regroup against the surviving enemy pool after losses | Manual victory with at most 20% battle casualties | Gentry +3 |
+| VI Living town | Level-2 Longcheng market, Qinghe hospital, restaurant and actual supply chain | Also establish a brewery and charcoal kiln | Existing prosperity increase |
+| VII Veteran curriculum | Keep 200 experienced soldiers, 400 grain and 100 leather armour; preserve rank through refits | Field at least 100 crossbowmen and 100 infantry | Existing +2 command companies |
+| VIII Capital concern | Build wine/beauty enterprises, gather a consignment locally and deliver it to Kaifeng | Receive 60 silver of new ordinary export payments after starting | Six-month Qinghe market charter; customer budgets and support requirements apply |
+| IX Royal road | Reach the three-person party and physically escort survivors to extraction | Bring all three home alive in a successful rescue | Court +6; actual rescue casualties persist |
+
+Later chapters use the same structured operation model with individually authored orders, stages and feats, including the six-month concurrent rearmament plan, fixed-origin Youzhou return convoy, medical branches and post-siege alternatives. Public audit earns a real twelve-month market charter and gentry support; evidence registration earns court support and merit. Military occupation trades gentry support for two additional company slots. Memorial compensation improves gentry support; delegated clinicians improve relief readiness.
+
+Acceptance grants five base favour; an earned feat adds eight base favour and two Qinghe prosperity. The existing court multiplier applies. Reserve checks subtract normal chapter fees before awarding a surplus feat. New-work counters use a chapter-start baseline. Old active saves establish that baseline on load, and completed old chapters are never retrospectively awarded. Battlefield feats count actual casualties or extracted survivors and ignore duplicate callbacks.
+
+There are three bespoke continuing Chronicle battle scenarios, not 27 separate authored maps. New siege-relief and withdrawing-convoy encounters are recommended next; see [the balance review](CAMPAIGN_REVIEW.md).
+
 ## The campaign loop
 
 Read a short council scene, start the current chapter when ready, work toward its visible objectives in the actual campaign, then accept its consequences. Construction, barracks training, manufacturing and transport run through the existing systems. Starting a chapter never grants its reward. Completion pays explicit local costs once. A chapter with a waiting period starts that clock only when the player begins it.

@@ -2,6 +2,14 @@
 
 A browser strategy game.
 
+### v0.51 — Orders and Consequences
+
+The 27 continuing Chronicle chapters now have detailed execution orders, named stages, contextual action shortcuts and one optional feat each. Missions preview the next two chapters’ actual requirements and cargo routes so ordinary transfers, construction and manufacturing can be prepared early. A live historical countdown keeps Jingkang visible. Chapter choices present their consequences before the next-chapter shortcut can lock a branch.
+
+Newly completed chapters earn five base court merit; an optional feat adds eight base merit and two Qinghe prosperity. Feats measure actual new training/manufacture, delivered sales, battlefield preservation, full rescue extraction or the stated reserves after fees. Rewards and baselines survive saves and cannot pay twice. The capital concern now grants six months of export privileges; the stronghold, royal rescue and signal station have real support/readiness effects. Later audit, occupation, compensation and medical choices produce explicit outcomes. Existing progress and opening support remain intact; old completions are not retroactively paid.
+
+See [campaign implementation](CAMPAIGN_DESIGN.md) and [development/balance audit and priorities](CAMPAIGN_REVIEW.md). There are still three specifically authored continuing Chronicle battle scenarios; other conquest chapters use the regular campaign battle system.
+
 ### v0.25 — Smooth Haulage (in progress)
 
 - Village loot and unload scenes draw carriers, carts and cargo from screen-scaled sprite rows (about 14 ms → 1 ms per frame); rows are prepared before the scene starts.
