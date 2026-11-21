@@ -51,14 +51,14 @@ function frLoot(id,men,h){const s=CG.T[id],L={grain:0,silver:0,horse:0,hide:0,ca
   if(s.own==='qh'){L.grain=take(id,'grain',Math.round(Math.min((s.st.grain||0)*.35,men*2)),false)||0;L.horse=take(id,'horse',Math.round(Math.min((s.st.horse||0)*.4,men*.1)),false)||0;L.hide=take(id,'hide',Math.round(Math.min((s.st.hide||0)*.4,men*.3)),false)||0;
     if(id===HOME||CT[id].kind!=='village'){L.silver=Math.round(Math.min((CAMP.res.silver||0)*.05,70));CAMP.res.silver-=L.silver;}
     const ks=Object.keys(s.bld||{}).filter(k=>k!=='wall'&&s.bld[k]>0).sort();if(ks.length&&h<.6){L.burn=ks[Math.floor(h*ks.length/.6)%ks.length];s.bld[L.burn]--;}s.raided=1;}
-  else{L.grain=Math.round(men*1.2);L.silver=Math.round(10+(s.prosp||0)*.4);L.horse=Math.round(men*.05);}
-  L.cap=Math.round((s.pop||0)*.03);s.pop=Math.max(50,(s.pop||0)-L.cap);s.prosp=Math.max(0,(s.prosp||0)-10);if(s.own==='song'&&s.songGarrison)s.songGarrison.men=Math.round(s.songGarrison.men*.85);return L;}
+  else{for(const [k,n]of Object.entries({grain:Math.round(men*1.2),silver:Math.round(10+(s.prosp||0)*.4),horse:Math.round(men*.05)})){L[k]=Math.min(s.st?.[k]||0,n);if(s.st)s.st[k]=(s.st[k]||0)-L[k];}}
+  L.cap=Math.min(Math.max(0,(s.pop||0)-50),Math.round((s.pop||0)*.03));s.pop=Math.max(0,(s.pop||0)-L.cap);s.prosp=Math.max(0,(s.prosp||0)-10);if(s.own==='song'&&s.songGarrison)s.songGarrison.men=Math.round(s.songGarrison.men*.85);return L;}
 function frRaid(F,tr,src,id,men,lines,R){const s=CG.T[id],D=frDef(id),h1=siH('fd',id,F.mo,R),h2=siH('fa',src,F.mo,R),mo=F.mo,T=FR_TRIBE[tr],nm=CT[id];
-  const A=men*(.85+.3*h2)*1.25,Dv=D.v*(.85+.3*h1),b={id:F.id++,tr,src,to:id,men,mo,own:s.own,k:s.own==='song'?sfOf(id):null};F.stats.raids++;
+  men=Math.min(men,typeof frontierAvailable==='function'?frontierAvailable(F,tr,src):men);if(men<40)return null;const A=men*(.85+.3*h2)*1.25,Dv=D.v*(.85+.3*h1),b={id:F.id++,tr,src,to:id,men,mo,own:s.own,k:s.own==='song'?sfOf(id):null};F.stats.raids++;
   if(Dv>=A){b.res='repelled';b.men=Math.round(men*.6);if(tr==='xia')CG.T[src].str=Math.max(0,CG.T[src].str-Math.round(men*.4));else F.camps[src].men=Math.max(60,F.camps[src].men-Math.round(men*.4));F.stats.repelled++;
     if(s.own==='qh'){const T2=stState();T2.qren=(T2.qren||0)+3;CAMP.res.rep=(CAMP.res.rep||0)+1;for(const u of unitsAt(id))u.men=Math.max(10,Math.round(u.men*.97));}else if(s.own==='song'&&s.songGarrison)s.songGarrison.men=Math.round(s.songGarrison.men*.92);
     lines.push(['🛡',Ts(`${T.zh2}${men}来掠${nm.zh}，为守军击退`,`${men} ${T.en2} rode on ${nm.en} and were driven off by the garrison`)]);}
-  else{b.res='looted';b.loot=frLoot(id,men,siH('fl',id,mo,R));F.stats.looted++;if(tr==='qiang')F.camps[src].men=Math.min(900,F.camps[src].men+Math.round(men*.08));else F.str.xia+=Math.round(men*.1);
+  else{b.res='looted';b.loot=frLoot(id,men,siH('fl',id,mo,R));F.stats.looted++;if(typeof frontierRaidLoot==='function')frontierRaidLoot(F,tr,src,b.loot);
     const L=b.loot,gz=[],ge=[];if(L.grain){gz.push(`粮${L.grain}`);ge.push(`${L.grain} grain`);}if(L.silver){gz.push(`银${L.silver}`);ge.push(`${L.silver} silver`);}if(L.horse){gz.push(`马${L.horse}`);ge.push(`${L.horse} horses`);}if(L.hide){gz.push(`皮${L.hide}`);ge.push(`${L.hide} hides`);}if(L.cap){gz.push(`掳走${L.cap}口`);ge.push(`${L.cap} captives`);}
     const dn=L.burn&&typeof DEV!=='undefined'&&DEV[L.burn]?DEV[L.burn]:{zh:L.burn,en:L.burn},bz=L.burn?`，焚其${dn.zh}`:'',be=L.burn?`, burned the ${String(dn.en).toLowerCase()}`:'';
     lines.push(['🔥',Ts(`${T.zh2}${men}劫掠${nm.zh}：${gz.join('、')}${bz}`,`${men} ${T.en2} looted ${nm.en}: ${ge.join(', ')}${be}`)]);}
@@ -80,9 +80,9 @@ function frPlan(F,tr,lines){const mo=F.mo,srcs=tr==='xia'?frXiaSources():FR_CAMP
   for(const s of srcs){const start=tr==='xia'?s:frNearTown(s);if(!start)continue;for(const t of seats){const p=frPath(start,t,tr);if(!p)continue;const path=tr==='xia'?p:[s,...p];const L=path.length-1;if(L<1||L>5)continue;
       cols.push({src:s,to:t,path,sc:(CT[t].pop||1000)/1000/(1+frDef(t).v/400)/L+siH('frc',s,t,mo)*.3});}}
   if(!cols.length)return null;cols.sort((a,b)=>b.sc-a.sc);const pick=[],usedS=new Set(),usedT=new Set();
-  for(const c of cols){if(pick.length>=(F.str[tr]>(tr==='xia'?4500:1800)?3:2))break;if(usedS.has(c.src)||usedT.has(c.to))continue;usedS.add(c.src);usedT.add(c.to);pick.push(c);}
-  const men=Math.round(F.str[tr]*.65);F.str[tr]-=men;const T=FR_TRIBE[tr];
-  const inv={tr,stage:'scout',mo0:mo,men,cols:pick.map((c,i)=>({id:i+1,src:c.src,to:c.to,path:c.path,step:0,men:Math.round(men/pick.length),state:'wait'})),relief:{},beat:0,qhBeat:0};
+  for(const c of cols){if(pick.length>=(F.str[tr]>(tr==='xia'?4500:1800)?3:2))break;if(usedS.has(c.src)||usedT.has(c.to)||typeof frontierAvailable==='function'&&frontierAvailable(F,tr,c.src)<250)continue;usedS.add(c.src);usedT.add(c.to);pick.push(c);}
+  if(!pick.length)return null;const share=Math.round(F.str[tr]*.65/pick.length);for(const c of pick)c.funded=typeof frontierWithdraw==='function'?frontierWithdraw(F,tr,c.src,share):share;const men=pick.reduce((n,c)=>n+c.funded,0);F.str[tr]=Math.max(0,F.str[tr]-men);const T=FR_TRIBE[tr];
+  const inv={tr,stage:'scout',mo0:mo,men,cols:pick.map((c,i)=>({id:i+1,src:c.src,to:c.to,path:c.path,step:0,men:c.funded,state:'wait'})),relief:{},beat:0,qhBeat:0};
   inv.warn=[...new Set(inv.cols.map(c=>c.path[tr==='xia'?1:1]).filter(Boolean))];F.inv=inv;F.stats.inv++;
   lines.push(['👁',Ts(`边地哨探回报：${T.zh}游骑屡现于${inv.warn.map(id=>CT[id]?.zh||'').join('、')}一带`,`Border scouts report ${T.en} outriders around ${inv.warn.map(id=>CT[id]?.en||'').join(', ')}`)]);return inv;}
 function frRefugees(F,id,n,lines){const nb=CADJ[id].filter(x=>CG.T[x]&&frHit(CG.T[x].own)&&x!==id);if(!nb.length||n<10)return;const per=Math.round(n/nb.length);
@@ -149,7 +149,7 @@ function frRepelled(x,lines){const F=frState(),inv=F.inv,T=stState(),S=siState()
 // ---- the month
 function frMonth(lines){if(!CG||CG.over)return;const F=frState(),mo=campaignMonth();if(F.mo===mo&&F.ran)return;F.mo=mo;F.ran=1;
   F.bands=F.bands.filter(b=>b.mo>=mo-0);F.bands=[];F.ref=F.ref.filter(r=>r.mo>=mo);F.ref=[];F.hitTown=F.hitTown||[];
-  F.str.xia=Math.min(7000,F.str.xia+80);F.str.qiang=Math.min(3000,F.str.qiang+35);for(const c of FR_CAMPS){const C=F.camps[c.id];C.men=Math.min(900,C.men+15);}
+  if(typeof frontierBudgetMonth==='function')frontierBudgetMonth(F);
   frInvMonth(F,lines);if(mo>=FR.START){frRaids(F,'xia',lines);frRaids(F,'qiang',lines);}frInvTrigger(F,'xia',lines);frInvTrigger(F,'qiang',lines);frRipple(F,lines);
   F.log.unshift({mo,raids:F.bands.length,looted:F.bands.filter(b=>b.res==='looted').length});F.log.length=Math.min(F.log.length,24);if(typeof MP!=='undefined'&&MP)MP.ver=(MP.ver||0)+1;}
 {const old=siMonth;siMonth=function(lines){const r=old.apply(this,arguments);try{const F=frState();F.ran=0;frMonth(lines);}catch(e){console.error(e);}return r;};}

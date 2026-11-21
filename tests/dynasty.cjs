@@ -4,8 +4,8 @@ const {chromium}=require('playwright'),fs=require('node:fs');const {startServer,
  const checks=await p.evaluate(()=>{const out=[],ok=(v,m)=>{if(!v)throw Error(m);out.push(m);};coachSave({off:1,seen:{}});LOGI.on=false;setLang('en');__sw.cstart();CG.supplyAuto=false;
  const s=CG.T[HOME],d=dynastyState();
  const tick=()=>{if(CG.month===3){CG.turn++;CG.month=1;}else CG.month++;CG.phase=0;dynastyTick();};window.dyTick=tick;
- ok(CL.terr.length===121&&CL.terr.filter(t=>t.vacant&&CG.T[t.id].own==='free').length===16,'sixteen additional unadministered settlements can be settled without changing existing ownership');
- ok(Object.keys(bfsDist(HOME,100)).length===121&&NODES.some(n=>n.terr==='jinzhou_mines'&&n.k==='sulphur'),'new settlements and Shanxi sulphur supply connect to the actual road network');
+ ok(CL.terr.length===128&&CL.terr.filter(t=>t.vacant&&CG.T[t.id].own==='free').length===16,'sixteen additional unadministered settlements can be settled without changing existing ownership');
+ ok(Object.keys(bfsDist(HOME,100)).length===128&&NODES.some(n=>n.terr==='jinzhou_mines'&&n.k==='sulphur'),'new settlements and Shanxi sulphur supply connect to the actual road network');
  const inventory=JSON.stringify(s.st);dynastyInit();dynastyInit();ok(JSON.stringify(s.st)===inventory,'economy migration and repeated UI access do not grant extra supplies');
  s.st.gold=20;CAMP.res.silver=0;const wood=s.st.timber;ok(dynastyBuild(HOME,'brewery')&&s.st.gold===11&&s.st.timber===wood-50,'gold funds a real brewery by exchanging only the silver shortfall');
  const gold=s.st.gold;ok(!dynastyBuild(HOME,'brewery')&&s.st.gold===gold,'duplicate construction cannot charge twice');

@@ -129,11 +129,7 @@ function dynastyTick(){
  if(d.research&&owned(d.research.id)&&CG.T[d.research.id].businesses.arsenal?.level&&--d.research.left<=0){d.research=null;d.siegecraft=true;dynastyNote('试制铜炮研究完成。','Prototype cannon research completed.');}
  for(const [id,s]of Object.entries(CG.T)){
   if(s.own==='song'){
-   const m=d.markets[id],scale=CT[id].kind==='city'?3:1;if(!m)continue;m.budget=Math.min(600,m.budget+35*scale);m.demand.wine=Math.min(60,m.demand.wine+12*scale);m.demand.cosmetics=Math.min(40,m.demand.cosmetics+8*scale);realmMarketMonth(id,scale);
-   s.st.grain=Math.min(900,s.st.grain+35*scale);s.st.oil=Math.min(180,s.st.oil+8*scale);s.st.herbs=Math.min(180,s.st.herbs+5*scale);s.st.nitre=Math.min(180,s.st.nitre+4*scale);s.st.wine=Math.max(0,s.st.wine-12*scale);s.st.cosmetics=Math.max(0,s.st.cosmetics-8*scale);
-   for(const n of NODES.filter(n=>n.terr===id))for(const [k,v]of Object.entries(NODEK[n.k].y)){if(RAW.includes(k))s.st[k]=Math.min(1200,(s.st[k]||0)+Math.ceil(v/3));}
-   for(const k of ['spear','bow','xbow','armL'])s.eq[k]=Math.min(200,s.eq[k]+(k==='xbow'?8:15));
-   const near=dynastyNearest(id,3);if(near){const host=CG.T[near.to],business=Object.values(host.businesses).filter(b=>b.level&&!b.paused).length;d.influence[id]=Math.min(100,dynastyInfluence(id)+Math.min(12,2+business+Math.floor(host.prosp/25)+(host.bld.hosp||0)));}
+   if(typeof economyMarketMonth==='function')economyMarketMonth(id);
   }
   if(!owned(id))continue;
   s.accountsActive=!!(s.accounts&&s.st.paper>=2);if(s.accountsActive)s.st.paper-=2;
@@ -142,7 +138,7 @@ function dynastyTick(){
    if(!b.level||b.paused)continue;const p=dynastyProduction(id,k);if(p.blocked||p.scale<=0||!dynastyCanPay(id,{silver:p.wage})){b.last=p.blocked?Tz('待试炮研究','Awaiting cannon research'):p.scale<=0?Tz('缺原料或劳力：','Missing inputs or workers: ')+Object.entries(p.input).filter(([r,n])=>s.st[r]<n).map(([r,n])=>Tz(...RES_N[r])+' '+Math.max(0,n-s.st[r])).join(' · '):Tz('缺工资','Wages unavailable');continue;}
    const out=Object.fromEntries(Object.entries(p.output).map(([r,n])=>[r,Math.floor(n*p.scale)]));if(!Object.values(out).some(Boolean)){b.last=Tz('原料不足一批','Inputs below one batch');continue;}
    dynastyPay(id,{silver:p.wage});d.expenses+=p.wage;for(const [r,n]of Object.entries(p.input))s.st[r]-=Math.ceil(n*p.scale);
-   for(const [r,n]of Object.entries(out))if(r==='silver'){CAMP.res.silver+=n;d.income+=n;}else{const box=EQ.includes(r)?s.eq:s.st;box[r]=(box[r]||0)+n;}
+   for(const [r,n]of Object.entries(out))if(r==='silver'){if(k==='restaurant'&&typeof economyRestaurantSale==='function')economyRestaurantSale(id,n);CAMP.res.silver+=n;d.income+=n;}else{const box=EQ.includes(r)?s.eq:s.st;box[r]=(box[r]||0)+n;}
    b.last=stockTxt(out);b.made=out;s.prosp=Math.min(100,s.prosp+.35);if(k==='restaurant'&&p.scale>=.5)s.pop+=2;
   }
   const customers=Object.keys(d.markets).filter(to=>CG.T[to].own==='song'&&supplyPath(id,to)?.length<=5).sort((a,b)=>supplyPath(id,a).length-supplyPath(id,b).length);

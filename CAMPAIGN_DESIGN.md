@@ -2,6 +2,16 @@
 
 Implemented 2026-11-18, v0.22. Three opening missions continue into 27 new chapters. Campaign quantities, schematic geography and the 1120 start are gameplay accommodations. The source is the unfinished serial by 茶根儿; the documented reading ledger reaches IV:165. The last act below connects to the game's existing historical crisis and does not claim a novel ending.
 
+## v0.52 consequence, economy and frontier update — 21 November 2026
+
+The five companions are detached from command and all village passives after defeat. Stretcher parties follow friendly roads to Qinghe one link per month; convalescence begins only on admission and lasts ten months after defeat, five after a victory ending with the companion down. Each loses one grade, never below zero, and must earn the lost grade again. A road cut or occupied home delays care. Recruited officers have permanent death when their actual marked troop figure is killed or their defeated formation loses at least 35% of its men. Remaining ordinary officers can lead manual battles using an existing troop figure and a modest rally skill. Companies preserve names, battle records and merge lineages; eliminated companies and dead officers enter memorial records.
+
+Chapter XI now includes a two-depot relief defence: preserve both granaries for 110 seconds and establish a continuous twelve-second beacon hold. A destroyed depot burns ten percent of the actual home grain reserve once. Chapter XXV reserves 150 grain at Youzhou before a fighting withdrawal; a vulnerable ox cart must cross the bridge and reach extraction. Victory dispatches the same cargo to Linhe. Blocked roads retain the manifest for later dispatch without a second payment; defeat loses the reserved grain. The hostile armies are withdrawn from occupied Xia garrisons. Existing active saves with the corridor consignment already dispatched retain their progress.
+
+Jin has six persistent schematic forward camps, finite starting armies, workshops, paid recruitment and monthly provisions. Historical columns assemble from real camp reserves, with other-camp reinforcements travelling before departure. Independent Jin and Xia columns contest a connected border. A paid frontier trade agreement permits finite-stock purchases, carried along actual roads; hostility blocks delivery. Original Blender meshes and an eight-direction sprite atlas distinguish Jin from Xia. The map now has 128 connected sites, including a Xia frontier outpost; it is not an exact historical border reconstruction.
+
+Restaurant spending is limited by local households and real traffic. Regional merchant contracts reserve finite buyer funds and goods, then pay upon arrival. Song market arsenals manufacture from actual materials; opening the UI cannot restock them. Xia/Qiang raids and invasions spend actual local manpower and equipment; difficulty changes decisions rather than adding invisible troops. Prosperity stages require 45/65/80 prosperity, 1/3/5 supplied enterprises and 100 local grain. Town fronts, an academy, lanterns and crowds appear on existing plots and decline with shortages.
+
 ## v0.51 mission detail update — 21 November 2026
 
 Every continuing chapter now has authored orders, stages that cover each existing goal exactly once, contextual help, an optional feat and a persistent acceptance honour. The next two chapters’ requirements and cargo are previewable for forward staging. These stages organise real work; they add no separate phase locks. Chapters with choices show their effects before beginning.
@@ -19,7 +29,7 @@ Later chapters use the same structured operation model with individually authore
 
 Acceptance grants five base favour; an earned feat adds eight base favour and two Qinghe prosperity. The existing court multiplier applies. Reserve checks subtract normal chapter fees before awarding a surplus feat. New-work counters use a chapter-start baseline. Old active saves establish that baseline on load, and completed old chapters are never retrospectively awarded. Battlefield feats count actual casualties or extracted survivors and ignore duplicate callbacks.
 
-There are three bespoke continuing Chronicle battle scenarios, not 27 separate authored maps. New siege-relief and withdrawing-convoy encounters are recommended next; see [the balance review](CAMPAIGN_REVIEW.md).
+There are five bespoke continuing Chronicle battle scenarios, not 27 separate authored maps. The siege-relief and withdrawing-convoy encounters join the three earlier scenarios; see [the balance review](CAMPAIGN_REVIEW.md).
 
 ## The campaign loop
 

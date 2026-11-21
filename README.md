@@ -2,13 +2,25 @@
 
 A browser strategy game.
 
+### v0.52 — People, Power and Peril
+
+Defeat now leaves a lasting absence. The five companions travel by stretcher to Qinghe and rest for ten monthly turns after arrival following a defeat, or five if still down at the end of a victory. Each loses one grade, with a floor at zero. Blocked roads and an occupied Qinghe delay care. Recruited officers die permanently when their battlefield figure is killed, or in a defeated formation losing at least 35% of its soldiers. Living recruited officers can command while companions recover. Named companies retain battle histories and absorbed lineages; fallen officers and destroyed companies have memorial records.
+
+Two more authored Chronicle encounters bring the total to five: defend two grain depots while raising a relief beacon, and withdraw a vulnerable ox cart across a bridge. The latter reserves actual grain before battle and dispatches that same cargo onto the campaign road after extraction. These encounters use troops withdrawn from real hostile settlements; earlier conquests can avert the threat.
+
+The expanded 128-settlement world includes six persistent Jin forward camps with finite garrisons, local production, paid recruitment, actual historical mobilisation, frontier clashes with Xia and treaty-based imports. These camps and border rivalries are schematic gameplay, not a reconstruction of 1120 borders. Jin soldiers, riders and camps use original Blender models, distinct from Xia: [source](assets/jin/jin-source.blend), [rebuild script](art/build_jin.py). Run Blender in background mode with `--python art/build_jin.py` to rebuild the sprite atlas.
+
+Restaurants now depend on finite local spending; regional merchant contracts reserve buyer funds and pay on delivery. Song arsenals require material inputs rather than receiving free monthly equipment. Xia raids and frontier columns withdraw real garrison troops; surviving expedition troops return along roads. Prosperity thresholds at 45, 65 and 80, supplied enterprises and grain reserves bring richer stalls, an academy, lanterns and market crowds; shortages reverse the display.
+
+Existing campaigns migrate on load. Opening crossbow support and the paid 200-militia conquest grant remain. Prospecting, salvage workshops, merchant loans and refugee recruitment are future economy suggestions, not implemented features of this release.
+
 ### v0.51 — Orders and Consequences
 
 The 27 continuing Chronicle chapters now have detailed execution orders, named stages, contextual action shortcuts and one optional feat each. Missions preview the next two chapters’ actual requirements and cargo routes so ordinary transfers, construction and manufacturing can be prepared early. A live historical countdown keeps Jingkang visible. Chapter choices present their consequences before the next-chapter shortcut can lock a branch.
 
 Newly completed chapters earn five base court merit; an optional feat adds eight base merit and two Qinghe prosperity. Feats measure actual new training/manufacture, delivered sales, battlefield preservation, full rescue extraction or the stated reserves after fees. Rewards and baselines survive saves and cannot pay twice. The capital concern now grants six months of export privileges; the stronghold, royal rescue and signal station have real support/readiness effects. Later audit, occupation, compensation and medical choices produce explicit outcomes. Existing progress and opening support remain intact; old completions are not retroactively paid.
 
-See [campaign implementation](CAMPAIGN_DESIGN.md) and [development/balance audit and priorities](CAMPAIGN_REVIEW.md). There are still three specifically authored continuing Chronicle battle scenarios; other conquest chapters use the regular campaign battle system.
+See [campaign implementation](CAMPAIGN_DESIGN.md) and [development/balance audit and priorities](CAMPAIGN_REVIEW.md). There are now five specifically authored continuing Chronicle battle scenarios; other conquest chapters use the regular campaign battle system.
 
 ### v0.25 — Smooth Haulage (in progress)
 
@@ -17,7 +29,7 @@ See [campaign implementation](CAMPAIGN_DESIGN.md) and [development/balance audit
 - The campaign camera glides per second rather than per frame, and any drag or wheel takes control back at once.
 - Chapter 1 lesson rebalanced: forty raiders in all (was 87). Skill hints come one at a time, at least 10 s apart, and Deadeye won't fire out of range during the lesson. Following the lesson wins; standing idle still loses the granary (tests/lesson.cjs).
 - Difficulty (Easy/Normal/Hard Xia aggression) is chosen at New campaign; Court & government shows it read-only.
-- Xia pressure grows with the realm: raids scale with settlements and soldiers and are sized against the target's defence; larger realms draw extra raids.
+- Xia pressure grows with the realm: raids scale their decisions with realm size and target defence, but v0.52 caps actual soldiers to withdrawals from occupied source garrisons; larger realms can draw extra raids.
 - Conquests settle slowly (50% of their yield, rising to 85% over about six months); their 200 local levies draw pay; capture loot is halved. Resource sites (×1.75) and trade roads (×1.6) pay more.
 - Coach: the bubble docks clear of its target and any open dialog, lessons wait 45 s between each other, steps complete on the actual purchase or march order, a step whose panel was closed returns to “open the panel”, and the trade lesson matches the Buy-only Trade tab.
 - One ledger: the top bar, realm panel and village panel quote the same season figures (output − troop pay − village upkeep = net); the village box says it is one village and gives the realm total.

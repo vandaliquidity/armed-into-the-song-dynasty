@@ -32,17 +32,17 @@ function jinCapital(){
 }
 function jinTick(){
   if(!CG||CG.over)return;const j=jinState(),now=historyAbsoluteMonth();if(now<=j.last)return;j.last=now;
-  for(const a of j.armies)if(a.state==='retreat'&&--a.retreatMonths<=0)a.state='withdrawn';
+  for(const a of j.armies)if(a.state==='retreat'){if(typeof easternRetreat==='function')easternRetreat(a);else if(--a.retreatMonths<=0)a.state='withdrawn';}
   if(j.outcome||CG.fallK)return;
-  if(now>=1125*12+10&&!j.first){j.first=true;const east=jinArmy(['完颜宗望','Wanyan Zongwang'],6000,['zhending','xiangzhou','daming','kaifeng'],1);jinOccupy(east,'zhending');jinArmy(['完颜宗翰','Wanyan Zonghan'],8000,['taiyuan','longde','henan','kaifeng'],1,'taiyuan-siege');jinReport('金军分东西两路南下：宗望走河北，宗翰围太原。','Two Jin columns move south: Zongwang through Hebei; Zonghan besieges Taiyuan.','taiyuan');}
-  if(now>=1126*12+8&&!j.second){j.second=true;jinArmy(['宗望东路军','Zongwang’s eastern army'],12000,['zhending','xiangzhou','daming','kaifeng'],2);let west=j.armies.find(a=>a.phase===1&&a.name[1].includes('Zonghan')&&!a.defeated);if(west){west.phase=2;west.men+=6000;west.state='march';}else west=jinArmy(['宗翰西路军','Zonghan’s western army'],14000,['taiyuan','longde','henan','kaifeng'],2);jinOccupy(west,'taiyuan');jinReport('金军再次南征，东西两路向汴京会师。','The Jin invade again; eastern and western columns converge on Kaifeng.','kaifeng');}
-  for(const a of j.armies){a.anim=0;if(a.defeated||['withdrawn','retreat','occupation','player-battle'].includes(a.state))continue;
-    if(a.state==='siege'&&!jinOccupy(a,a.at))continue;
+  if(now>=1125*12+10&&!j.first){j.first=true;const east=jinArmy(['完颜宗望','Wanyan Zongwang'],6000,['zhending','xiangzhou','daming','kaifeng'],1);jinArmy(['完颜宗翰','Wanyan Zonghan'],8000,['taiyuan','longde','henan','kaifeng'],1,'taiyuan-siege');jinReport('金军分东西两路南下：宗望走河北，宗翰围太原。','Two Jin columns move south: Zongwang through Hebei; Zonghan besieges Taiyuan.','taiyuan');}
+  if(now>=1126*12+5&&!j.second){j.second=true;jinArmy(['宗望东路军','Zongwang’s eastern army'],12000,['zhending','xiangzhou','daming','kaifeng'],2);let west=j.armies.find(a=>a.phase===1&&a.name[1].includes('Zonghan')&&!a.defeated);if(west){west.phase=2;west.departAfter=1126*12+8;if(typeof easternReinforce==='function')easternReinforce(west,6000);else{west.men+=6000;west.state='march';}}else west=jinArmy(['宗翰西路军','Zonghan’s western army'],14000,['taiyuan','longde','henan','kaifeng'],2);jinReport('金军筹备秋季南征，东西两路在实际营地集结。','Jin mobilise for the autumn campaign; eastern and western columns assemble at their actual camps.','kaifeng');}
+  for(const a of j.armies){a.anim=0;if(a.defeated||['withdrawn','retreat','occupation','player-battle','await-reinforcement'].includes(a.state)||a.departAfter&&now<a.departAfter)continue;
+    if(a.phase===2&&a.at==='taiyuan'&&CG.T.taiyuan.own!=='jin'&&!jinOccupy(a,a.at))continue;if(a.state==='siege'&&!jinOccupy(a,a.at))continue;
     if(a.state==='taiyuan-siege'){if(jinPlayerPower('taiyuan')+(CG.T.taiyuan.songGarrison?.men||0)*3>a.men){a.defeated=true;a.state='retreat';a.retreatMonths=2;jinReport('太原援军击退宗翰，西路金军受挫。','Taiyuan’s relief defeats Zonghan; the western column is checked.','taiyuan');}continue;}
     if(a.at==='kaifeng'){
       a.state='capital-siege';if(a.phase===1&&now>=1126*12+1){a.state='retreat';a.retreatMonths=2;CG.T.kaifeng.songGarrison.men=Math.max(0,Math.round(CG.T.kaifeng.songGarrison.men*.9));jinReport('汴京第一次围城解围，金军暂退；第二次进攻仍需防备。','The first siege of Kaifeng is lifted; the Jin withdraw, but a second invasion remains possible.','kaifeng');}continue;
     }
-    const next=a.path[a.step+1];if(!next)continue;a.step++;a.at=next;
+    const next=a.path[a.step+1];if(!next)continue;a.step++;a.at=next;if(a.phase===1&&next==='taiyuan'&&a.holdTaiyuan){a.state='taiyuan-siege';continue;}
     if(next==='kaifeng'){a.state='capital-siege';jinReport(`${a.name[0]}抵达汴京，开始围城。`,`${a.name[1]} reaches Kaifeng and begins the siege.`,'kaifeng');}
     else jinOccupy(a,next);
   }

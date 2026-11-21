@@ -13,8 +13,8 @@ const checks=await page.evaluate(opts=>{const checks=[],ok=(v,s)=>{if(!v)throw E
  const s1=xiaScale();const ids=Object.keys(CG.T).filter(id=>!owned(id)&&CG.T[id].own!=='xia').slice(0,12);for(const id of ids)claimTerr(id,true);campRefresh();const s2=xiaScale();
  ok(s2>s1+.4,'Xia pressure grows with the realm ('+s1.toFixed(2)+' -> '+s2.toFixed(2)+')');
  // raids sized against the defence
- CG.turn=6;let made=0,ok2=true;for(let i=0;i<40;i++){const rep={lines:[]};const n0=CG.xa.length;xiaAI(rep);for(const x of CG.xa.slice(n0))if(owned(x.to)&&!x.story){made++;if(x.str<defPow(x.to)*.8)ok2=false;}CG.xa.length=0;}
- ok(made>5,'a large realm draws regular raids ('+made+' in 40 months)');ok(ok2,'Hard raids are sized against the target defence, not a fixed share');
+ CG.turn=6;let made=0,ok2=true;for(let i=0;i<40;i++){const rep={lines:[]};const n0=CG.xa.length,available=Object.values(CG.T).filter(s=>s.own==='xia').reduce((n,s)=>n+s.str,0);xiaAI(rep);const after=Object.values(CG.T).filter(s=>s.own==='xia').reduce((n,s)=>n+s.str,0);if(CG.xa.slice(n0).filter(x=>!x.story&&!x.faction).reduce((n,x)=>n+x.str,0)>available-after)ok2=false;for(const x of CG.xa.slice(n0))if(owned(x.to)&&!x.story){made++;if(CG.T[x.from].own!=='xia'||!CADJ[x.from].includes(x.to))ok2=false;}CG.xa.length=0;}
+ ok(made>0,'a large realm draws funded raids ('+made+' in 40 months)');ok(ok2,'Hard raids are funded from actual adjacent garrisons; defence estimates cannot mint attackers');
  // conquest settles slowly; sites and trade pay more
  const id=ids[0];CG.T[id].conq=campaignMonth();const f0=conqFactor(id);CG.month=1;const m=campaignMonth;campaignMonth=()=>m()+12;const f1=conqFactor(id);campaignMonth=m;
  ok(f0===BAL.conq0&&f1===BAL.conqMax,'a fresh conquest yields '+f0*100+'% and settles to '+f1*100+'%');

@@ -11,10 +11,10 @@ const checks=await p.evaluate(()=>{const out=[],ok=(v,m)=>{if(!v)throw Error(m);
  date(1123,1);ok(!fieldAward('imperial'),'imperial relief command does not unlock before its campaign date');date(1124,1);ok(fieldAward('imperial'),'mission campaign unlocks the imperial relief command in 1124');const imperial=shipsOn().find(s=>s.commission==='imperial');shipDeliver(imperial,[]);ok(armyN(leader)===initial+3000&&fieldState().bonus===32,'Lin Feng can command several thousand field troops through mission-earned commissions');
  __sw.cstart();CG.supplyAuto=false;date(1125,10);jinState().last=historyAbsoluteMonth();date(1125,11);jinTick();
  ok(jinState().armies.length===2&&jinState().armies.some(a=>a.state==='taiyuan-siege'),'1125 invasion creates distinct eastern and western Jin columns on the map');
- ok(CG.T.xiangzhou.own==='jin'&&CG.T.taiyuan.own==='song','eastern Jin advance captures towns while Taiyuan holds the western approach');
+ ok(CG.T.zhending.own==='jin'&&CG.T.taiyuan.own==='song','eastern Jin advance captures towns while Taiyuan holds the western approach');
  const snapshot=JSON.stringify(jinState());jinDraw(ctx);ok(JSON.stringify(jinState())===snapshot,'drawing Jin armies cannot resolve battles or alter their progress');
- date(1125,12);jinTick();date(1126,1);jinTick();ok(jinState().armies.some(a=>a.phase===1&&a.at==='kaifeng'&&a.state==='capital-siege'),'first eastern column physically reaches and besieges Kaifeng');
- date(1126,2);jinTick();ok(jinState().armies.some(a=>a.phase===1&&a.state==='retreat'),'first Kaifeng siege is lifted and the eastern Jin visibly retreat');
+ date(1125,12);jinTick();date(1126,1);jinTick();date(1126,2);jinTick();ok(jinState().armies.some(a=>a.phase===1&&a.at==='kaifeng'&&a.state==='capital-siege'),'first eastern column physically reaches and besieges Kaifeng');
+ date(1126,3);jinTick();ok(jinState().armies.some(a=>a.phase===1&&a.state==='retreat'),'first Kaifeng siege is lifted and the eastern Jin visibly retreat');
  // A player army can fight the western column in the real tactical engine.
  const col=jinState().armies.find(a=>a.state==='taiyuan-siege');journeyLeader().loc='taiyuan';CG.phase=0;
  ok(jinEngage(col.id,journeyLeader().id)&&MODE==='battle'&&B.skirm.enemyFaction==='jin','field army can launch an actual interception against a nearby Jin column');

@@ -16,7 +16,7 @@ const checks=await page.evaluate(async()=>{const checks=[],ok=(v,s)=>{if(!v)thro
  const run=n=>{R(snap);const L=[];month(n,L);return JSON.stringify([CG.sf.st.stance,CG.sf.st.wr,CG.sf.st.env.map(e=>[e.k,e.kind]),CG.fr.stats,CG.fr.log,CG.fr.str]);};
  const r1=run(14),r2=run(14);ok(r1===r2,'stances, envoys, raids and invasions are deterministic (same start, same 14 months)');
  // weak Qinghe: overbearing blocs send demands
- R(snap);let dem=null;for(let i=0;i<10&&!dem;i++){month(1);dem=CG.sf.st.env.find(e=>e.kind==='demand');}
+ R(snap);CAMP.res.silver=300;let dem=null;for(let i=0;i<10&&!dem;i++){month(1);dem=CG.sf.st.env.find(e=>e.kind==='demand');}
  ok(dem&&CG.sf.st.stance[dem.k]==='over'&&dem.goods.silver>0,`a far stronger bloc demands tribute from a weak Qinghe (${dem&&dem.k}: ${dem&&dem.goods.silver} silver, ${dem&&dem.goods.grain} grain)`);
  const before=W();const rel0=sfState().rel[dem.k],s0=CAMP.res.silver,g0=CG.T[HOME].st.grain,mo=campaignMonth();
  ok(__st.stAnswer(dem.id,true).ok&&CAMP.res.silver===s0-dem.goods.silver&&CG.T[HOME].st.grain===g0-dem.goods.grain&&sfState().rel[dem.k]>rel0&&CG.sf.st.peace[dem.k]>mo,'accepting a demand pays it, raises standing and buys peace');
