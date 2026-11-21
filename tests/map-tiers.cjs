@@ -6,7 +6,7 @@ const open=async q=>{const page=await browser.newPage({viewport:{width:1440,heig
 const page=await open('');
 const checks=await page.evaluate(async()=>{const checks=[],ok=(v,s)=>{if(!v)throw Error(s);checks.push(s);};const M=__mt;
  ok(M.mtReady()&&M.MT.img&&M.MT.img.naturalWidth>0,'the settlement icon atlas loads ('+M.MT.tier+')');
- const keys=Object.keys(M.MT_META.k);ok(keys.length===16&&keys.every(k=>{const r=M.MT_META.t[M.MT.tier].r[k];return r&&r[2]>4&&r[3]>4;}),'all 16 icons have atlas cells');
+ const keys=Object.keys(M.MT_META.k);ok(keys.length===19&&keys.every(k=>{const r=M.MT_META.t[M.MT.tier].r[k];return r&&r[2]>4&&r[3]>4;}),'all 19 icons have atlas cells');
  const s=CG.T[HOME],p0=s.prosp,seq=[];for(const p of [0,20,40,70,95]){s.prosp=p;seq.push(M.mtKey(HOME));}s.prosp=p0;
  ok(seq.join()==='v0,v1,v2,v3,v3','a village grows from hamlet to walled village with prosperity ('+seq.join()+')');
  const by=k=>Object.keys(CT).filter(i=>CT[i].kind===k);

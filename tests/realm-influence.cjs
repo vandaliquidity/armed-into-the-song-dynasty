@@ -14,10 +14,10 @@ const checks=await page.evaluate(async()=>{const checks=[],ok=(v,s)=>{if(!v)thro
  ok(song.every(id=>!reg(id)||sfOf(id)===reg(id))&&song.every(id=>sfOf(id)),'every Song town starts with the bloc of its circuit ('+song.length+' towns; circuits without a bloc get the nearest one)');
  ok(Object.keys(S.inf).length===CL.terr.filter(t=>['song','free'].includes(CG.T[t.id].own)).length,'every Song-held and unaligned town carries bloc influence');
  // determinism: the same start gives the same 18 months
- const snap=JSON.stringify(CG.sf),m0=CG.month;const run=()=>{CG.sf=JSON.parse(snap);CG.month=m0;month(18);return JSON.stringify([CG.sf.inf,CG.sf.hold,CG.sf.feud,CG.sf.pow,CG.sf.evlog]);};
+ const snap=JSON.stringify(CG.sf),snapW=JSON.stringify({T:CG.T,fr:CG.fr||null,xa:CG.xa||[],res:CAMP.res,fac:CG.fac,U:CG.U,uid:CG.uid}),m0=CG.month;const restoreW=()=>{const w=JSON.parse(snapW);CG.T=w.T;if(w.fr)CG.fr=w.fr;else delete CG.fr;CG.xa=w.xa;CAMP.res=w.res;CG.fac=w.fac;CG.U=w.U;CG.uid=w.uid;};const run=()=>{restoreW(),CG.sf=JSON.parse(snap);CG.month=m0;month(18);return JSON.stringify([CG.sf.inf,CG.sf.hold,CG.sf.feud,CG.sf.pow,CG.sf.evlog]);};
  const r1=run(),r2=run();ok(r1===r2,'influence spread, flips and rivalry acts are deterministic (same start, same 18 months)');
  // spread: towns change, influence pushes recorded
- CG.sf=JSON.parse(snap);CG.month=m0;S=__si.siState();const inf0=JSON.stringify(S.inf);const L1=[];month(1,L1);S=CG.sf;
+ restoreW(),CG.sf=JSON.parse(snap);CG.month=m0;S=__si.siState();const inf0=JSON.stringify(S.inf);const L1=[];month(1,L1);S=CG.sf;
  ok(JSON.stringify(S.inf)!==inf0&&S.push.length>0,'influence spreads monthly along the roads ('+S.push.length+' pushes this month)');
  // flip: a rival that overtakes the holder takes the town, with a news line and a map event
  const tid=song.find(id=>sfOf(id)==='zhong'&&CADJ[id].some(n=>CG.sf.hold[n]==='tong')),o=S.inf[tid];o.tong=Math.min(100,o.zhong+25);o.zhong=Math.max(0,o.zhong-20);
@@ -27,14 +27,14 @@ const checks=await page.evaluate(async()=>{const checks=[],ok=(v,s)=>{if(!v)thro
  // power ranking
  ok(Object.values(S.rank).sort().join()==='1,2,3,4'&&Object.keys(SF_DEF).every(k=>S.pow[k]>0&&S.powPrev[k]!=null),'each bloc has a power score and a rank, re-ranked monthly with the previous month kept for arrows');
  // rivalry acts move feuds (no random drift)
- CG.sf=JSON.parse(snap);CG.month=m0;S=__si.siState();let acts=0,steady=true;for(let i=0;i<24;i++){const f0={...S.feud},e0=new Set(S.evlog),L=[];month(1,L);S=CG.sf;const evs=S.evlog.filter(e=>!e0.has(e)&&['blockade','poach','impeach','pressure','flip'].includes(e.ty));acts+=evs.length;
+ restoreW(),CG.sf=JSON.parse(snap);CG.month=m0;S=__si.siState();let acts=0,steady=true;for(let i=0;i<24;i++){const f0={...S.feud},e0=new Set(S.evlog),L=[];month(1,L);S=CG.sf;const evs=S.evlog.filter(e=>!e0.has(e)&&['blockade','poach','impeach','pressure','flip','blame'].includes(e.ty));acts+=evs.length;
    for(const k in S.feud){const fed=evs.some(e=>[e.k,e.o].sort().join('_')===k);if(!fed&&S.feud[k]>f0[k])steady=false;}}
  ok(acts>=10&&steady,'blocs act against rivals (blockade, poaching, accusation, pressure: '+acts+' acts in 24 months) and feuds rise only when fed by acts');
  const kinds=new Set(S.evlog.map(e=>e.ty));ok(['blockade','poach','impeach','pressure'].filter(k=>kinds.has(k)).length>=3,'at least three kinds of rivalry act occur ('+[...kinds].join(', ')+')');
  // Qinghe's backing reshapes the map
- const play=side=>{CG.sf=JSON.parse(snap);CG.month=m0;CAMP.res.silver=5000;const S=__si.siState();if(side)__si.siSide(side);month(24);return {pow:S.pow.liu,towns:sfTowns('liu').length,inf:Object.values(S.inf).reduce((t,o)=>t+o.liu,0)};};
+ const play=side=>{restoreW(),CG.sf=JSON.parse(snap);CG.month=m0;CAMP.res.silver=5000;const S=__si.siState();if(side)__si.siSide(side);month(24);return {pow:S.pow.liu,towns:sfTowns('liu').length,inf:Object.values(S.inf).reduce((t,o)=>t+o.liu,0)};};
  const a=play(null),b=play('liu');ok(b.inf>a.inf*1.08&&b.pow>a.pow&&b.towns>=a.towns,`backing a bloc speeds its influence and power (Liu after 24 months: influence ${Math.round(a.inf)} → ${Math.round(b.inf)}, power ${a.pow} → ${b.pow}, towns ${a.towns} → ${b.towns})`);
- CG.sf=JSON.parse(snap);CG.month=m0;S=__si.siState();const s0=CAMP.res.silver;__si.siSide('yao');month(1);ok(CAMP.res.silver===s0-__si.SI.SIDE_COST&&S.bk.yao>0,'open backing costs silver each month and builds backing');
+ restoreW(),CG.sf=JSON.parse(snap);CG.month=m0;S=__si.siState();const s0=CAMP.res.silver;__si.siSide('yao');month(1);ok(CAMP.res.silver===s0-__si.SI.SIDE_COST&&S.bk.yao>0,'open backing costs silver each month and builds backing');
  CG.T[HOME].st.grain=500;const bk0=S.bk.liu;ok(__si.siGrain('liu').ok&&S.bk.liu>bk0,'a grain convoy backs a bloc');const bk1=S.bk.zhong;sfGift('zhong');ok(S.bk.zhong>bk1,'gifts count as backing');
  // save migration: a t247 save (no influence data, old feud keys) loads cleanly
  fresh();month(3);saveGame();const raw=JSON.parse(localStorage.getItem(SAVEKEY));const sf=raw.cg.sf;for(const k of ['inf','hold','si','tr','w','cf','bk','ev','evlog','push','blk','side','ver','pow','rank','powPrev','rankPrev','pat'])delete sf[k];sf.feud={zhong_liu:40,tong_zhong:55};
@@ -42,8 +42,8 @@ const checks=await page.evaluate(async()=>{const checks=[],ok=(v,s)=>{if(!v)thro
  ok(S.si===1&&song.filter(id=>CG.T[id].own==='song').every(id=>!reg(id)||sfOf(id)===reg(id))&&S.feud.liu_zhong===40&&!('zhong_liu' in S.feud),'a save from before t256 migrates on load: influence seeded, holders = the old circuit blocs, feuds kept');
  const L3=[];month(2,L3);ok(saveGame()&&JSON.parse(localStorage.getItem(SAVEKEY)).cg.sf.hold,'the migrated campaign plays on and saves its dynamic allegiances');
  // UI: ranking strip, factions panel, town panel
- CSEL=null;CG.layer=null;campUI();const strip=document.getElementById('swRank');ok(strip&&strip.querySelectorAll('.sw-rk').length===4&&/[▲▼↑↓–]/.test(strip.textContent),'a compact power ranking strip sits in the layer bar with up/down arrows');
- CSEL={sf:1};campUI();const fp=document.querySelector('.sw-rtab');ok(fp&&fp.querySelectorAll('tr').length===5&&document.querySelectorAll('[data-back]').length===4,'the Factions panel ranks the blocs and has backing actions for each');
+ CSEL=null;CG.layer=null;campUI();const strip=document.getElementById('swRank');ok(strip&&strip.querySelectorAll('.sw-rk[data-sf]:not(.qh)').length===4&&strip.querySelectorAll('.sw-rk.qh').length===1&&/[▲▼↑↓–]/.test(strip.textContent),'a compact power ranking strip sits in the layer bar with up/down arrows');
+ CSEL={sf:1};campUI();const fp=document.querySelector('.sw-rtab');ok(fp&&fp.querySelectorAll('tr').length===6&&document.querySelectorAll('[data-back]').length===4,'the Factions panel ranks the blocs and has backing actions for each');
  const tt=song.find(id=>CG.T[id].own==='song');CSEL={t:tt};campUI();ok(document.querySelector('[data-inf]'),'a town panel shows every bloc\'s influence there');
  // layers
  for(const L of ['fac','threat','supply','trade']){CG.layer=L;CSEL={t:HOME};campUI();for(let i=0;i<3;i++){__mp.MP.ver++;await raf();}
