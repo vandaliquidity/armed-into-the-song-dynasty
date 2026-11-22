@@ -11,11 +11,11 @@ const checks=await page.evaluate(async()=>{const checks=[],ok=(v,s)=>{if(!v)thro
  S.rel.liu=-60;campRefresh();const rl=ROUTES.filter(r=>[r.a,r.b].some(id=>R.sfOf(id)==='liu'));ok(rl.every(r=>r.mul<=.5+1e-9||r.choke&&r.choke.length),'a hostile bloc halves trade with its towns');S.rel.liu=20;campRefresh();
  // bandits grow and raid an unguarded village
  const l0=[];const gg0=CG.T[HOME].st.grain;R.bdState().list.forEach(b=>b.quiet=0);const gt0=CG.turn,gm0=CG.month;CG.turn=1;CG.month=1;R.bdTick(l0);ok(CG.T[HOME].st.grain===gg0&&!l0.some(l=>l[0]==='🔥'),'no raids in the first two seasons');CG.turn=Math.max(gt0,3);CG.month=gm0||1;
- const B=R.bdGet('longshan');B.men=120;B.quiet=0;const lines=[];const s=CG.T[HOME];const save=__rs.bdHere(HOME).map(u=>[u,u.loc]);for(const [u] of save)u.loc={v:'nowhere'};const arm=CG.armies.filter(a=>a.loc===HOME).map(a=>[a,a.loc]);for(const [a] of arm)a.loc='nowhere';s.st.grain=500;const g0=s.st.grain;R.bdTick(lines);
- ok(B.men>=126&&s.st.grain<g0&&s.raided,'an unguarded village is raided and the band grows ('+B.men+' men, grain '+g0+'→'+s.st.grain+')');for(const [u,l] of save)u.loc=l;for(const [a,l] of arm)a.loc=l;s.raided=false;
+ const B=R.bdGet('longshan');B.men=120;B.quiet=0;const lines=[];const target=raidNeighbours(B.id,'bandit')[0];CG.T[target].own='qh';const s=CG.T[target];const save=__rs.bdHere(target).map(u=>[u,u.loc]);for(const [u] of save)u.loc={v:'nowhere'};const arm=CG.armies.filter(a=>a.loc===target).map(a=>[a,a.loc]);for(const [a] of arm)a.loc='nowhere';s.st.grain=500;const g0=s.st.grain;R.bdTick(lines);
+ ok(B.men>=126&&s.st.grain<g0&&s.raided,'an unguarded village is raided and the band grows ('+B.men+' men, grain '+g0+'→'+s.st.grain+')');for(const [u,l] of save)u.loc=l;for(const [a,l] of arm)a.loc=l;s.raided=false;for(const u of armyUnits(CG.armies[0]))u.loc={a:CG.armies[0].id};CG.armies[0].loc=target;
  const l2=[];const before=s.st.grain;R.bdTick(l2);ok(s.st.grain===before,'a strong garrison keeps the band away from Qinghe ('+(l2[0]||[])[1]+')');
  // suppress with the home garrison
- B.men=60;const base=R.bdBase(B);ok(base&&base.id===HOME,'the home garrison is in reach of Longshan');const r1=R.bdSuppress('longshan');ok(r1.win&&B.men===0,'suppression clears the stronghold');
+ B.men=60;const base=R.bdBase(B);ok(base&&base.id===target,'the garrison at the adjacent target is in reach of Longshan');const r1=R.bdSuppress('longshan');ok(r1.win&&B.men===0,'suppression clears the stronghold');
  ok(offHas('bd_longshan')&&CG.off.bd_longshan.loy===35,'the captured chief joins the officers with low loyalty');
  // amnesty: militia + chief
  const M=R.bdGet('maxian');M.men=100;CAMP.res.silver=500;const ac=Math.round(M.men*.8),tg=S.rel.tong,r2=R.bdAmnesty('maxian');ok(r2.ok&&CG.U[r2.unit].type==='mil'&&CG.U[r2.unit].men===50&&CAMP.res.silver===500-ac,'amnesty costs silver and the band becomes a 50-man militia company');

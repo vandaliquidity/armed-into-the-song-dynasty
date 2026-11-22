@@ -60,9 +60,9 @@ const {startServer,browserOptions}=require('./server.cjs');
   }
   await page.evaluate(()=>{B=null;showCamp();});
   await page.setViewportSize({width:1200,height:800});await page.waitForTimeout(500);await page.screenshot({path:'test-results/campaign-1200.png'});
-  const overlap=await page.evaluate(()=>{const a=document.querySelector('.campaign-nav').getBoundingClientRect(),b=document.querySelector('.campaign-log').getBoundingClientRect();return a.bottom>b.top;});
-  if(overlap)throw Error('Navigation overlaps dispatches at 1200x800');
-  await page.locator('#cSetB').click();await page.waitForTimeout(100);if(!await page.locator('#cSet').count())throw Error('Settlement navigation failed');
+  const overlap=await page.evaluate(()=>{const a=document.querySelector('.campaign-top').getBoundingClientRect(),b=document.querySelector('#topCommands').getBoundingClientRect();return a.bottom>b.top;});
+  if(overlap)throw Error('Top navigation overlaps resources at 1200x800');
+  await page.locator('[data-menu=town]>summary').click();await page.locator('#cSetB').click();await page.waitForTimeout(100);if(!await page.locator('#cSet').count())throw Error('Settlement navigation failed');
   await page.screenshot({path:'test-results/settlement-panel.png'});
   console.log(JSON.stringify({...results,errors},null,2));if(errors.length)throw Error('Browser errors');
  }finally{if(browser)await browser.close();await new Promise(r=>server.close(r));}

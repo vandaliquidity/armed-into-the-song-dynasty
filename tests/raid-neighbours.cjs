@@ -1,0 +1,15 @@
+const {chromium}=require('playwright');const {startServer,browserOptions}=require('./server.cjs');
+(async()=>{const {server,url}=await startServer();let b;try{b=await chromium.launch(browserOptions());const p=await b.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.stack));await p.goto(url,{waitUntil:'networkidle'});const checks=await p.evaluate(()=>{
+ coachSave({off:1,seen:{}});LOGI.on=false;__sw.cstart();const out=[],ok=(v,m)=>{if(!v)throw Error(m);out.push(m);},F=frState();
+ for(const src of frXiaSources())ok(frTargets('xia',src).every(t=>CADJ[src].includes(t.id)),'Xia targets are actual neighbours of '+src);
+ const src=frXiaSources().find(src=>Object.entries(bfsDist(src,2)).some(([id,d])=>d===2&&frHit(CG.T[id].own))),far=Object.entries(bfsDist(src,2)).find(([id,d])=>d===2&&frHit(CG.T[id].own))[0];
+ const before=JSON.stringify([CG.T,F,CAMP.res]);ok(frRaid(F,'xia',src,far,200,[],0)===null&&JSON.stringify([CG.T,F,CAMP.res])===before,'Calling a raid directly cannot damage or loot a village two roads away');
+ ok(!frTargets('xia',src).some(t=>t.id===far)&&!frRisk(far)?.thr.some(t=>t.src===src),'Threat warnings and raid selection agree about the two-link exclusion');
+ for(const c of FR_CAMPS){ok(raidNeighbours(c.id,'qiang').length>0&&frTargets('qiang',c.id).every(t=>raidAdjacent(c.id,t.id,'qiang')),'Qiang camp '+c.id+' uses its explicit approach');const remote=CL.terr.find(t=>frHit(CG.T[t.id].own)&&!raidAdjacent(c.id,t.id,'qiang')).id;const snapshot=JSON.stringify([CG.T,F]);ok(frRaid(F,'qiang',c.id,remote,150,[],0)===null&&JSON.stringify([CG.T,F])===snapshot,'A Qiang camp cannot use distance to raid a disconnected target');}
+ for(const band of bdState().list){const target=bdTarget(band);ok(!target||raidAdjacent(band.id,target,'bandit'),'Bandit '+band.id+' raids only a directly connected settlement');}
+ for(const t of CL.terr){const exposed=mlExposure(t.id);ok(!exposed||exposed.thr.every(b=>raidAdjacent(b.id,t.id,'bandit')),'Bandit warnings match actual links at '+t.id);}
+ const near=raidNeighbours(src).find(id=>frHit(CG.T[id].own));CG.T[src].str=1000;ok(!!frRaid(F,'xia',src,near,120,[],1),'An occupied Xia source can still raid a valid adjacent target');
+ const id=CG.xid++,men=warMen(src);CG.xa.push({id,from:src,to:far,str:80,paid:true});CG.queue.push({type:'def',terr:far,xa:id});raidPrune();ok(!CG.xa.some(x=>x.id===id)&&!CG.queue.some(q=>q.xa===id)&&warMen(src)===men+80,'Old invalid raids are cancelled once and their paid soldiers refunded');raidPrune();ok(warMen(src)===men+80,'Old-save cleanup cannot duplicate the troop refund');
+ const camp=FR_CAMPS[0],entry=raidNeighbours(camp.id,'qiang')[0],owner=CG.T[entry].own;CG.T[entry].own='xia';const invasion=frPlan(F,'qiang',[]);ok(!invasion?.cols.some(c=>c.src===camp.id),'A Qiang invasion cannot skip an occupied approach to launch from a more distant town');CG.T[entry].own=owner;
+ return out;
+ });console.log(JSON.stringify({checks,errors},null,2));if(errors.length)throw Error(errors.join('\n'));}finally{if(b)await b.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});

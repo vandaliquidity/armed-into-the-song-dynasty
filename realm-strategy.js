@@ -46,7 +46,7 @@ function bdHere(id){const us=unitsAt(id);for(const a of CG.armies||[])if(a.loc==
 function bdStr(b){return b.men*1.25;} // mountain palisades: one bandit behind his stockade is worth more than in the open
 function bdBase(b){const ids=bdNear(b,BD.RAID_R+.25).filter(owned);let best=null,bp=0;for(const id of ids){const p=bdPow(bdHere(id));if(p>bp){bp=p;best=id;}}return best?{id:best,pow:bp}:null;}
 // raid target: the juiciest reachable village, Qinghe's own first (Song towns have walls and their own troops)
-function bdTarget(b){let best=null,bs=0;for(const id of bdNear(b,BD.RAID_R)){const o=CG.T[id].own;if(o!=='qh'&&o!=='song')continue;const def=o==='qh'?bdPow(bdHere(id)):300;const sc=(o==='qh'?2:1)/(1+def/bdStr(b))/(1+bdDist(b,id));if(sc>bs){bs=sc;best=id;}}return best;}
+function bdTarget(b){let best=null,bs=0;for(const id of raidNeighbours(b.id,'bandit')){const o=CG.T[id].own;if(o!=='qh'&&o!=='song')continue;const def=o==='qh'?bdPow(bdHere(id)):300;const sc=(o==='qh'?2:1)/(1+def/bdStr(b))/(1+bdDist(b,id));if(sc>bs){bs=sc;best=id;}}return best;}
 function bdTick(lines){const B=bdState();for(const b of B.list){const d=bdDef(b.id);
   if(!bdActive(b)){if(++b.cleared>=BD.RESPAWN){b.men=40;b.cleared=0;lines.push(['🏴',Ts(`${d.zh}又聚起了亡命之徒`,`Outlaws gather again at ${d.en}`)]);}continue;}
   b.men=Math.min(BD.CAP,b.men+BD.GROW);if(b.quiet>0){b.quiet--;continue;}
@@ -106,7 +106,7 @@ function sfAid(k){if(!sfAidOk(k))return {ok:false};const S=sfState();S.aid[k]=ca
 // trade: blocs scale income with their towns; strongholds near a road cut it
 {const old=tradeRoutes;tradeRoutes=function(){const out=old.apply(this,arguments);if(!CG)return out;const B=bdState();
   for(const r of out){let m=1;for(const id of [r.a,r.b]){const k=sfOf(id);if(k)m*=sfTradeMul(k);}
-    const A=CT[r.a],Bt=CT[r.b],mx=(A.lon+Bt.lon)/2,my=(A.lat+Bt.lat)/2;r.choke=B.list.filter(b=>bdActive(b)&&b.quiet<=0&&Math.hypot(bdDef(b.id).lon-mx,(bdDef(b.id).lat-my)*1.2)<BD.TRADE_R).map(b=>b.id);if(r.choke.length)m*=.8;
+    const A=CT[r.a],Bt=CT[r.b],mx=(A.lon+Bt.lon)/2,my=(A.lat+Bt.lat)/2;r.choke=B.list.filter(b=>bdActive(b)&&b.quiet<=0&&(raidAdjacent(b.id,r.a,'bandit')||raidAdjacent(b.id,r.b,'bandit'))).map(b=>b.id);if(r.choke.length)m*=.8;
     r.v0=r.v;r.v=Math.round(r.v*m);r.mul=m;}return out;};}
 // ---- map: stronghold markers, picking and layers
 function bdScreen(id){const d=bdDef(id);const p=d._p||(d._p=cwp(d.lon,d.lat));return c2s(p.x,p.y);}
@@ -122,7 +122,7 @@ function rsDrawLayers(g){if(!CG)return;const L=rsLayer(),sc=iconScale(),B=bdStat
       g.font=`bold ${Math.round(14*sc)}px "Noto Serif SC",serif`;g.textAlign='center';g.lineWidth=4;g.strokeStyle='rgba(20,10,4,.85)';const s1=Tz(SF_DEF[k].zh,SF_DEF[k].en),s2=`${Tz(m[0],m[1])} ${v>0?'+':''}${v}`;g.strokeText(s1,x,y-40*sc);g.fillStyle=SF_DEF[k].col;g.fillText(s1,x,y-40*sc);g.strokeText(s2,x,y-24*sc);g.fillStyle=m[2];g.fillText(s2,x,y-24*sc);}}
   if(L==='threat'){for(const b of B.list){if(!bdActive(b))continue;const q=bdScreen(b.id),p0=cwp(bdDef(b.id).lon,bdDef(b.id).lat),p1=cwp(bdDef(b.id).lon+BD.RAID_R,bdDef(b.id).lat),r=(p1.x-p0.x)*CC.z;const a=Math.min(.38,.1+b.men/700);
     const gr=g.createRadialGradient(q.x,q.y,0,q.x,q.y,r);gr.addColorStop(0,`rgba(200,40,20,${a})`);gr.addColorStop(1,'rgba(200,40,20,0)');g.fillStyle=gr;g.beginPath();g.arc(q.x,q.y,r,0,TAU);g.fill();g.setLineDash([6,6]);g.strokeStyle='rgba(160,30,10,.6)';g.lineWidth=1.5;g.stroke();g.setLineDash([]);}
-    for(const t of CL.terr){if(!owned(t.id))continue;const thr=B.list.filter(b=>bdActive(b)&&bdDist(b,t.id)<=BD.RAID_R);if(!thr.length)continue;const q=c2s(tPos(t.id).x,tPos(t.id).y),def=bdPow(bdHere(t.id)),need=Math.max(...thr.map(bdStr))*.9,safe=def>=need;
+    for(const t of CL.terr){if(!owned(t.id))continue;const thr=B.list.filter(b=>bdActive(b)&&raidAdjacent(b.id,t.id,'bandit'));if(!thr.length)continue;const q=c2s(tPos(t.id).x,tPos(t.id).y),def=bdPow(bdHere(t.id)),need=Math.max(...thr.map(bdStr))*.9,safe=def>=need;
       g.font=`bold ${Math.round(12*sc)}px sans-serif`;g.textAlign='center';g.lineWidth=3;g.strokeStyle='rgba(20,10,4,.9)';const s=safe?Tz('守备足','Guarded'):Tz(`守备不足 ${Math.round(def)}/${Math.round(need)}`,`Exposed ${Math.round(def)}/${Math.round(need)}`);g.strokeText(s,q.x,q.y+44*sc);g.fillStyle=safe?'#9fe08a':'#ff8a70';g.fillText(s,q.x,q.y+44*sc);}}
   if(L==='supply'){for(const t of CL.terr){const s=CG.T[t.id];if(!s||s.own!=='qh'&&!(CG.armies||[]).some(a=>a.loc===t.id))continue;const q=c2s(tPos(t.id).x,tPos(t.id).y),ok=SUPP.has(t.id);g.lineWidth=3*sc;g.strokeStyle=ok?'rgba(110,210,110,.9)':'rgba(230,80,60,.95)';g.setLineDash(ok?[]:[5,4]);g.beginPath();g.arc(q.x,q.y,30*sc,0,TAU);g.stroke();g.setLineDash([]);
       g.font=`bold ${Math.round(11*sc)}px sans-serif`;g.textAlign='center';g.fillStyle=ok?'#bff0b0':'#ffb0a0';g.strokeStyle='rgba(20,10,4,.9)';g.lineWidth=3;const tx=ok?Tz('补给通畅','Supplied'):Tz('补给断绝','Cut off');g.strokeText(tx,q.x,q.y+46*sc);g.fillText(tx,q.x,q.y+46*sc);}}
@@ -138,7 +138,7 @@ function rsBtn(zh,en,fn,dis){const b=btn(zh,en,()=>{if(dis)return;fn();},'sw-btn
 function bdPanel(id){const b=bdGet(id),d=bdDef(id),w=rsEl('div','sw-card');w.dataset.bd=id;const k=bdFaction(b),base=bdActive(b)&&bdBase(b);
   w.appendChild(rsEl('div','sw-h',`🏴 ${Ts(d.zh,d.en)}`));
   if(!bdActive(b)){w.appendChild(rsEl('div','sw-p',Ts(`山寨已平。约${BD.RESPAWN-b.cleared}月后或有余党复聚。`,`Cleared. Stragglers may regroup in about ${BD.RESPAWN-b.cleared} months.`)));return w;}
-  const near=bdNear(b,BD.RAID_R),thr=[...near.filter(owned),...near.filter(i=>!owned(i)&&CT[i].kind!=='district')].slice(0,4).map(i=>(owned(i)?'⚑':'')+Tz(CT[i].zh,CT[i].en));
+  const near=raidNeighbours(b.id,'bandit'),thr=[...near.filter(owned),...near.filter(i=>!owned(i)&&CT[i].kind!=='district')].slice(0,4).map(i=>(owned(i)?'⚑':'')+Tz(CT[i].zh,CT[i].en));
   w.appendChild(rsEl('div','sw-p',`${Ts('寨主','Chief')}: <b>${Ts(d.boss[0],d.boss[1])}</b> · ${Ts('喽啰','Outlaws')} <b>${b.men}</b> (${Ts('据寨战力','fortified strength')} ${Math.round(bdStr(b))})<br>${Ts('威胁','Threatens')}: ${thr.join('、')||'—'}${near.length>4?` ${Ts('等','and')} ${near.length-4} ${Ts('处','more')}`:''}${k?`<br>${Ts('辖区','Circuit')}: <span style="color:${SF_DEF[k].col}">${Ts(SF_DEF[k].zh,SF_DEF[k].en)}</span>`:''}${b.quiet>0?`<br>${Ts('已纳贡，安静','Paid off, quiet for')} ${b.quiet} ${Ts('月','months')}`:''}`));
   const row=rsEl('div','sw-row');
   row.appendChild(rsBtn(base?`剿灭（${CT[base.id].zh}守军 ${Math.round(base.pow)}）`:'剿灭（附近无驻军）',base?`Suppress (${CT[base.id].en} garrison ${Math.round(base.pow)})`:'Suppress (no garrison near)',()=>{const r=bdSuppress(id);sfx(r.win?'gong':'lose');campUI();},!base));

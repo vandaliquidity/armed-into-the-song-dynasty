@@ -53,11 +53,10 @@ function mlDrawFac(g,sc){const S=siState();mlBlit(g,mlFacField());const mo=campa
     mlText(g,`${S.rank[k]} · ${Tz(SF_DEF[k].zh,SF_SHORT[k][1])}`,q.x,q.y-44*sc,SF_DEF[k].col,15*sc);mlText(g,`${Tz('权势','power')} ${S.pow[k]} · ${ts.length}${Tz('城',' towns')}`,q.x,q.y-28*sc,'#f8e6b8',11*sc);}}
 // ---------------------------------------------------------------- Bandit threat
 function mlRaidR(){const kx=CGEO.k*CGEO.s,ky=CGEO.s;return {rx:BD.RAID_R*kx,ry:BD.RAID_R/1.2*ky};}
-function mlThreatField(){const B=bdState(),key=B.list.map(b=>b.id+b.men+(b.quiet>0?'q':'')).join(',');const {rx,ry}=mlRaidR();
-  return mlField('threat',key,(W,H,C)=>{const a=new Float32Array(W*H);for(const b of B.list){if(!bdActive(b))continue;const d=bdDef(b.id),p=cwp(d.lon,d.lat),s=Math.min(1,.35+b.men/BD.CAP)*(b.quiet>0?.45:1);
-      mlSplat(null,W,H,C,p.x,p.y,Math.max(rx,ry),(q,dx,dy)=>{const dn=Math.hypot(dx/rx,dy/ry);if(dn<1)a[q]+=s*Math.pow(1-dn,.8);});}return a;},
-    (a,d,W,H)=>{for(let q=0;q<W*H;q++){const v=Math.min(1,a[q]);if(v<=.01)continue;const o=q*4;d[o]=255;d[o+1]=210-150*v;d[o+2]=70-50*v;d[o+3]=40+120*v;}});}
-function mlExposure(id){const B=bdState(),thr=B.list.filter(b=>bdActive(b)&&bdDist(b,id)<=BD.RAID_R);if(!thr.length)return null;const def=bdPow(bdHere(id)),need=Math.max(...thr.map(bdStr))*.9;
+function mlThreatField(){const B=bdState(),key='adjacent:'+B.list.map(b=>b.id+b.men+(b.quiet>0?'q':'')+raidNeighbours(b.id,'bandit').join()).join(',');
+ return mlField('threat',key,(W,H,C)=>{const a=new Float32Array(W*H);for(const b of B.list){if(!bdActive(b))continue;const d=bdDef(b.id),p=cwp(d.lon,d.lat),s=Math.min(1,.35+b.men/BD.CAP)*(b.quiet>0?.45:1);for(const id of raidNeighbours(b.id,'bandit')){const t=tPos(id);for(let i=0;i<=12;i++){const x=lerp(p.x,t.x,i/12),y=lerp(p.y,t.y,i/12);mlSplat(null,W,H,C,x,y,34,(q,dx,dy)=>{const n=Math.hypot(dx,dy)/34;if(n<1)a[q]=Math.max(a[q],s*(1-n));});}}}return a;},
+ (a,d,W,H)=>{for(let q=0;q<W*H;q++){const v=Math.min(1,a[q]);if(v<=.01)continue;const o=q*4;d[o]=255;d[o+1]=210-150*v;d[o+2]=70-50*v;d[o+3]=40+120*v;}});}
+function mlExposure(id){const B=bdState(),thr=B.list.filter(b=>bdActive(b)&&raidAdjacent(b.id,id,'bandit'));if(!thr.length)return null;const def=bdPow(bdHere(id)),need=Math.max(...thr.map(bdStr))*.9;
   const per=(UT.spear&&UT.spear.pow)||1;const add=Math.max(0,Math.ceil((need-def)/per/10)*10);return {thr,def:Math.round(def),need:Math.round(need),safe:def>=need,add};}
 function mlDrawThreat(g,sc){const B=bdState();mlBlit(g,mlThreatField());
   for(const b of B.list){if(!bdActive(b)||b.quiet>0)continue;const tg=bdTarget(b);if(!tg)continue;const s=bdScreen(b.id),e=mlScr(tg);g.setLineDash([7,6]);g.strokeStyle='rgba(150,20,10,.85)';g.lineWidth=2.2*sc;g.beginPath();g.moveTo(s.x,s.y);g.lineTo(e.x,e.y);g.stroke();g.setLineDash([]);
@@ -81,7 +80,7 @@ function mlDrawSupply(g,sc){mlBlit(g,mlSupplyField());const par=mlSupplyTree();
 // ---------------------------------------------------------------- Trade
 function mlSongRoads(){const out=[];for(const [a,b] of CL.links){const A=CG.T[a],B=CG.T[b];if(A.own!=='song'||B.own!=='song')continue;const v=Math.round(3+2*(siTownW(a)+siTownW(b)));out.push({a,b,v,k:sfOf(a)===sfOf(b)?sfOf(a):null});}return out;}
 function mlCharters(){const out=[];for(const [a,b] of CL.links)for(const [x,y] of [[a,b],[b,a]]){const X=CG.T[x],Y=CG.T[y];if(X.own==='qh'&&X.bld.market>0&&Y.own==='song'&&!CG.trade[y]){const v=Math.round(6+3*(tierOf(X.prosp)+3)+2*(X.bld.market+(Y.bld.market||0))+8+(CT[y].kind==='city'?10:0));out.push({a:x,b:y,v});}}return out;}
-function mlChokers(a,b){const B=bdState(),A=CT[a],Bt=CT[b],mx=(A.lon+Bt.lon)/2,my=(A.lat+Bt.lat)/2;return B.list.filter(s=>bdActive(s)&&s.quiet<=0&&Math.hypot(bdDef(s.id).lon-mx,(bdDef(s.id).lat-my)*1.2)<BD.TRADE_R).map(s=>s.id);}
+function mlChokers(a,b){const B=bdState(),A=CT[a],Bt=CT[b],mx=(A.lon+Bt.lon)/2,my=(A.lat+Bt.lat)/2;return B.list.filter(s=>bdActive(s)&&s.quiet<=0&&(raidAdjacent(s.id,a,'bandit')||raidAdjacent(s.id,b,'bandit'))).map(s=>s.id);}
 function mlDrawTrade(g,sc){const S=siState(),roads=mlSongRoads(),ch=new Map();
   for(const r of roads){const col=r.k?SF_DEF[r.k].col:'#b89a60';g.strokeStyle='rgba(20,10,4,.45)';g.lineWidth=(2+r.v/5)*sc+2;mlCurve(g,r.a,r.b);g.stroke();g.globalAlpha=.75;g.strokeStyle=col;g.lineWidth=(2+r.v/5)*sc;mlCurve(g,r.a,r.b);g.stroke();g.globalAlpha=1;for(const c of mlChokers(r.a,r.b))(ch.get(c)||ch.set(c,[]).get(c)).push([r.a,r.b]);}
   for(const r of mlCharters()){g.setLineDash([8,6]);g.strokeStyle='rgba(255,215,110,.9)';g.lineWidth=2.5*sc;const m=mlCurve(g,r.a,r.b);g.stroke();g.setLineDash([]);mlTag(g,`${Tz('可通商','charter')} +🪙${r.v}`,m.x,m.y,'rgba(60,40,10,.9)','#ffe7a0',10*sc);}

@@ -2,6 +2,12 @@
 
 A browser strategy game.
 
+### v0.53 — Roads and a Clear Horizon
+
+All raids are restricted to one direct connection. Xia uses existing road neighbours; off-road Qiang and bandit camps have one explicit approach to their nearest settlement. Camp approaches are drawn on the map. The same connections determine raid targets, threat warnings and bandit interference with trade. Calling a distant raid directly cannot spend troops or damage a town. Old invalid ordinary Xia raids are cancelled on load and paid troops returned once. Travelling invasions still move along their actual roads.
+
+Campaign navigation is consolidated into one top command bar: Missions, Towns, Armies, Commerce & Council, Logistics, Map and System. The old left menu and bottom layer/mobile bars are removed. Production remains in the shared council. Officers has promotion and recruitment tabs. Layers, factions, the overview and dispatches open from Map; settlement and army details appear only when selected. Menus support keyboard controls, Escape and outside-click dismissal; the top row scrolls on narrow screens. Existing saves retain their campaign progress.
+
 ### v0.52 — People, Power and Peril
 
 Defeat now leaves a lasting absence. The five companions travel by stretcher to Qinghe and rest for ten monthly turns after arrival following a defeat, or five if still down at the end of a victory. Each loses one grade, with a floor at zero. Blocked roads and an occupied Qinghe delay care. Recruited officers die permanently when their battlefield figure is killed, or in a defeated formation losing at least 35% of its soldiers. Living recruited officers can command while companions recover. Named companies retain battle histories and absorbed lineages; fallen officers and destroyed companies have memorial records.

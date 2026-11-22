@@ -49,7 +49,7 @@ const checks=await page.evaluate(async()=>{const checks=[],ok=(v,s)=>{if(!v)thro
  for(const L of ['fac','threat','supply','trade']){CG.layer=L;CSEL={t:HOME};campUI();for(let i=0;i<3;i++){__mp.MP.ver++;await raf();}
    const leg=document.getElementById('swLegend');ok(leg&&leg.dataset.layer===L&&leg.children.length>=3,`layer ${L}: legend shown`);ok(document.querySelector('[data-layinfo="'+L+'"]')&&__ml.mlInfo(HOME,L).length>3,`layer ${L}: town info in the panel and hover`);}
  const fac=__ml.mlFacField(),th=__ml.mlThreatField(),sp=__ml.mlSupplyField();const lit=c=>{const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let n=0;for(let i=3;i<d.length;i+=4)if(d[i]>20)n++;return n/(d.length/4);};
- ok(lit(fac)>.08&&lit(th)>.01&&lit(sp)>.02,`territory, heat and supply fields are painted (${(lit(fac)*100).toFixed(0)}% / ${(lit(th)*100).toFixed(0)}% / ${(lit(sp)*100).toFixed(0)}% of the map)`);
+ ok(lit(fac)>.08&&lit(th)>0&&lit(th)<.01&&lit(sp)>.02,`territory and supply are painted, with raid heat restricted to local approaches (${(lit(fac)*100).toFixed(0)}% / ${(lit(th)*100).toFixed(0)}% / ${(lit(sp)*100).toFixed(0)}% of the map)`);
  const k0=__ml.ML.f.fac.key;CG.layer='fac';campUI();await raf();await raf();ok(__ml.ML.f.fac.key===k0,'the territory field is reused until influence changes');
  for(const mp of [false,true]){__mp.MP.on=mp;for(const L of ['fac','threat','supply','trade',null]){CG.layer=L;campUI();await raf();await raf();}}__mp.MP.on=true;ok(true,'all layers draw with the map cache on and off');
  CG.layer=null;return checks;});

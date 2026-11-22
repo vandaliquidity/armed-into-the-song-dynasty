@@ -55,7 +55,7 @@ const {startServer,browserOptions}=require('./server.cjs');
    const n=woundedAll();MODE='battle';consolidateWounded();ok(woundedAll()===n,'active tactical combat cannot dispatch patients');B=null;showCamp();
    return{checks};
   });
-  await page.locator('#cMedicalB').click();await page.locator('#cMedical').waitFor({state:'visible'});
+  await page.locator('[data-menu=army]>summary').click();await page.locator('#cMedicalB').click();await page.locator('#cMedical').waitFor({state:'visible'});
   fs.mkdirSync('test-results',{recursive:true});await page.screenshot({path:'test-results/medical-quick-action.png'});
   console.log(JSON.stringify({...result,errors},null,2));if(errors.length)throw Error('Browser errors');
  }finally{if(browser)await browser.close();await new Promise(r=>server.close(r));}

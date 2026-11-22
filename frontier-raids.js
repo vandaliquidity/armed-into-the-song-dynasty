@@ -35,12 +35,11 @@ function frXiaSources(){return Object.keys(CG.T).filter(id=>CG.T[id].own==='xia'
 function frDef(id){const s=CG.T[id];let d=s.own==='qh'?garrison(id):s.own==='song'?(s.songGarrison?.men||0):Math.min(120,s.str||40);
   const k=CT[id].kind,f=(k==='city'?1.8:k==='fort'||k==='pass'?1.5:k==='town'?1.2:1)*(1+(s.bld?.wall||0)*.15);return {men:d,v:Math.round(d*f)};}
 function frGeo(a,b){const A=frCamp(a)||CT[a],B=frCamp(b)||CT[b];return Math.hypot((A.lon-B.lon)*.82,A.lat-B.lat);}
-function frTargets(tr,src){let ids;if(tr==='xia'){const d=bfsDist(src,2);ids=Object.keys(d).filter(id=>d[id]>0&&frHit(CG.T[id].own));}
-  else ids=CL.terr.filter(t=>frHit(CG.T[t.id].own)&&frGeo(src,t.id)<=FR.QR).map(t=>t.id);
+function frTargets(tr,src){const ids=raidNeighbours(src,tr).filter(id=>CG.T[id]&&frHit(CG.T[id].own));
   return ids.filter(id=>CT[id].kind!=='city'||frDef(id).men<60).map(id=>{const s=CG.T[id],D=frDef(id);const val=(10+(s.prosp||0)*.5+(s.pop||0)/150+(s.own==='qh'?10:0))*(s.own==='free'?.5:1);return {id,sc:val/(1+D.v/60)};}).sort((a,b)=>b.sc-a.sc||a.id.localeCompare(b.id));}
 function frRisk(id){const s=CG.T[id];if(!s||!frHit(s.own))return null;const D=frDef(id),thr=[];
-  for(const src of frXiaSources())if((bfsDist(src,2)[id]||9)<=2)thr.push({tr:'xia',src,men:frBandMen(frState(),'xia',src)});
-  const F=frState();for(const c of FR_CAMPS)if(frGeo(c.id,id)<=FR.QR)thr.push({tr:'qiang',src:c.id,men:frBandMen(F,'qiang',c.id)});
+  for(const src of frXiaSources())if(raidAdjacent(src,id))thr.push({tr:'xia',src,men:frBandMen(frState(),'xia',src)});
+  const F=frState();for(const c of FR_CAMPS)if(raidAdjacent(c.id,id,'qiang'))thr.push({tr:'qiang',src:c.id,men:frBandMen(F,'qiang',c.id)});
   if(!thr.length)return null;const top=Math.max(...thr.map(t=>t.men));const ratio=top*1.25/Math.max(1,D.v);return {thr,top,def:D.v,lvl:ratio>1.2?2:ratio>.7?1:0,ratio};}
 // drawing-side memo: risk and Xia sources change at most with the month or a garrison move; recompute every 2 s
 const FR_MEMO={k:null,risk:{},src:null};function frMemo(){const k=campaignMonth()+'|'+Math.floor(performance.now()/2000);if(FR_MEMO.k!==k){FR_MEMO.k=k;FR_MEMO.risk={};FR_MEMO.src=null;}return FR_MEMO;}
@@ -53,7 +52,7 @@ function frLoot(id,men,h){const s=CG.T[id],L={grain:0,silver:0,horse:0,hide:0,ca
     const ks=Object.keys(s.bld||{}).filter(k=>k!=='wall'&&s.bld[k]>0).sort();if(ks.length&&h<.6){L.burn=ks[Math.floor(h*ks.length/.6)%ks.length];s.bld[L.burn]--;}s.raided=1;}
   else{for(const [k,n]of Object.entries({grain:Math.round(men*1.2),silver:Math.round(10+(s.prosp||0)*.4),horse:Math.round(men*.05)})){L[k]=Math.min(s.st?.[k]||0,n);if(s.st)s.st[k]=(s.st[k]||0)-L[k];}}
   L.cap=Math.min(Math.max(0,(s.pop||0)-50),Math.round((s.pop||0)*.03));s.pop=Math.max(0,(s.pop||0)-L.cap);s.prosp=Math.max(0,(s.prosp||0)-10);if(s.own==='song'&&s.songGarrison)s.songGarrison.men=Math.round(s.songGarrison.men*.85);return L;}
-function frRaid(F,tr,src,id,men,lines,R){const s=CG.T[id],D=frDef(id),h1=siH('fd',id,F.mo,R),h2=siH('fa',src,F.mo,R),mo=F.mo,T=FR_TRIBE[tr],nm=CT[id];
+function frRaid(F,tr,src,id,men,lines,R){if(!raidAdjacent(src,id,tr)||tr==='xia'&&CG.T[src]?.own!=='xia'||!CG.T[id]||!frHit(CG.T[id].own))return null;const s=CG.T[id],D=frDef(id),h1=siH('fd',id,F.mo,R),h2=siH('fa',src,F.mo,R),mo=F.mo,T=FR_TRIBE[tr],nm=CT[id];
   men=Math.min(men,typeof frontierAvailable==='function'?frontierAvailable(F,tr,src):men);if(men<40)return null;const A=men*(.85+.3*h2)*1.25,Dv=D.v*(.85+.3*h1),b={id:F.id++,tr,src,to:id,men,mo,own:s.own,k:s.own==='song'?sfOf(id):null};F.stats.raids++;
   if(Dv>=A){b.res='repelled';b.men=Math.round(men*.6);if(tr==='xia')CG.T[src].str=Math.max(0,CG.T[src].str-Math.round(men*.4));else F.camps[src].men=Math.max(60,F.camps[src].men-Math.round(men*.4));F.stats.repelled++;
     if(s.own==='qh'){const T2=stState();T2.qren=(T2.qren||0)+3;CAMP.res.rep=(CAMP.res.rep||0)+1;for(const u of unitsAt(id))u.men=Math.max(10,Math.round(u.men*.97));}else if(s.own==='song'&&s.songGarrison)s.songGarrison.men=Math.round(s.songGarrison.men*.92);
@@ -74,7 +73,7 @@ function frBandMen(F,tr,src){return tr==='xia'?Math.round(Math.min(CG.T[src].str
 // ---- invasions
 function frPath(from,to,tr){const prev={[from]:null},q=[from];for(const at of q){if(at===to)break;for(const n of CADJ[at]||[])if(!(n in prev)&&CG.T[n]&&(CG.T[n].own!=='xia'||tr==='xia')){prev[n]=at;q.push(n);}}
   if(!(to in prev))return null;const p=[];for(let at=to;at!=null;at=prev[at])p.unshift(at);return p;}
-function frNearTown(cid){let best=null,bd=9;for(const t of CL.terr)if(frHit(CG.T[t.id].own)){const d=frGeo(cid,t.id);if(d<bd){bd=d;best=t.id;}}return best;}
+function frNearTown(cid){return raidNeighbours(cid,'qiang').find(id=>CG.T[id]&&frHit(CG.T[id].own))||null;}
 function frSeats(tr){const ownN=Object.keys(CG.T).filter(owned).length;return CL.terr.filter(t=>{const s=CG.T[t.id];if(!s||!['song','qh'].includes(s.own))return false;if(t.id===HOME&&ownN<5)return false;return t.kind==='city'||(s.own==='qh'&&['town','fort'].includes(t.kind));}).map(t=>t.id);}
 function frPlan(F,tr,lines){const mo=F.mo,srcs=tr==='xia'?frXiaSources():FR_CAMPS.map(c=>c.id);if(!srcs.length)return null;const seats=frSeats(tr),cols=[];
   for(const s of srcs){const start=tr==='xia'?s:frNearTown(s);if(!start)continue;for(const t of seats){const p=frPath(start,t,tr);if(!p)continue;const path=tr==='xia'?p:[s,...p];const L=path.length-1;if(L<1||L>5)continue;
@@ -168,8 +167,7 @@ function frDrawStatic(g){if(!CG||MODE!=='camp')return;const F=frState(),sc=iconS
   if(CC.z>.75)for(const id of frSrcM()){const q=mlScr(id);if(!mlVis(q,60))continue;frIcon(g,'tq',q.x-26*sc,q.y-4*sc,sc*.55,1);if(siH('herd',id)<.45&&CC.z>1)frIcon(g,'hh',q.x+30*sc,q.y+14*sc,sc*.5,1);}
   if(rsLayer()==='threat')frDrawThreat(g,sc);}
 function frDrawThreat(g,sc){const F=frState(),kx=CGEO.k*CGEO.s,ky=CGEO.s;
-  for(const c of FR_CAMPS){const q=frScr(c.id),rx=FR.QR/.82*kx*CC.z,ry=FR.QR*ky*CC.z,a=Math.min(.35,.12+F.camps[c.id].men/3000);const gr=g.createRadialGradient(q.x,q.y,0,q.x,q.y,Math.max(rx,ry));gr.addColorStop(0,`rgba(60,120,190,${a})`);gr.addColorStop(1,'rgba(60,120,190,0)');
-    g.fillStyle=gr;g.beginPath();g.ellipse(q.x,q.y,rx,ry,0,0,TAU);g.fill();g.setLineDash([6,6]);g.strokeStyle='rgba(80,150,220,.75)';g.lineWidth=1.6*sc;g.stroke();g.setLineDash([]);}
+  for(const c of FR_CAMPS){const q=frScr(c.id);for(const id of raidNeighbours(c.id,'qiang')){const p=mlScr(id);g.strokeStyle='rgba(80,150,220,.75)';g.lineWidth=2*sc;g.setLineDash([5,5]);g.beginPath();g.moveTo(q.x,q.y);g.lineTo(p.x,p.y);g.stroke();g.setLineDash([]);g.fillStyle='rgba(60,120,190,.15)';g.beginPath();g.arc(p.x,p.y,24*sc,0,TAU);g.fill();}}
   for(const src of frSrcM()){const q=mlScr(src),r=70*sc*CC.z;const a=Math.min(.32,.1+CG.T[src].str/4000);const gr=g.createRadialGradient(q.x,q.y,0,q.x,q.y,r);gr.addColorStop(0,`rgba(110,120,170,${a})`);gr.addColorStop(1,'rgba(110,120,170,0)');g.fillStyle=gr;g.beginPath();g.arc(q.x,q.y,r,0,TAU);g.fill();
     for(const n of CADJ[src])if(frHit(CG.T[n].own)){const e=mlScr(n);g.strokeStyle='rgba(90,100,160,.55)';g.lineWidth=2*sc;g.setLineDash([3,5]);g.beginPath();g.moveTo(q.x,q.y);g.lineTo(e.x,e.y);g.stroke();g.setLineDash([]);}}
   for(const t of CL.terr){const id=t.id,s=CG.T[id];if(s.own!=='qh'&&s.own!=='song')continue;const R=frRiskM(id);if(!R||R.lvl<1)continue;const q=mlScr(id);if(!mlVis(q))continue;
