@@ -2,6 +2,16 @@
 
 A browser strategy game.
 
+### v0.54 — Room to Build
+
+The standard 550-man opening now forecasts **+43 silver per season**, up from **−20**, through population taxes and local commerce. A level-one market adds roughly 38 net silver per season after its upkeep. These are recurring settlement yields, not a starting cash grant; conquest settlement penalties, supply, prosperity, governors and actual army costs still apply. Businesses retain their material and customer limits.
+
+Political pressure is protected for the first 18 monthly turns and remains protected until Qinghe has at least three settlements, 1,200 soldiers or 300 silver in delivered exports. Factions share a three-month pressure cooldown; each bloc waits six months after a hostile act. Demands are capped at 10% of current silver and 8% of local grain, with absolute caps of 80 silver/120 grain, and are withheld when basic reserves are low. Expired demands no longer count as refusals. Accusations, gentry pressure and blockade duration are reduced. Invisible monthly treasury confiscation is removed.
+
+Opening protection also covers Xia extortion, ignored petitions and annual tribute penalties. Voluntary fulfilled petitions and paid tribute still earn their rewards. Low court/gentry support recovers by up to 2/1 points each actual month toward 50 while protected and holding Qinghe; loading a save grants no money or instant recovery. Explicitly refused Xia extortion uses a real, adjacent, funded expedition, not an invented force. Ordinary raids and dated Jin campaigns continue.
+
+Existing early saves clear pending extortion, direct anti-Qinghe blockades and retaliation. The council and faction panel explain the protection conditions and current ordinary balance. Later campaign politics remain active once the realm can support them.
+
 ### v0.53 — Roads and a Clear Horizon
 
 All raids are restricted to one direct connection. Xia uses existing road neighbours; off-road Qiang and bandit camps have one explicit approach to their nearest settlement. Camp approaches are drawn on the map. The same connections determine raid targets, threat warnings and bandit interference with trade. Calling a distant raid directly cannot spend troops or damage a town. Old invalid ordinary Xia raids are cancelled on load and paid troops returned once. Travelling invasions still move along their actual roads.

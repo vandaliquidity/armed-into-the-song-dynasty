@@ -2,7 +2,7 @@
 const {chromium}=require('playwright');const {startServer,browserOptions}=require('./server.cjs');
 (async()=>{const {server,url}=await startServer();let browser;try{browser=await chromium.launch(browserOptions());const page=await browser.newPage({viewport:{width:1440,height:900}}),errors=[];page.on('pageerror',e=>errors.push(e.stack));
 await page.goto(url,{waitUntil:'networkidle'});await page.waitForFunction(()=>typeof sprReady!=='undefined'&&sprReady,null,{timeout:90000});
-const checks=await page.evaluate(async()=>{const checks=[],ok=(v,s)=>{if(!v)throw Error(s);checks.push(s);};coachSave({off:1,seen:{}});__sw.cstart();if(CG.evQ)CG.evQ.length=0;campUI();const R=__rs;
+const checks=await page.evaluate(async()=>{const checks=[],ok=(v,s)=>{if(!v)throw Error(s);checks.push(s);};coachSave({off:1,seen:{}});__sw.cstart();CG.turn=7;CG.dynasty.totalSales=300;if(CG.evQ)CG.evQ.length=0;campUI();const R=__rs;
  ok(!!document.getElementById('swuiCss'),'the UI design system stylesheet is installed');
  const towns={};for(const k in R.SF_DEF)towns[k]=R.sfTowns(k).length;ok(Object.values(towns).filter(n=>n>0).length>=3,'Song towns are split between rival blocs '+JSON.stringify(towns));
  ok(R.sfOf(HOME)===null,'Qinghe itself belongs to no bloc');

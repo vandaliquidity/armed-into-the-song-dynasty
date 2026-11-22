@@ -67,44 +67,44 @@ function stAnswer(id,yes){const S=siState(),T=stState(S),e=T.env.find(x=>x.id===
   else if(e.kind==='protect'){if(yes){T.prot[k]={until:mo+12,stip:e.stip};sfAdd(k,8,'protect');siBack(k,10);for(const o of siRivals(k))T.wr[o]=Math.min(100,(T.wr[o]||0)+8);stLine(lines,'🛡',`清河应允庇护${F.zh}，其对头侧目`,`Qinghe takes ${F.en} under its protection; their rivals take note`);}
     else{sfAdd(k,-3,'protect');stLine(lines,'🛡',`清河婉拒${F.zh}所请`,`Qinghe declines ${F.en}'s request`);}}
   T.env=T.env.filter(x=>x!==e);for(const l of lines)cgLog(l[0],l[1]);S.ver++;return {ok:true,lines};}
-function stRefuse(S,T,k,lines){const F=SF_DEF[k],mo=campaignMonth();sfAdd(k,-10,'refused');T.har[k]=mo+4;T.cd[k]=0;T.wr[k]=Math.min(100,T.wr[k]+10);stEvent(S,'harass',k,stHome());
-  stLine(lines,'⚔',`清河拒绝${F.zh}索贡，彼扬言报复`,`Qinghe refuses ${F.en}'s demand; they vow to make Qinghe pay`);}
+function stRefuse(S,T,k,lines){const F=SF_DEF[k],mo=campaignMonth();if(politicsProtected()){T.peace[k]=mo+3;return;}sfAdd(k,-5,'refused');T.har[k]=mo+4;T.cd[k]=mo+1;(T.demCd||(T.demCd={}))[k]=mo+6;T.wr[k]=Math.min(100,T.wr[k]+5);stEvent(S,'harass',k,stHome());
+ stLine(lines,'⚔',`清河拒绝${F.zh}索贡，彼扬言报复`, `Qinghe refuses ${F.en}'s demand; limited retaliation may follow`);}
 function stGain(g,k){g=g||{};if(g.silver)CAMP.res.silver+=g.silver;const h=CG.T[HOME];if(g.grain)h.st.grain=(h.st.grain||0)+g.grain;if(g.horse)h.st.horse=(h.st.horse||0)+g.horse;
   if(g.loan&&typeof newUnit==='function'){const T=stState(),u=newUnit(k==='yao'?'cav':'spear',g.loan,{loc:{v:HOME},mor:70,exp:2});u.loan=k;T.loan={k,u:u.id,until:campaignMonth()+ST.LOAN};}}
 function stLoanEnd(T,lines){const L=T.loan;if(!L||campaignMonth()<L.until)return;const u=CG.U[L.u];if(u){for(const a of CG.armies)a.units=a.units.filter(i=>i!==u.id);delete CG.U[u.id];}
   T.loan=null;stLine(lines,'🎖',`${SF_DEF[L.k].zh}借调之兵期满归营`,`The company on loan from ${SF_DEF[L.k].en} returns home`);}
 // ---- the month
-function stMonth(lines){const S=siState(),T=stState(S),mo=campaignMonth(),F0=SF_DEF;T.qren=Math.max(0,Math.round((T.qren||0)*.97*10)/10);
+function stMonth(lines){const S=siState(),T=stState(S),mo=campaignMonth(),F0=SF_DEF;politicsOpeningClean();T.qren=Math.max(0,Math.round((T.qren||0)*.97*10)/10);
   for(const k in T.hurt)T.hurt[k]=Math.max(0,Math.round(T.hurt[k]*.85));T.coal=T.coal.filter(c=>c.until>mo);stLoanEnd(T,lines);
-  // stale envoys: an unanswered demand counts as a refusal
-  for(const e of T.env.slice())if(e.until<=mo){T.env=T.env.filter(x=>x!==e);if(e.kind==='demand')stRefuse(S,T,e.k,lines);else if(e.kind==='tribute'){stGain(e.goods,e.k);}}
+  // Unanswered demands expire peacefully; refusing explicitly is a separate choice.
+  for(const e of T.env.slice())if(e.until<=mo){T.env=T.env.filter(x=>x!==e);if(e.kind==='demand'){stLine(lines,'📜',`${SF_DEF[e.k].zh}的索贡使者离去，未引发报复。`,`${SF_DEF[e.k].en}'s demand expires without retaliation.`);}else if(e.kind==='tribute'){stGain(e.goods,e.k);}}
   for(const k in T.prot){const P=T.prot[k];if(P.until<=mo||!sfTowns(k).length){delete T.prot[k];continue;}CAMP.res.silver+=P.stip;}
   if(campaignMonth()<ST.START)return;
   for(const k of Object.keys(SF_DEF)){const F=F0[k],R=stRead(S,T,k),was=T.stance[k];T.stance[k]=R.st;T.why[k]=R.why;
     if(was!==R.st){stEvent(S,'stance',k,siBig(k),{st:R.st});const L=ST_LBL[R.st];stLine(lines,'🧭',`${F.zh}对清河态度转为「${L[0]}」：${R.why[0]}`,`${F.en} is now ${L[1].toLowerCase()} toward Qinghe: ${R.why[1]}`);}
     if((T.cd[k]||0)>mo)continue;const quiet=(T.peace[k]||0)>mo,har=(T.har[k]||0)>mo;
-    if(R.st==='threat'||har){if(quiet)continue;const inCoal=T.coal.some(c=>c.a===k||c.b===k);const p=Math.min(.75,.22+R.wr/300+(inCoal?.1:0)+(har?.3:0));if(siH('st',k,mo)>=p)continue;stHostile(S,T,k,R,lines,har);T.cd[k]=mo+1;}
+    if(R.st==='threat'||har){if(quiet||!politicsPressureReady(T))continue;const inCoal=T.coal.some(c=>c.a===k||c.b===k);const p=Math.min(.75,.22+R.wr/300+(inCoal?.1:0)+(har?.3:0));if(siH('st',k,mo)>=p)continue;if(stHostile(S,T,k,R,lines,har))T.cd[k]=mo+OPENING_BALANCE.factionGap;}
     else if(R.st==='court'){if(siH('trib',k,mo)>=.4)continue;const g=stTribGoods(S,k,mo);stEnvoy(T,k,'tribute',{goods:g});stEvent(S,'tribute',k,siBig(k));
       stLine(lines,'🎁',`${F.zh}遣使携礼赴清河示好（待你接见）`,`${F.en} sends an envoy with gifts to Qinghe (waiting to be received)`);T.cd[k]=mo+ST.TRIB_CD;}
     else if(R.st==='protect'){if(T.prot[k]||siH('prot',k,mo)>=.45)continue;const stip=10+Math.round(S.w[k]/40);stEnvoy(T,k,'protect',{stip});stEvent(S,'protect',k,siBig(k));
       stLine(lines,'🛡',`${F.zh}遣使求清河庇护`,`${F.en} sends an envoy asking for Qinghe's protection`);T.cd[k]=mo+6;}
-    else if(R.st==='over'){if(quiet||siH('dem',k,mo)>=.35)continue;const g={silver:Math.min(220,30+Math.round(S.pow[k]/6)),grain:Math.min(300,80+Math.round(S.pow[k]/5))};stEnvoy(T,k,'demand',{goods:g});stEvent(S,'demand',k,stHome());
+    else if(R.st==='over'){if(quiet||!politicsPressureReady(T)||(T.demCd?.[k]||0)>mo||siH('dem',k,mo)>=.35)continue;const g=politicsDemandGoods();if(!g)continue;T.lastPressure=mo;stEnvoy(T,k,'demand',{goods:g});stEvent(S,'demand',k,stHome());
       stLine(lines,'🏛',`${F.zh}使者至清河，索银${g.silver}、粮${g.grain}`,`An envoy of ${F.en} arrives in Qinghe demanding ${g.silver} silver and ${g.grain} grain`);T.cd[k]=mo+ST.DEM_CD;}}
   S.ver++;}
 function stTribGoods(S,k,mo){const h=siH('tg',k,mo),w=S.w[k];if(k==='yao')return {horse:6+Math.round(h*8),silver:20};if(k==='zhong')return {grain:150+Math.round(h*120)};
   if(k==='liu')return h<.5?{loan:100,silver:20}:{silver:40+Math.round(w/12)};return {silver:60+Math.round(h*60)};}
-function stHostile(S,T,k,R,lines,har){const F=SF_DEF[k],mo=campaignMonth(),W=[1.2,1,1,.8];
+function stHostile(S,T,k,R,lines,har){if(!politicsPressureReady(T)||(T.cd[k]||0)>campaignMonth())return false;const F=SF_DEF[k],mo=campaignMonth(),W=[1.2,1,1,.8];
   const other=Object.keys(SF_DEF).find(o=>o!==k&&T.stance[o]==='threat'&&!T.coal.some(c=>(c.a===k&&c.b===o)||(c.a===o&&c.b===k)));if(!other)W[3]=0;
   const bt=stQhBorderTowns(k);if(!bt.length){W[0]=0;W[2]=0;}if(har){W[0]*=1.5;W[2]*=1.5;}
-  const tot=W.reduce((a,b)=>a+b,0);if(!tot)return;let r=siH('stp',k,mo)*tot,ty=0;while(ty<3&&r>W[ty]){r-=W[ty];ty++;}
-  if(ty===0){const b=bt[Math.floor(siH('qb',k,mo)*bt.length)],a=CADJ[b].find(n=>sfOf(n)===k)||b;S.blk=(S.blk||[]).filter(x=>x.until>mo);S.blk.push({k,o:'qh',a,b,until:mo+3});
-    stEvent(S,'qblock',k,b,{b:a});stLine(lines,'⛔',`${F.zh}封锁通往清河${CT[b].zh}的商路三月`,`${F.en} closes the roads into Qinghe's ${CT[b].en} for three months`);}
-  else if(ty===1){const hit=4+Math.round(siH('qi',k,mo)*4);if(typeof favAdd==='function')favAdd(-hit,'court');if(CG.fac)CG.fac.court=Math.max(0,CG.fac.court-3);S.cf[k]=Math.max(0,S.cf[k]-2);
-    stEvent(S,'qimpeach',k,stHome(),{hit});stLine(lines,'📜',`${F.zh}遣台谏弹劾清河擅权，功绩-${hit}，朝官支持-3`,`${F.en} has Qinghe accused at court of overreach: merit -${hit}, court support -3`);}
-  else if(ty===2){const id=bt[Math.floor(siH('qp',k,mo)*bt.length)],s=CG.T[id],d=4+Math.round(siH('qpd',k,mo)*4);s.prosp=Math.max(0,s.prosp-d);
+  const tot=W.reduce((a,b)=>a+b,0);if(!tot)return false;T.lastPressure=mo;T.cd[k]=mo+OPENING_BALANCE.factionGap;let r=siH('stp',k,mo)*tot,ty=0;while(ty<3&&r>W[ty]){r-=W[ty];ty++;}
+  if(ty===0){const b=bt[Math.floor(siH('qb',k,mo)*bt.length)],a=CADJ[b].find(n=>sfOf(n)===k)||b;S.blk=(S.blk||[]).filter(x=>x.until>mo);S.blk.push({k,o:'qh',a,b,until:mo+2});
+    stEvent(S,'qblock',k,b,{b:a});stLine(lines,'⛔',`${F.zh}封锁通往清河${CT[b].zh}的商路两月`,`${F.en} closes the roads into Qinghe's ${CT[b].en} for two months`);}
+  else if(ty===1){const hit=2+Math.round(siH('qi',k,mo)*2);if(typeof favAdd==='function')favAdd(-hit,'court');if(CG.fac)CG.fac.court=Math.max(0,CG.fac.court-1);S.cf[k]=Math.max(0,S.cf[k]-2);
+    stEvent(S,'qimpeach',k,stHome(),{hit});stLine(lines,'📜',`${F.zh}遣台谏弹劾清河擅权，功绩-${hit}，朝官支持-1`,`${F.en} has Qinghe accused at court of overreach: merit -${hit}, court support -1`);}
+  else if(ty===2){const id=bt[Math.floor(siH('qp',k,mo)*bt.length)],s=CG.T[id],d=2+Math.round(siH('qpd',k,mo)*2);s.prosp=Math.max(0,s.prosp-d);
     stEvent(S,'qpress',k,id);stLine(lines,'✊',`${F.zh}逼迫清河${CT[id].zh}乡绅，民心不安（繁荣-${d}）`,`${F.en} leans on the gentry of Qinghe's ${CT[id].en}: unrest (prosperity -${d})`);}
   else{T.coal.push({a:k,b:other,until:mo+12});const fk=siFeudKey(k,other);if(S.feud[fk]!=null)S.feud[fk]=Math.max(0,S.feud[fk]-12);
-    stEvent(S,'coalition',k,siBig(k),{with:other});stLine(lines,'🤝',`${F.zh}与${SF_DEF[other].zh}暂释宿怨，结盟以制清河`,`${F.en} and ${SF_DEF[other].en} set aside their feud and combine against Qinghe`);}}
+    stEvent(S,'coalition',k,siBig(k),{with:other});stLine(lines,'🤝',`${F.zh}与${SF_DEF[other].zh}暂释宿怨，结盟以制清河`,`${F.en} and ${SF_DEF[other].en} set aside their feud and combine against Qinghe`);}return true;}
 {const old=siMonth;siMonth=function(lines){const r=old.apply(this,arguments);try{stMonth(lines);}catch(e){console.error(e);}return r;};}
 // ---- Qinghe demands tribute from a weaker bloc
 function stCanDemand(k){const S=siState(),T=stState(S);return stRatio(S,k)>=1.3&&(T.pd[k]||0)<=campaignMonth();}
@@ -149,3 +149,5 @@ function stEnvPanel(){const S=siState(),T=stState(S),w=rsEl('div','sw-card');w.i
     c.insertBefore(box,c.querySelector('.sw-row')||null);
     const row=c.querySelector('[data-back]')||c;const can=stCanDemand(k);const b=rsBtn('索贡','Demand tribute',()=>{stDemand(k);campUI();},!can);b.dataset.demand=k;b.title=can?Ts('清河势大，可令其纳贡','Qinghe is strong enough to demand tribute'):Ts(`需清河权势达其1.3倍（现${r.toFixed(2)}倍）且无冷却`,`Needs Qinghe at 1.3x their power (now ${r.toFixed(2)}x) and no cooldown`);row.appendChild(b);}}catch(e){console.error(e);}return w;};}
 window.__st={ST,ST_TEMPER,ST_LBL,stState,stQhPower,stMonth,stRead,stAnswer,stDemand,stCanDemand,stEnvoy,stRatio,stHostile,V:ST.V};
+
+{const old=sfTradeMul;sfTradeMul=function(k){const m=old(k);return politicsProtected()?Math.max(1,m):m;};}

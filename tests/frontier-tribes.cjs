@@ -16,11 +16,11 @@ const checks=await page.evaluate(async()=>{const checks=[],ok=(v,s)=>{if(!v)thro
  const run=n=>{R(snap);const L=[];month(n,L);return JSON.stringify([CG.sf.st.stance,CG.sf.st.wr,CG.sf.st.env.map(e=>[e.k,e.kind]),CG.fr.stats,CG.fr.log,CG.fr.str]);};
  const r1=run(14),r2=run(14);ok(r1===r2,'stances, envoys, raids and invasions are deterministic (same start, same 14 months)');
  // weak Qinghe: overbearing blocs send demands
- R(snap);CAMP.res.silver=300;let dem=null;for(let i=0;i<10&&!dem;i++){month(1);dem=CG.sf.st.env.find(e=>e.kind==='demand');}
+ R(snap);CG.month=25;CG.dynasty.totalSales=300;CAMP.res.silver=300;let dem=null;for(let i=0;i<10&&!dem;i++){month(1);dem=CG.sf.st.env.find(e=>e.kind==='demand');}
  ok(dem&&CG.sf.st.stance[dem.k]==='over'&&dem.goods.silver>0,`a far stronger bloc demands tribute from a weak Qinghe (${dem&&dem.k}: ${dem&&dem.goods.silver} silver, ${dem&&dem.goods.grain} grain)`);
  const before=W();const rel0=sfState().rel[dem.k],s0=CAMP.res.silver,g0=CG.T[HOME].st.grain,mo=campaignMonth();
  ok(__st.stAnswer(dem.id,true).ok&&CAMP.res.silver===s0-dem.goods.silver&&CG.T[HOME].st.grain===g0-dem.goods.grain&&sfState().rel[dem.k]>rel0&&CG.sf.st.peace[dem.k]>mo,'accepting a demand pays it, raises standing and buys peace');
- R(before);const T=CG.sf.st;ok(__st.stAnswer(dem.id,false).ok&&CAMP.res.silver===s0&&sfState().rel[dem.k]===Math.max(-100,rel0-10)&&T.har[dem.k]>mo&&!T.env.some(e=>e.id===dem.id),'refusing a demand keeps the goods but drops standing and starts harassment');
+ R(before);const T=CG.sf.st;ok(__st.stAnswer(dem.id,false).ok&&CAMP.res.silver===s0&&sfState().rel[dem.k]===Math.max(-100,rel0-5)&&T.har[dem.k]>mo&&!T.env.some(e=>e.id===dem.id),'refusing a demand keeps the goods but drops standing and starts harassment');
  const h0=CG.sf.evlog.length;month(4);ok(CG.sf.evlog.some(e=>e.k===dem.k&&['qblock','qimpeach','qpress','coalition'].includes(e.ty)),'a refused bloc harasses Qinghe (blockade, accusation or pressure on its towns)');
  // strong Qinghe: courting, protection, threat; tribute; Qinghe's own demands
  R(snap);CG.sf.st.qren=900;CAMP.res.silver=6000;const seen=new Set(),kinds=new Set();let trib=null;for(let i=0;i<12;i++){month(1);for(const k in CG.sf.st.stance)seen.add(CG.sf.st.stance[k]);for(const e of CG.sf.st.env){kinds.add(e.kind);if(e.kind==='tribute'&&!trib)trib=e;}}

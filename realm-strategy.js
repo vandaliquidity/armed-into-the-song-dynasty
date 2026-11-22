@@ -92,12 +92,13 @@ function sfTick(lines,season){const S=sfState();for(const k in SF_DEF){const v=S
 function sfAI(lines){const S=sfState();S.req=S.req||{};S.feud=S.feud||{};const mo=campaignMonth();
   for(const k in SF_DEF){const F=SF_DEF[k],v=S.rel[k];
     const mine=bdState().list.filter(b=>bdActive(b)&&bdFaction(b)===k&&b.men>120);if(mine.length){const b=mine[0],hit=30+((mo*13+k.length*7)%31);b.men=Math.max(0,b.men-hit);if(!b.men)b.cleared=0;lines.push(['🏹',Ts(`${F.zh}出兵清剿${bdDef(b.id).zh}，斩获${hit}`,`${F.en} sent troops against ${bdDef(b.id).en}: ${hit} outlaws fell`)]);continue;}
-    const riv=Object.entries(SF_RIV[k]||{}).filter(([o,m])=>m<0).map(([o])=>o);const close=riv.find(o=>S.rel[o]-v>=35);if(close){sfAdd(k,-3);lines.push(['😠',Ts(`${F.zh}不满你与${SF_DEF[close].zh}过从甚密`,`${F.en} resents your closeness to ${SF_DEF[close].en}`)]);}
-    if(!S.req[k]&&v>=20&&CAMP.res.silver>=300&&(mo+k.length)%4===0){S.req[k]={m:mo,c:50};lines.push(['📨',Ts(`${F.zh}来书求助军饷五十两`,`${F.en} writes asking for 50 silver toward its pay chests`)]);}
-    if(S.req[k]&&mo-S.req[k].m>=2){delete S.req[k];sfAdd(k,-6,'refused');lines.push(['📪',Ts(`${F.zh}所请未获回应，颇有怨言`,`${F.en} took your silence as a refusal`)]);}
-    if(v<=-50&&CAMP.res.silver>0){const t=Math.min(CAMP.res.silver,20);CAMP.res.silver-=t;lines.push(['⚠',Ts(`${F.zh}截留你的商队，损银${t}`,`${F.en} detained your convoy: ${t} silver lost`)]);}}
+    const riv=Object.entries(SF_RIV[k]||{}).filter(([o,m])=>m<0).map(([o])=>o);const close=riv.find(o=>S.rel[o]-v>=35);if(close&&!politicsProtected()){sfAdd(k,-3);lines.push(['😠',Ts(`${F.zh}不满你与${SF_DEF[close].zh}过从甚密`,`${F.en} resents your closeness to ${SF_DEF[close].en}`)]);}
+    if(!politicsProtected()&&!S.req[k]&&v>=20&&CAMP.res.silver>=300&&(mo+k.length)%4===0){S.req[k]={m:mo,c:50};lines.push(['📨',Ts(`${F.zh}来书求助军饷五十两`,`${F.en} writes asking for 50 silver toward its pay chests`)]);}
+    if(S.req[k]&&mo-S.req[k].m>=2){delete S.req[k];if(!politicsProtected())sfAdd(k,-2,'refused');lines.push(['📪',Ts(`${F.zh}所请未获回应，颇有怨言`,`${F.en} took your silence as a refusal`)]);}
+    // Hostile trade is handled by real route penalties, not monthly treasury theft.
+  }
   for(const k in SF_RIV)for(const [o,m] of Object.entries(SF_RIV[k])){if(m>=0||k>o)continue;const key=k+'_'+o;S.feud[key]=clamp((S.feud[key]??Math.round(-m*50))+(((mo*7+key.length)%5)-2),0,100);}}
-function sfReqAnswer(k,yes){const S=sfState(),R=S.req&&S.req[k];if(!R)return {ok:false};if(yes){if(CAMP.res.silver<R.c)return {ok:false};CAMP.res.silver-=R.c;sfAdd(k,12,'request');}else sfAdd(k,-6,'refused');delete S.req[k];return {ok:true};}
+function sfReqAnswer(k,yes){const S=sfState(),R=S.req&&S.req[k];if(!R)return {ok:false};if(yes){if(CAMP.res.silver<R.c)return {ok:false};CAMP.res.silver-=R.c;sfAdd(k,12,'request');}else if(!politicsProtected())sfAdd(k,-3,'refused');delete S.req[k];return {ok:true};}
 function sfGift(k){const c=40;if(CAMP.res.silver<c)return {ok:false};CAMP.res.silver-=c;return {ok:true,rel:sfAdd(k,10,'gift')};}
 function sfAidOk(k){const S=sfState();return S.rel[k]>=40&&(S.aid[k]||-99)<=campaignMonth()-3;}
 function sfAid(k){if(!sfAidOk(k))return {ok:false};const S=sfState();S.aid[k]=campaignMonth();const h=CG.T[HOME];h.st.grain=(h.st.grain||0)+60;h.eq=h.eq||{};h.eq.spear=(h.eq.spear||0)+20;sfAdd(k,-15,'aid');return {ok:true};}

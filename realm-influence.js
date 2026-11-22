@@ -121,7 +121,7 @@ function siGrain(k){if(!siGrainOk())return {ok:false};CG.T[HOME].st.grain-=SI.GR
 function siCourtOk(){return typeof politicsAvailable==='function'?politicsAvailable()>=SI.COURT:(CG.fav&&CG.fav.pts>=SI.COURT);}
 function siCourt(k){if(!siCourtOk())return {ok:false};favAdd(-SI.COURT,'court');const S=siState();S.cf[k]=Math.min(100,S.cf[k]+10);siBack(k,8);sfAdd(k,3,'court');return {ok:true};}
 // blockades also cut Qinghe's own routes through a blockaded town
-{const old=tradeRoutes;tradeRoutes=function(){const out=old.apply(this,arguments);if(!CG||!CG.sf||!CG.sf.si)return out;const B=CG.sf.blk||[];
+{const old=tradeRoutes;tradeRoutes=function(){const out=old.apply(this,arguments);if(!CG||!CG.sf||!CG.sf.si)return out;const B=politicsProtected()?[]:(CG.sf.blk||[]);
   for(const r of out){const b=B.find(x=>[x.a,x.b].includes(r.a)||[x.a,x.b].includes(r.b));if(b){r.blk=b.k;r.v=Math.round(r.v*.8);r.mul=(r.mul||1)*.8;}}return out;};}
 // ---- UI: power ranking strip (in the layer bar), factions panel additions, town panel influence
 const SI_CSS=`.sw-rank{display:flex;flex-basis:100%;justify-content:center;gap:var(--sw-s1);flex-wrap:wrap;margin-bottom:2px}
