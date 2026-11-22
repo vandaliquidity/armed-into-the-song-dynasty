@@ -1,5 +1,5 @@
 const {chromium}=require('playwright'),fs=require('node:fs');const {startServer,browserOptions}=require('./server.cjs');
-(async()=>{const {server,url}=await startServer();let browser;try{browser=await chromium.launch(browserOptions());const p=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];p.on('pageerror',e=>errors.push(e.stack));await p.goto(url,{waitUntil:'networkidle'});
+(async()=>{const {server,url}=await startServer();let browser;try{browser=await chromium.launch(browserOptions());const p=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];p.on('pageerror',e=>errors.push(e.stack));await p.goto(url,{waitUntil:'load'});
 const checks=await p.evaluate(()=>{const out=[],ok=(v,m)=>{if(!v)throw Error(m);out.push(m);};coachSave({off:1,seen:{}});LOGI.on=false;setLang('en');__sw.cstart();CG.supplyAuto=false;const s=CG.T[HOME];
  s.pop=1800;s.staff={};s.staffManual={};for(const k of PROD_ORDER){s.bld[k]=1;s.staff[k]=0;}delete s.productionVersion;
  const recovered=prodBreak(HOME);ok(recovered.rows.every(r=>r.w>0&&r.amt>0)&&s.staffRecovered,'older all-zero staffing is repaired despite an otherwise healthy population');

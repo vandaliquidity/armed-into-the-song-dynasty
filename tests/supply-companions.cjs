@@ -1,7 +1,7 @@
 const {chromium}=require('playwright'),fs=require('node:fs');
 const {startServer,browserOptions}=require('./server.cjs');
 (async()=>{const {server,url}=await startServer();let browser;try{
- browser=await chromium.launch(browserOptions());const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.stack));await page.goto(url,{waitUntil:'networkidle'});
+ browser=await chromium.launch(browserOptions());const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.stack));await page.goto(url,{waitUntil:'load'});
  const checks=await page.evaluate(()=>{
   const checks=[],ok=(v,m)=>{if(!v)throw Error(m);checks.push(m);};coachSave({off:1,seen:{}});LOGI.on=false;setLang('en');__sw.cstart();CG.supplyAuto=false;
   const home=CG.T[HOME],source=CG.T.qingshui;source.own='qh';source.eq.bow=100;home.eq.bow=0;home.bld.yard=1;home.pop=2000;CAMP.res.silver=1000;campRefresh();

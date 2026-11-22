@@ -1,5 +1,5 @@
 const {chromium}=require('playwright'),fs=require('node:fs');const {startServer,browserOptions}=require('./server.cjs');
-(async()=>{const {server,url}=await startServer();let b;try{b=await chromium.launch(browserOptions());const p=await b.newPage({viewport:{width:1500,height:1000}}),errors=[],checks=[];p.on('pageerror',e=>errors.push(e.stack));await p.goto(url,{waitUntil:'networkidle'});await p.evaluate(()=>{coachSave({off:1,seen:{}});LOGI.on=false;setLang('en');__sw.cstart();});
+(async()=>{const {server,url}=await startServer();let b;try{b=await chromium.launch(browserOptions());const p=await b.newPage({viewport:{width:1500,height:1000}}),errors=[],checks=[];p.on('pageerror',e=>errors.push(e.stack));await p.goto(url,{waitUntil:'load'});await p.evaluate(()=>{coachSave({off:1,seen:{}});LOGI.on=false;setLang('en');__sw.cstart();});
  const ok=(v,m)=>{if(!v)throw Error(m);checks.push(m);};
  ok(await p.locator('#topCommands').count()===1&&await p.locator('.campaign-nav').count()===0,'One top command bar replaces the left navigation');
  ok(await p.locator('#cChainB').count()===0&&await p.locator('#cOffB').count()===1,'Duplicate production and officer entry points are removed');

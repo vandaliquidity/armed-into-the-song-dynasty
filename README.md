@@ -2,6 +2,16 @@
 
 A browser strategy game.
 
+### v0.56 — A Council That Governs
+
+Commerce & Council now opens four compact adviser desks: economy, trade, politics and military. Long introductions and repeated accounting notes are removed from the main council, barracks, settlement resource panel and supply screen. Adviser reasoning, ranked alternatives and execution logs stay collapsed. Manual trade is available through an optional button; the default Trade screen covers the whole realm.
+
+Governors rank at most three actual needs across the realm rather than proposing every missing business in every town. Food deficits, patients without beds, tax income, constrained recruitment and real production bottlenecks drive the ranking. Businesses need existing inputs and customers. Approve a six-month construction mandate focused on food, income or both, with a total silver cap of 150/300/600. Governors start at most one project per month using local materials and real construction slots, retain 150 treasury silver, respect local governance settings/manual locks, and wait when a higher-priority emergency cannot be funded. Pause stops future work without undoing construction. Legacy petitions are rescored; existing approved projects remain.
+
+The trade adviser offers Sell surplus, Supply workshops & sell surplus, or Stockpile. Managed purchases first request internal carts, then buy actual connected Song-market stocks, at most two batches per month, within a realm-wide 40/80/160 silver cap and a 150-silver treasury floor. Existing and incoming cargo reduce demand. Profitable premium export contracts are selected across settlements, retaining food, industrial inputs and recruitment reserves. Exports still reserve finite customer budgets and pay on arrival; roads, losses and local export pauses remain meaningful. Supply policy requires an explicit policy decision; the default sells surplus without automatic external purchases.
+
+Political advice selects a presently eligible commission and spends actual merit/resources only on approval. Military advice prioritises reachable wounded, then affordable veteran crossbow refits and exposed frontier recruitment; it uses the existing patient, rank-preserving equipment and monthly training systems. Defer suppresses the specific recommendation for six months. Policies, mandates, spent budgets and decisions survive save/load without triggering free work or repeated orders.
+
 ### v0.55 — Orders, Recruits and Counsel
 
 Campaign orders now trigger by monthly turn, in source chapter order. Qinzhou is due on turn 2, Qinghe defence on turn 6, and the continuing chronicle begins on turn 8, with the historical crisis still scheduled independently. Delayed orders wait; neither time nor a menu opening can win a battle. A short current-order board replaces mandatory preparation lists. Former construction, manufacturing and stock targets are optional development goals; administrative chapters use a short elapsed period and at most 30 silver. Consequential branches still need an explicit choice, and the alternate medical rescue retains its real care requirements. Appointments conserve actual allied garrisons. Optional cargo, real construction and armament research continue to consume resources and travel normally.
