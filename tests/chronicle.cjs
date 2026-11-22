@@ -8,10 +8,10 @@ const checks=await p.evaluate(()=>{
  ok(new Set(CHRONICLE_CHAPTERS.map(c=>c.id)).size===27,'every chapter has a unique save key');
  ok(CHRONICLE_SITES.every(t=>CG.T[t.id]&&bfsDist(HOME,100)[t.id]!=null),'Deshun, Roulang and Linhe are connected, populated campaign settlements');
  for(const c of CHRONICLE_CHAPTERS){for(const g of c.goals)chronGoal(c,g);ok(c.source&&c.reward&&c.brief,'chapter '+c.id+' has source, consequences and valid objectives');}
- ok(!chronStart('county')&&!chronStart('regional'),'opening progress and chapter order cannot be bypassed');CAMP.done=[0,1,2];missionsUI();
+ ok(!chronStart('county')&&!chronStart('regional'),'opening progress and chapter order cannot be bypassed');CAMP.done=[0,1,2];legacyMissionBoard();
  ok(!$('missionNext').classList.contains('dis')&&document.querySelector('.chronicle-board'),'old saves with three chapters complete receive an enabled next-chapter action');
  ok($('cFieldCommand')?.textContent.includes('Opening support & legacy commissions'),'legacy imperial support remains reachable inside live dispatches');
- const oldTroops=chronMen(),oldStore=JSON.stringify(CG.T[HOME].st);missionsUI();ok(chronMen()===oldTroops&&JSON.stringify(CG.T[HOME].st)===oldStore,'opening the new board does not grant supplies or duplicate troops');
+ const oldTroops=chronMen(),oldStore=JSON.stringify(CG.T[HOME].st);legacyMissionBoard();ok(chronMen()===oldTroops&&JSON.stringify(CG.T[HOME].st)===oldStore,'opening the new board does not grant supplies or duplicate troops');
  ok(chronStart('county')&&!chronComplete('county'),'starting a chapter does not grant its reward before goals are met');
  CG.T[HOME].bld.yard=2;CG.month=2;const bonus=fieldState().bonus,allied=CG.T.longcheng.songGarrison.men,money=CAMP.res.silver;
  ok(chronComplete('county')&&owned('longcheng')&&fieldState().bonus===bonus+2,'county reform grants real Longcheng administration and command capacity');
@@ -53,7 +53,7 @@ const checks=await p.evaluate(()=>{
  chronFixture('relief');Object.assign(CG.T[HOME].st,{grain:3000});CG.T[HOME].eq.xbow=1000;ok(chronChapter('relief').goals.every(g=>chronGoal(chronChapter('relief'),g).ok)&&chronComplete('relief'),'a decided siege switches the relief chapter to real surviving reserves and care instead of impossible deliveries');
  ok(chronStart('jingkang')&&chronComplete('jingkang')&&!chronNext()&&!CG.over,'the actual fall of Kaifeng can conclude the chronicle while keeping the realm playable');
  chronFixture('arsenal');
- saveGame();const saved=JSON.stringify(chronicle());CAMP=loadGame();campLoad();ok(JSON.stringify(chronicle())===saved,'active chapter, choices, finite enemies, dispatches and metrics survive save/load');
- missionsUI();return out;
+ saveGame();const saved=JSON.stringify(chronicle());CAMP=loadGame();campLoad();const migrated=JSON.parse(JSON.stringify(chronicle()));if(migrated.active){delete migrated.active.calendar;delete migrated.active.calendarChoiceConfirmed;}const expected=JSON.parse(saved);if(expected.active){delete expected.active.calendar;delete expected.active.calendarChoiceConfirmed;}ok(JSON.stringify(migrated)===JSON.stringify(expected)&&chronicle().active.calendar,'active chapter, choices, finite enemies, dispatches and metrics survive save/load');
+ legacyMissionBoard();return out;
 });fs.mkdirSync('test-results',{recursive:true});await p.screenshot({path:'test-results/chronicle-board.png'});await p.setViewportSize({width:1100,height:760});await p.screenshot({path:'test-results/chronicle-board-small.png'});console.log(JSON.stringify({checks,errors},null,2));if(errors.length)throw Error('Browser errors');
 }finally{if(browser)await browser.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});

@@ -9,14 +9,14 @@ const checks=await p.evaluate(()=>{const checks=[],ok=(v,m)=>{if(!v)throw Error(
  ok(CG.xa.length===1&&CG.xa[0]===ordinary&&!CG.queue.length&&CG.story.qingheHeld,'old-save scripted invasions are held without deleting ordinary enemy marches');
  CG.armies[0].loc='qingshui';ok(!missionQinghe(),'mission waits for the lead army to return to Qinghe');CG.armies[0].loc=HOME;
  CG.phase=3;ok(!missionQinghe(),'story launch cannot bypass campaign phase requirements');CG.phase=0;
- ok(missionReady(),'prepared army at Qinghe can launch the mission on demand');missionsUI();return checks;});
+ ok(missionReady(),'prepared army at Qinghe can launch the mission on demand');legacyMissionBoard();return checks;});
 await p.locator('#cMissions').getByText('I am ready: start Qinghe',{exact:true}).click();
 checks.push(...await p.evaluate(()=>{const ok=(v,m)=>{if(!v)throw Error(m);return m;};return [ok(MODE==='brief'&&CG.pend?.story===2&&SEL_CH===2,'actual Ready button opens the Qinghe story briefing'),ok(CG.story.qingheAttempts===1&&!CG.xa.some(x=>x.story==='ch3'),'ready launch records one attempt without spawning a second invasion')];}));
 await p.keyboard.press('Escape');checks.push(...await p.evaluate(()=>{if(MODE!=='camp'||CG.pend||!missionReady())throw Error('Briefing cancellation stranded the campaign');missionQinghe();beginBattle(2);return ['leaving a briefing restores planning and allows the mission to be started later'];}));await p.waitForTimeout(250);checks.push(...await p.evaluate(()=>{if(MODE!=='battle'||B.ch!==2||!B.key||B.waves.length!==1)throw Error('Qinghe did not start');return ['Qinghe mission launches the real commander-kill defence battle'];}));
 checks.push(...await p.evaluate(()=>{const checks=[],ok=(v,m)=>{if(!v)throw Error(m);checks.push(m);};B=null;CG.pend=null;CAMP.done=[0,1,2];CG.journey.stage='complete';CG.journey.before={pop:1000,prosp:20};CG.journey.result={carts:3,saved:6};showCamp();
- ok(!missionQinghe(),'completed Qinghe mission cannot be replayed for rewards');missionsUI();ok(!document.querySelector('#missionNext').classList.contains('dis'),'completed opening unlocks the continuing novel campaign');
+ ok(!missionQinghe(),'completed Qinghe mission cannot be replayed for rewards');legacyMissionBoard();ok(!document.querySelector('#missionNext').classList.contains('dis'),'completed opening unlocks the continuing novel campaign');
  CG.armies[0].route=null;CG.armies[0].dest=null;const enemy=CADJ[HOME][0];CG.T[enemy].own='xia';CG.T[enemy].str=200;
  const op=missionOperations().find(o=>o.terr===enemy);ok(!!op,'frontier operations remain available after the story ends');ok(missionPlan(op.army,op.terr)&&CG.armies.find(a=>a.id===op.army).route?.includes(enemy),'frontier operation creates a real raid march order');
  saveGame();CAMP=loadGame();campLoad();ok(CAMP.done.includes(2)&&CG.missionsVersion===1,'mission completion and manual-start migration persist in saves');return checks;}));
-await p.evaluate(()=>missionsUI());fs.mkdirSync('test-results',{recursive:true});await p.screenshot({path:'test-results/missions-board.png'});console.log(JSON.stringify({checks,errors},null,2));if(errors.length)throw Error('Browser errors');
+await p.evaluate(()=>legacyMissionBoard());fs.mkdirSync('test-results',{recursive:true});await p.screenshot({path:'test-results/missions-board.png'});console.log(JSON.stringify({checks,errors},null,2));if(errors.length)throw Error('Browser errors');
 }finally{if(browser)await browser.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});

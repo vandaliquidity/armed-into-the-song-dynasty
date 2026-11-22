@@ -1,0 +1,4 @@
+.governor-proposal{padding:12px 0;border-top:1px solid #65725b}.governor-proposal h4{margin:6px 0;color:#ecd19a}.governor-proposal p{font-size:12px;line-height:1.6;margin:6px 0}.advisor-badge{background:#b39554;color:#14251d;padding:2px 6px;border-radius:12px;font-size:10px}#cMissions .chron-card{margin:14px 0;padding:16px}#cMissions details{margin:12px 0;padding:10px;border:1px solid #667353;border-radius:5px}#cMissions summary{cursor:pointer;color:#e8cf97}#recruitmentStatus p{font-size:12px;line-height:1.6}
+
+.governor-proposal canvas{float:right;width:140px;height:64px;object-fit:contain;margin:0 0 8px 12px;background:#4d64503b;border-radius:5px}.governor-proposal:after{content:"";display:block;clear:both}.advisor-badge{cursor:pointer}
+@media(max-width:700px){.governor-proposal canvas{width:100px;height:55px}}

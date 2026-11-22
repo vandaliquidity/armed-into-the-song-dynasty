@@ -2,6 +2,16 @@
 
 A browser strategy game.
 
+### v0.55 — Orders, Recruits and Counsel
+
+Campaign orders now trigger by monthly turn, in source chapter order. Qinzhou is due on turn 2, Qinghe defence on turn 6, and the continuing chronicle begins on turn 8, with the historical crisis still scheduled independently. Delayed orders wait; neither time nor a menu opening can win a battle. A short current-order board replaces mandatory preparation lists. Former construction, manufacturing and stock targets are optional development goals; administrative chapters use a short elapsed period and at most 30 silver. Consequential branches still need an explicit choice, and the alternate medical rescue retains its real care requirements. Appointments conserve actual allied garrisons. Optional cargo, real construction and armament research continue to consume resources and travel normally.
+
+The Qinzhou staff plan performs the existing expedition choices in one paid action (40 grain, 20 timber, 120 silver); manual choices remain available. Existing five tactical scenarios are joined by a supply-depot defence, signal-tower/citadel assault and timed Youzhou breakout. These additional opponents come from actual occupied garrisons; earlier conquests can avert them. Missions still require a real staged banner, and staging orders use the campaign roads.
+
+Recruitment checks now use the same default armour, phase, supply reservations and destination rules as training. Approved remote-equipment orders can start during end-of-month processing, fixing the old phase lock. Training advances monthly, once per elapsed month, with no second seasonal graduation. Busy barracks accept a bounded waiting list; people, kit and silver are charged when training actually begins. Barracks show active lanes, waiting reasons and cancellation. Recruit-and-send uses the destination banner’s room instead of incorrectly blocking on the source garrison.
+
+Governors and unappointed town stewards suggest two priorities with reasons and current budgets. Approve starts the real build; Reject costs nothing and suppresses that proposal for six months. Urgent medical needs can replace a lower-priority suggestion. Automatic governor construction, buying/selling and recruitment are suspended in favour of approval; existing worker allocation can remain enabled. The numbered badge beside Commerce & Council opens the proposals, also found under Court & government → Governors. Proposals and decisions persist in saves; they do not create resources or buildings.
+
 ### v0.54 — Room to Build
 
 The standard 550-man opening now forecasts **+43 silver per season**, up from **−20**, through population taxes and local commerce. A level-one market adds roughly 38 net silver per season after its upkeep. These are recurring settlement yields, not a starting cash grant; conquest settlement penalties, supply, prosperity, governors and actual army costs still apply. Businesses retain their material and customer limits.

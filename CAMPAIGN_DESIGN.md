@@ -2,6 +2,12 @@
 
 Implemented 2026-11-18, v0.22. Three opening missions continue into 27 new chapters. Campaign quantities, schematic geography and the 1120 start are gameplay accommodations. The source is the unfinished serial by 茶根儿; the documented reading ledger reaches IV:165. The last act below connects to the game's existing historical crisis and does not claim a novel ending.
 
+## v0.55 calendar update — 22 November 2026
+
+The current-order calendar supersedes the mandatory preparation gates below. Opening expeditions are issued on turns 2 and 6; the 27 continuing chapters are scheduled on monthly turns 8–84, in their existing order. Delays retain the next order rather than skipping unfinished battles. Construction, stockpiles and industrial targets remain optional guidance; actual cargo, training, construction and medical rescue still need real resources and time. Consequential policy branches require a choice. The game's independent historical crisis remains active.
+
+Three additional tactical encounters use real hostile garrisons: a supply-depot defence, a signal-tower assault and a timed breakout. Alongside the existing five authored scenarios, these bring the continuing Chronicle to eight distinct tactical encounters. Earlier conquests can avert new hostile encounters; they do not invent replacement enemies. The detailed former chapter plans below describe development opportunities rather than compulsory checklists.
+
 ## v0.52 consequence, economy and frontier update — 21 November 2026
 
 The five companions are detached from command and all village passives after defeat. Stretcher parties follow friendly roads to Qinghe one link per month; convalescence begins only on admission and lasts ten months after defeat, five after a victory ending with the companion down. Each loses one grade, never below zero, and must earn the lost grade again. A road cut or occupied home delays care. Recruited officers have permanent death when their actual marked troop figure is killed or their defeated formation loses at least 35% of its men. Remaining ordinary officers can lead manual battles using an existing troop figure and a modest rally skill. Companies preserve names, battle records and merge lineages; eliminated companies and dead officers enter memorial records.

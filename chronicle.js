@@ -72,8 +72,8 @@ function chronComplete(id){
     else for(const army of CG.armies)army.morale=Math.min(100,army.morale+10);
   }
   if(id==='xia'&&a.choice==='settlement')for(const at of Object.keys(CG.T).filter(owned))CG.T[at].tribX=Math.max(CG.T[at].tribX||0,CG.turn+4);
-  if(id==='linhe'){chronCharter('linhe');CG.T.linhe.bld.hosp=Math.max(1,CG.T.linhe.bld.hosp||0);}
-  if(id==='hospital'){const to=s.cargo.hospital.to;CG.T[to].bld.hosp=Math.max(1,CG.T[to].bld.hosp||0);CG.ready=(CG.ready||0)+5;}
+  if(id==='linhe'){chronCharter('linhe');if(owned('linhe')&&s.cargo.linhe?.state==='delivered')CG.T.linhe.bld.hosp=Math.max(1,CG.T.linhe.bld.hosp||0);}
+  if(id==='hospital'&&s.cargo.hospital?.to){const to=s.cargo.hospital.to;CG.T[to].bld.hosp=Math.max(1,CG.T[to].bld.hosp||0);CG.ready=(CG.ready||0)+5;}
   CAMP.res.rep=(CAMP.res.rep||0)+5;s.active=null;
   const choice=c.choices?.find(x=>x[0]===a.choice),suffix=choice?' · '+Tz(choice[1],choice[2]):'';
   chronNote(Tz(...c.title)+'：'+Tz(...c.reward)+suffix,Tz(...c.title)+': '+Tz(...c.reward)+suffix);
