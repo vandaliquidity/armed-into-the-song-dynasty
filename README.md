@@ -2,6 +2,12 @@
 
 A browser strategy game.
 
+### v0.58 — The Banner Endures
+
+The main formation now keeps Lin Feng's banner identity when a wound replaces him with an acting commander. The same army ID, soldiers, location and custom livery remain; no casualties or medical penalties are undone. Existing renamed opening-banner saves are identified on load. A depleted main formation retains an empty headquarters rather than becoming impossible to rebuild. After genuine recovery, Lin rejoins his original banner when it is at Qinghe, even if another companion is commanding it.
+
+Muster includes Locate banner and compact acting-command/recovery status. Opening expedition blockers show the actual medical condition instead of incorrectly saying no field army exists. This preserves the distinction between the formation and its currently available commander.
+
 ### v0.57 — The Edict Is Heard
 
 The edict scroll's character counter and column coordinates had been swallowed by an inline comment. Opening the scroll then threw a reference error and stopped the game's animation loop. These declarations are restored, with a regression exercising the actual reading stage and checking that frames continue.
