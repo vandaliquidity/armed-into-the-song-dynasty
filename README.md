@@ -2,6 +2,12 @@
 
 A browser strategy game.
 
+### v0.57 — The Edict Is Heard
+
+The edict scroll's character counter and column coordinates had been swallowed by an inline comment. Opening the scroll then threw a reference error and stopped the game's animation loop. These declarations are restored, with a regression exercising the actual reading stage and checking that frames continue.
+
+The envoy now reads the proclamation through browser speech synthesis at the reading stage, in the selected language (bilingual mode prefers an available Chinese voice, otherwise English). Short utterances cover the full text. Read aloud/Stop reading/Retry controls are independent of acknowledgement; unsupported or stalled speech never prevents Continue. Acknowledgement consumes only the presented record and never pays gifts twice. Leaving, loading or changing campaigns cancels narration and clears pending callbacks. Controls remain visible on phones above village navigation. Speech availability depends on the browser's voices; the ceremony remains usable without it.
+
 ### v0.56 — A Council That Governs
 
 Commerce & Council now opens four compact adviser desks: economy, trade, politics and military. Long introductions and repeated accounting notes are removed from the main council, barracks, settlement resource panel and supply screen. Adviser reasoning, ranked alternatives and execution logs stay collapsed. Manual trade is available through an optional button; the default Trade screen covers the whole realm.
