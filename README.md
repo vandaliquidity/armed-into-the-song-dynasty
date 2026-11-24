@@ -2,6 +2,12 @@
 
 A browser strategy game.
 
+### v0.60 — Call the Reserves
+
+Each selected banner in Muster now has an exact soldier-count field and Assign nearest soldiers. One order gathers existing unassigned healthy troops from the nearest reachable owned towns, with a short source/count/travel preview. Whole companies keep their IDs; partial detachments retain their experience, armour, weapon quality and history. Wounded stay at their source. Civilians, other banners, convoy escorts, reserved recruits and units with medical transfers are not drawn into the order. No manpower, equipment or money is created or charged again.
+
+Orders reserve real command slots and use the existing monthly road movement, rerouting to meet a moving banner or waiting when roads are cut. Local troops can join immediately; distant troops march on the map and survive save/load. Exact counts are validated before any split, including cases where small nearby companies would consume the capacity needed for the full request. The count clears after dispatch to prevent accidental repeat orders. Battle and recovery cleanup now retains living formations below ten soldiers and formations with patients still receiving care.
+
 ### v0.59 — A Realm With a Story
 
 Ten dated chapters now include original council scenes and explicit policy decisions: the Longcheng quarter, veteran curriculum, capital concern, frontier reports, Deshun appointment, rearmament programme, mineral procurement, new commanders, northern preparations and the post-Jingkang legacy. Five additional interludes cover the royal rescue, casualties after victory, the court settlement, southern accounts and the capital hospital. Later scenes recall earlier settlement/training choices; the final scene reflects Kaifeng's actual outcome. Dialogue adapts the existing reading ledger through IV:165; it does not claim new source chapters or a canonical novel ending.

@@ -4,7 +4,7 @@ const {startServer,browserOptions}=require('./server.cjs');
  const {server,url}=await startServer();let browser;
  try{
   browser=await chromium.launch(browserOptions());const page=await browser.newPage({viewport:{width:1440,height:900}}),errors=[];
-  page.on('pageerror',e=>errors.push(e.message));await page.goto(url,{waitUntil:'networkidle'});
+  page.on('pageerror',e=>errors.push(e.message));await page.goto(url,{waitUntil:'load'});
   const result=await page.evaluate(()=>{
    const checks=[];const ok=(x,m)=>{if(!x)throw Error(m);checks.push(m);};
    coachSave({off:1,seen:{}});LOGI.on=false;setLang('en');__sw.cstart();
@@ -55,6 +55,8 @@ const {startServer,browserOptions}=require('./server.cjs');
    const n=woundedAll();MODE='battle';consolidateWounded();ok(woundedAll()===n,'active tactical combat cannot dispatch patients');B=null;showCamp();
    return{checks};
   });
+  // Monthly care can open a dated campaign order; dismiss it before testing the medical menu.
+  if(await page.locator('#cMissions').count())await page.locator('#cMissions').getByRole('button',{name:'Close',exact:true}).click();
   await page.locator('[data-menu=army]>summary').click();await page.locator('#cMedicalB').click();await page.locator('#cMedical').waitFor({state:'visible'});
   fs.mkdirSync('test-results',{recursive:true});await page.screenshot({path:'test-results/medical-quick-action.png'});
   console.log(JSON.stringify({...result,errors},null,2));if(errors.length)throw Error('Browser errors');
