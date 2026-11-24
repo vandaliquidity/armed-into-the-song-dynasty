@@ -1,5 +1,5 @@
 const {chromium}=require('playwright'),fs=require('node:fs');const {startServer,browserOptions}=require('./server.cjs');
-(async()=>{const {server,url}=await startServer();let browser;try{browser=await chromium.launch(browserOptions());const p=await browser.newPage({viewport:{width:1600,height:1000}}),errors=[];p.on('pageerror',e=>errors.push(e.stack));await p.goto(process.argv[2]||url,{waitUntil:'networkidle'});
+(async()=>{const {server,url}=await startServer();let browser;try{browser=await chromium.launch(browserOptions());const p=await browser.newPage({viewport:{width:1600,height:1000}}),errors=[];p.on('pageerror',e=>errors.push(e.stack));await p.goto(process.argv[2]||url,{waitUntil:'load'});
  await p.evaluate(()=>{coachSave({off:1,seen:{}});LOGI.on=false;setLang('en');__sw.cstart();});await p.locator('#cDynastyB').click();await p.locator('[data-council="business"]').click();await p.locator('[data-build="kiln"]').click();await p.evaluate(()=>{if(CG.T[HOME].businesses.kiln?.build!==1)throw Error('Actual construction button failed');});
  const checks=await p.evaluate(()=>{const out=[],ok=(v,m)=>{if(!v)throw Error(m);out.push(m);};coachSave({off:1,seen:{}});LOGI.on=false;setLang('en');__sw.cstart();CG.supplyAuto=false;
  const s=CG.T[HOME],d=dynastyState();

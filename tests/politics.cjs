@@ -1,5 +1,5 @@
 const {chromium}=require('playwright'),fs=require('node:fs');const {startServer,browserOptions}=require('./server.cjs');
-(async()=>{const {server,url}=await startServer();let browser;try{browser=await chromium.launch(browserOptions());const page=await browser.newPage({viewport:{width:1500,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.stack));await page.goto(url,{waitUntil:'networkidle'});
+(async()=>{const {server,url}=await startServer();let browser;try{browser=await chromium.launch(browserOptions());const page=await browser.newPage({viewport:{width:1500,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.stack));await page.goto(url,{waitUntil:'load'});
 const checks=await page.evaluate(()=>{coachSave({off:1,seen:{}});LOGI.on=false;setLang('en');__sw.cstart();CG.supplyAuto=false;const checks=[],ok=(v,s)=>{if(!v)throw Error(s);checks.push(s);};
  const p=politicsState(),home=CG.T[HOME],tick=()=>{if(CG.month===3){CG.turn++;CG.month=1;}else CG.month++;politicsTick();};
  CG.fac={court:80,gentry:80,qiang:80};CG.fav.pts=0;CAMP.res.silver=10000;for(const k of RAW)home.st[k]=1000;

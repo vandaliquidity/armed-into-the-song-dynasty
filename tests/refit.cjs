@@ -1,7 +1,7 @@
 const {chromium}=require('playwright'),fs=require('node:fs');
 const {startServer,browserOptions}=require('./server.cjs');
 (async()=>{const {server,url}=await startServer();let browser;try{
- browser=await chromium.launch(browserOptions());const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.stack));await page.goto(url,{waitUntil:'networkidle'});
+ browser=await chromium.launch(browserOptions());const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.stack));await page.goto(url,{waitUntil:'load'});
  const checks=await page.evaluate(()=>{
   const checks=[],ok=(v,m)=>{if(!v)throw Error(m);checks.push(m);};coachSave({off:1,seen:{}});LOGI.on=false;setLang('en');__sw.cstart();CG.supplyAuto=false;
   const s=CG.T[HOME],a=CG.armies[0],u=armyUnits(a)[0];s.bld.yard=1;CAMP.res.silver=5000;u.exp=11;u.mor=73;u.wq=2;u.men=80;u.wnd=20;u.name='Qinghe veterans';

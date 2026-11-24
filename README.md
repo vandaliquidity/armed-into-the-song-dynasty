@@ -2,6 +2,16 @@
 
 A browser strategy game.
 
+### v0.59 — A Realm With a Story
+
+Ten dated chapters now include original council scenes and explicit policy decisions: the Longcheng quarter, veteran curriculum, capital concern, frontier reports, Deshun appointment, rearmament programme, mineral procurement, new commanders, northern preparations and the post-Jingkang legacy. Five additional interludes cover the royal rescue, casualties after victory, the court settlement, southern accounts and the capital hospital. Later scenes recall earlier settlement/training choices; the final scene reflects Kaifeng's actual outcome. Dialogue adapts the existing reading ledger through IV:165; it does not claim new source chapters or a canonical novel ending.
+
+Choices affect real systems: a finite-market export charter or housing prosperity; recruit experience or company movement; export pricing or capital intelligence; convoy risk or frontier reports; command capacity or local welfare; refit costs or paid cannon trials; mineral purchase prices or convoy security; local garrison space or a trained cadre; actual war-stock targets or current morale; reconstruction or service honours. Decisions normally commit on chapter completion; the six-month rearmament priority takes effect when selected so it benefits the programme itself. Decisions persist in saves and cannot be changed for repeated rewards. Existing branch decisions are also recorded. Earlier completed chapters retain their results without retroactive awards. No manufacturing checklist is reintroduced.
+
+The Longcheng stronghold now requires freeing its imprisoned chief and physically escorting him out after taking both wards. If he is killed, that death remains through retries; subsequent assaults secure remaining testimony instead. The frontier-reports chapter gains a courier-and-relay battle: actual troops leave an adjacent Xia garrison, the courier travels through captured posts, and the far post must remain secure for ten seconds. Surviving attackers return to the same finite source. Earlier conquests can avert this ambush. This brings continuing Chronicle tactical scenarios to nine, with the Longcheng encounter substantially reworked.
+
+The current-order board presents short dialogue, two choices and concise consequences. People, decisions and battle outcomes stay in a collapsed chronicle. Local outcomes appear in town summaries and as a small commemorative tablet in the village; no buildings, cargo or soldiers are fabricated by those decorations. The five companions' recovery, demotions and banner identity remain intact.
+
 ### v0.58 — The Banner Endures
 
 The main formation now keeps Lin Feng's banner identity when a wound replaces him with an acting commander. The same army ID, soldiers, location and custom livery remain; no casualties or medical penalties are undone. Existing renamed opening-banner saves are identified on load. A depleted main formation retains an empty headquarters rather than becoming impossible to rebuild. After genuine recovery, Lin rejoins his original banner when it is at Qinghe, even if another companion is commanding it.

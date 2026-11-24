@@ -2,6 +2,14 @@
 
 Implemented 2026-11-18, v0.22. Three opening missions continue into 27 new chapters. Campaign quantities, schematic geography and the 1120 start are gameplay accommodations. The source is the unfinished serial by 茶根儿; the documented reading ledger reaches IV:165. The last act below connects to the game's existing historical crisis and does not claim a novel ending.
 
+## v0.59 story expansion — 24 November 2026
+
+The calendar now carries ten policy scenes and five character interludes, using the same source boundary documented above. The decisions concern housing and markets, doctrine, the capital office, courier redundancy, Deshun's households, equipment standardisation, mineral procurement, succession in command, northern stockpiles and the post-siege legacy. Each policy has an implemented consequence in existing supply, price, training, research, capacity, visibility, morale or prosperity systems. Short callbacks recall previous choices. Explicit choices and actual battles remain necessary; time does not silently select a policy or win a mission. Previous completed chapters receive no retroactive rewards.
+
+Longcheng now adapts the imprisoned-chief arc with capture, contact and physical extraction. The chief's death is a persistent alternate gameplay outcome, not a resettable target; it changes subsequent assaults into securing the fort and remaining testimony. The new relay encounter adapts the frontier-dispatch arc: escort a vulnerable courier between captured posts, then secure the far post for ten seconds. Attackers are reserved from an actual adjacent Xia garrison; surviving attackers return once. Prior conquest averts the ambush. Both encounters preserve strategic casualties and officer consequences.
+
+Story choices are journalled once, including the existing memorial/rescue, truce, southern audit, occupation and medical branches. The final legacy responds to the existing map siege of Kaifeng. The village tablet is commemorative scenery rather than a free building or productive enterprise. The expansion contains nine authored continuing Chronicle encounters in total. Original dialogue and the relay's tactical form are adaptations, not quotations or claims of verified historical events.
+
 ## v0.55 calendar update — 22 November 2026
 
 The current-order calendar supersedes the mandatory preparation gates below. Opening expeditions are issued on turns 2 and 6; the 27 continuing chapters are scheduled on monthly turns 8–84, in their existing order. Delays retain the next order rather than skipping unfinished battles. Construction, stockpiles and industrial targets remain optional guidance; actual cargo, training, construction and medical rescue still need real resources and time. Consequential policy branches require a choice. The game's independent historical crisis remains active.
