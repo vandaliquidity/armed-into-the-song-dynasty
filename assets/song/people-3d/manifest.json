@@ -1,0 +1,24 @@
+{
+  "columns": 5,
+  "directions": 8,
+  "frames": 5,
+  "roles": [
+    "man",
+    "woman",
+    "porter",
+    "merchant",
+    "elder",
+    "child"
+  ],
+  "workActions": [
+    "hammer",
+    "stir",
+    "lift",
+    "weave",
+    "pour",
+    "count"
+  ],
+  "workDirections": 4,
+  "width": 128,
+  "height": 160
+}

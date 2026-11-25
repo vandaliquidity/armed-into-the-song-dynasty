@@ -59,7 +59,7 @@ caravans=function(rep){const before=shipsOn().length;supplyAuto();if(rep)rep.mov
 {const old=shipTurn;shipTurn=function(lines){
   const internal=shipsOn().filter(s=>s.internal&&!s.state);CG.ship=shipsOn().filter(s=>!s.internal||s.state);old(lines);
   for(const s of internal){
-    if(!owned(s.to)||!careFriendly(s.at)){s.blocked=true;CG.ship.push(s);continue;}
+    if((!owned(s.to)&&!(s.worldQuest&&careFriendly(s.to)))||!careFriendly(s.at)){s.blocked=true;CG.ship.push(s);continue;}
     let route=supplyPath(s.at,s.to);if(!route){s.blocked=true;CG.ship.push(s);continue;}
     s.blocked=false;s.cargoPhase='travelling';
     if(Math.random()<shipRisk(s)&&shipRaid(s,lines)){CG.ship.push(s);continue;}

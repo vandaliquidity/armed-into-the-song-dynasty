@@ -35,7 +35,7 @@ function vuDev(){const m=ctx.getTransform();return Math.hypot(m.a,m.b);}
 function vuDraw(n,x,y,sc){const I=VU_META.items[n],R=VU_META.rects[VU.tier]?.[n];if(!I||!R)return false;const q=vuDev()*sc*I.W/R[2],o=vuCell(n,sprQB(q));if(!o)return false;
   ctx.drawImage(o.c,x-I.ax*sc,y-I.ay*sc,I.W*sc,I.H*sc);return true;}
 // the ground plate, pre-scaled once per zoom bucket instead of being filtered down every frame
-function vuGround(){const g=VU.ground;if(!g)return null;const q=(CVIL._sc||1)*(typeof DPR!=='undefined'?DPR:1)*VWW/g.width,qb=sprQB(q);if(qb>=1)return g;const G=VU.G||(VU.G={});if(G[qb]!==undefined)return G[qb].c;
+function vuGround(){const g=VU.ground;if(!g)return null;const q=(CVIL._sc||1)*(typeof DPR!=='undefined'?DPR:1)*1800/g.width,qb=sprQB(q);if(qb>=1)return g;const G=VU.G||(VU.G={});if(G[qb]!==undefined)return G[qb].c;
   const cv=mkCanvas(Math.round(g.width*qb),Math.round(g.height*qb)),x=cv.getContext('2d');x.imageSmoothingQuality='high';x.drawImage(g,0,0,cv.width,cv.height);const o={c:cv};G[qb]=o;toBitmap(o,'c');return cv;}
 // re-rendered unit atlases always draw from per-row bitmaps like the core's big atlases
 {const _b=sprBig;sprBig=function(d){return _b(d)||!!(d&&d.name&&d.name.startsWith('vu_'));};}

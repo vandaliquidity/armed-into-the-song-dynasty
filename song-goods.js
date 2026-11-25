@@ -1,0 +1,13 @@
+'use strict';
+SONG_SHEETS.goods={file:'goods-v1.png',cols:5,rows:4,names:['grain','timber','stone','ore','hide','leather','salt','nitre','tea','silk','wine','sulphur','charcoal','powder','bomb','chest','gold','silver','food','cloth'].map(k=>'goods_'+k)};
+SONG_SHEETS.racks={file:'racks-v1.png',cols:3,rows:3,names:['spear','dao','bow','xbow','lance','shield','armL','armI','saddle'].map(k=>'goods_'+k)};
+const SONG_STOCK=['grain','grain','grain','timber','stone','ore','hide','leather','nitre','salt','grain','tea','silk','gold','silver'];
+const SONG_RACK=['spear','dao','bow','xbow','lance','shield','armL','armI','saddle'];
+{const old=songSlice;songSlice=function(sheet,im){if(!['goods','racks'].includes(sheet))return old(sheet,im);const spec=SONG_SHEETS[sheet],c=mkCanvas(im.naturalWidth,im.naturalHeight),g=c.getContext('2d',{willReadFrequently:true});g.drawImage(im,0,0);const w=c.width,h=c.height,data=g.getImageData(0,0,w,h).data,bands=[];let start=-1,last=0;for(let y=0;y<h;y++){let n=0;for(let x=0;x<w;x++)if(data[(y*w+x)*4+3]>110)n++;if(n>w*.012){if(start<0)start=y;last=y;}else if(start>=0&&y-last>4){bands.push([start,last]);start=-1;}}if(start>=0)bands.push([start,last]);if(bands.length!==spec.rows)return old(sheet,im);for(let i=0;i<spec.names.length;i++){const row=Math.floor(i/spec.cols),col=i%spec.cols,x0=Math.round(col*w/spec.cols),x1=Math.round((col+1)*w/spec.cols),y0=Math.max(0,bands[row][0]-3),y1=Math.min(h,bands[row][1]+4);let l=x1,r=x0,t=y1,b=y0;for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++)if(data[(y*w+x)*4+3]>110){l=Math.min(l,x);r=Math.max(r,x);t=Math.min(t,y);b=Math.max(b,y);}if(r<=l)continue;const out=mkCanvas(r-l+5,b-t+5);out.getContext('2d').drawImage(c,l-2,t-2,out.width,out.height,0,0,out.width,out.height);SONG_ART.cells.set(spec.names[i],out);}};}
+function songGoodsLoad(){songLoad('goods');songLoad('racks');}
+function songGoods(g,k,x,y,sc=1,rack=false){return songSprite(g,'goods_'+k,x,y+(rack?11:18)*sc,(rack?42:54)*sc,(rack?70:58)*sc);}
+{const old=sprProp;sprProp=function(name,x,y,v=0,sc=1){if(MODE==='cvil'){let k,rack=false;if(name==='stk'||name==='stk8')k=SONG_STOCK[v];if(name==='rack'||name==='rack8'){k=SONG_RACK[v];rack=true;}if(k&&songGoods(ctx,k,x,y,sc,rack))return true;}return old.apply(this,arguments);};}
+{const old=carryProp;carryProp=function(g,k,x,y,sc=1){if(MODE==='cvil'){const rack=SONG_RACK.includes(k);if(songGoods(g,k,x,y-3,sc*(rack?.32:.3),rack))return true;}return old(g,k,x,y,sc);};}
+{const old=vcLoad;vcLoad=function(g,x,y,leg){if(MODE==='cvil'&&songGoods(g,leg.k,x,y-3,.3,SONG_RACK.includes(leg.k)))return;return old(g,x,y,leg);};}
+{const old=showCVil;showCVil=function(...args){songGoodsLoad();return old(...args);};}
+window.__songGoods={draw:songGoods,load:songGoodsLoad};

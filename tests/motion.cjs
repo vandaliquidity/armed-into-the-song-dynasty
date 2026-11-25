@@ -6,12 +6,12 @@ const checks=await page.evaluate(()=>{coachSave({off:1,seen:{}});setLang('en');_
  LOGI.force=true;LOGI.on=true;logvPush(HOME,'out',{grain:600,timber:300,silver:100},'soldier',901);showCVil(HOME);
  let atlasDraws=0;const atl=new Set();for(const k in SPR)if(SPR[k]&&SPR[k].img)atl.add(SPR[k].img);const D=CanvasRenderingContext2D.prototype.drawImage;CanvasRenderingContext2D.prototype.drawImage=function(img){if(img&&atl.has(img)&&this.canvas===cv)atlasDraws++;return D.apply(this,arguments);};
  let devSeen=0;const oldU=sprUnit;sprUnit=function(){if(SPR_DEV>0)devSeen++;return oldU.apply(this,arguments);};
- const V=LOGV[HOME];let flips=0,steps=0,teleports=0,prev=new Map();
- for(let i=0;i<60*25;i++){cvilFrame(1/60);for(const r of V.car){const p=prev.get(r);if(p){if(Math.hypot(r.x-p.x,r.y-p.y)>3)teleports++;const df=Math.abs(sprDir(r.f||0)-sprDir(p.f||0));if(df)flips++;}prev.set(r,{x:r.x,y:r.y,f:r.f});}steps++;if(!V.out.length&&!V.car.length&&!V.drops.length&&i>300)break;}
+ const V=LOGV[HOME];let flips=0,steps=0,teleports=0,early=0,prev=new Map();
+ for(let i=0;i<60*45;i++){cvilFrame(1/60);for(const r of V.car){const p=prev.get(r);if(p){if(Math.hypot(r.x-p.x,r.y-p.y)>3)teleports++;const df=Math.abs(sprDir(r.f||0)-sprDir(p.f||0));if(df)flips++;}if(r.phase==='carry'&&p?.phase==='fetch'&&Math.hypot(r.x-r.tgt.x,r.y-r.tgt.y)>18)early++;prev.set(r,{x:r.x,y:r.y,f:r.f,phase:r.phase});}steps++;if(!V.out.length&&!V.car.length&&!V.drops.length&&i>300)break;}
  CanvasRenderingContext2D.prototype.drawImage=D;sprUnit=oldU;
  ok(devSeen>0&&SPR_DEV===0,'village frames draw sprites from screen-scaled rows and restore SPR_DEV afterwards');
  ok(atlasDraws===0,'no whole-atlas drawImage calls in the haulage scene');
- ok(teleports===0,'carriers never jump more than 3 px in a 1/60 s frame');
+ ok(teleports===0,'carriers never jump more than 3 px in a 1/60 s frame');ok(early===0,'carriers reach the actual pickup before acquiring a load');
  ok(flips/(steps/60)<12,'carrier facing changes stay rare (smoothed heading)');
  ok(!V.out.length&&!V.car.some(r=>r.c),'every queued load is carried to a cart');
  ok(V.carts.every(c=>c.go||c.load>0||c.arr),'carts leave or wait loaded, none stall mid-road');

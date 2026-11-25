@@ -54,9 +54,9 @@ logvStep=function(id,dt){const V=LOGV[id];if(!V)return;logvPrune(V);const lane=5
     let tx,ty;if(r.idle||r.phase==='fetch'||!r.c){tx=r.tgt.x;ty=r.tgt.y;}else if(r.dir==='out'){tx=r.cart.x;ty=lane;}else{const p=logvSpot(r.c.k);tx=p.x;ty=p.y;}
     const vmax=r.c&&r.phase==='carry'?72:92;const x0=r.x,y0=r.y;const s=moveTo(r,tx,ty,vmax,MOTION.acc,dt);
     if(s>.05){const a=Math.atan2(r.y-y0,r.x-x0);r.f=angLerp(r.f??a,a,easeK(MOTION.turn,dt));r.ph+=s/30;r.mv=1;}
-    else{r.mv=0;if(r.idle){if(r.cart)r.f=angLerp(r.f||0,-Math.PI/2,easeK(4,dt));continue;}
+    else{r.mv=0;const final=r._vroute?.p?.at(-1)||[tx,ty];if(r._vroute?.blocked||Math.hypot(r.x-final[0],r.y-final[1])>.7)continue;if(r.idle){if(r.cart)r.f=angLerp(r.f||0,-Math.PI/2,easeK(4,dt));continue;}
       if(r.phase==='fetch'){r.phase='carry';r.hold=r.c;r.lift=0;r.wait=.35;if(r.dir==='out')r.c.pend=0;}
-      else{if(r.dir==='out'){const j=(r.cart.load||0)+V.drops.filter(d=>d.cart===r.cart).length;V.drops.push({k:r.hold.k,x0:r.x,y0:r.y-22,x1:r.cart.x-14-(j%3)*8,y1:r.cart.y+28-Math.floor(Math.min(5,j)/3)*6,t:0,cart:r.cart});}
+      else{if(r.dir==='out'){const j=(r.cart.load||0)+V.drops.filter(d=>d.cart===r.cart).length;const hand=typeof songCarryAnchor==='function'?songCarryAnchor(r.sp,r.x,r.y,r.f||0):null;V.drops.push({k:r.hold.k,x0:hand?hand.x:r.x,y0:hand?hand.y:r.y-22,x1:r.cart.x-14-(j%3)*8,y1:r.cart.y+28-Math.floor(Math.min(5,j)/3)*6,t:0,cart:r.cart});}
         else{r.cart.load=Math.max(0,(r.cart.load||0)-1);}r.c=null;r.hold=null;r.phase=null;r.lift=null;r.wait=.25;}}}
   if(!V.out.length&&!V.in.length&&!V.drops.length&&V.car.every(r=>!r.c)){V.car.length=0;}};
 logvDraw=function(add,g,t,dt){const id=CVIL.id,V=LOGV[id];if(!V)return;logvStep(id,dt);
@@ -64,7 +64,7 @@ logvDraw=function(add,g,t,dt){const id=CVIL.id,V=LOGV[id];if(!V)return;logvStep(
     for(let j=0;j<n;j++)sprProp('stk',c.x-14-(j%3)*8,c.y+8-Math.floor(j/3)*6,[0,3,5,6,9,0][j%6],.3);});
   for(const r of V.car){if(r.job==null&&!r.idle&&r.wait>0)continue;const fr=r.mv?frontierWalkFrame(r.sp,r.ph):0;add(r.y,()=>{
     if(r.hold&&r.hold.k==='horse'){sprProp('animal',r.x+12*Math.cos((r.f||0)+1.4),r.y+2,4,.55);}
-    sprUnit(r.sp,r.x,r.y,9,r.f||0,fr);if(r.hold&&r.hold.k!=='horse'){const l=r.lift==null?1:smooth01(r.lift);carryProp(g,r.hold.k,r.x,lerp(r.y-6,r.y-22,l));}});}
+    const hand=typeof songCarryAnchor==='function'?songCarryAnchor(r.sp,r.x,r.y,r.f||0):null,hasLoad=r.hold&&r.hold.k!=='horse',drawLoad=()=>{const l=r.lift==null?1:smooth01(r.lift);carryProp(g,r.hold.k,hand?hand.x:r.x,lerp(r.y-6,hand?hand.y:r.y-22,l));};if(hasLoad&&hand?.behind)drawLoad();sprUnit(r.sp,r.x,r.y,9,r.f||0,fr,{civilianCarrier:true});if(hasLoad&&!hand?.behind)drawLoad();});}
   for(const d of V.drops){if(d.k==='horse')continue;const k=smooth01(d.t),x=lerp(d.x0,d.x1,k),y=lerp(d.y0,d.y1,k)-Math.sin(k*Math.PI)*14;add(y+20,()=>carryProp(g,d.k,x,y));}
   let n=V.out.length+V.in.length;for(const r of V.car)if(r.c)n++;if(n){let out=V.out.length>0;if(!out)for(const r of V.car)if(r.dir==='out'&&r.c){out=true;break;}const lab=out?Tz('装车外运','loading out'):Tz('卸货入库','unloading in');add(9999,()=>txt(''+lab+' · '+n+' '+Tz('件','loads'),(VZ.store[0]+VZ.store[2])/2,VZ.store[3]+122,15,'#2a1406','center','bold '));}};
 

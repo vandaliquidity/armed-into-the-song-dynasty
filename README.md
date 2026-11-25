@@ -2,6 +2,18 @@
 
 A browser strategy game.
 
+### v0.62 — A Living Frontier
+
+Village civilians now use actual articulated Blender models rendered in eight directions, with six roles, walking frames and six work actions. Shaded figures, contact shadows, exposed workshop interiors and directional cargo occlusion preserve the established 2.5D view. Resource piles, weapon racks and tiered Song-inspired gatehouses share the architectural palette. The gate carries the settlement's actual Chinese name.
+
+Villages open at a readable neighbourhood scale and can be panned and zoomed across a larger world. Population and prosperity unlock persistent outward expansion. Individual settlements have seeded gardens, residential layouts and regional ground treatments. Actual food, cloth, metal, merchant and powder stocks occupy additional storage bays. Production, commerce, harvest and treasury carriers follow walkable lanes and entrances; animations remain presentations of real output, without creating stock.
+
+Tactical deployment and move orders use separated standing positions. Song settlements gain destructible walls and gates: attackers can breach the gate or take a longer flank through side entrances. Friendly soldiers and civilians can use their own gates; enemy forces cannot walk through them. Steppe encampments retain their separate appearance. Existing troop budgets, injuries and story objectives remain in force.
+
+**Missions → Frontier opportunities** adds optional local stories: road patrols, grain relief, well repairs, resource surveys, existing stockade suppression, medical care and merchant commissions. These use actual troops, local materials, existing contracts and road-travelling carts. Accepted requests have no deadline; up to three can be active. Completion improves local influence and reputation. This complements the dated historical campaign.
+
+Editable 3D source, regeneration instructions and generated-asset briefs are in [art/living-frontier.md](art/living-frontier.md). Older saves need no restart.
+
 ### v0.61 — A Song Landscape
 
 The campaign map and village now share a Song-inspired architectural set: thatched cottages, timber courtyard homes, two-storey wine houses, granaries, military halls and a modest county yamen. Settlement icons use different compositions as villages grow into walled villages, towns and cities; ownership flags, labels, supply and influence overlays remain functional. Xia and Jin retain their separate art. Ink-painted rocky, loess and blue-green ranges replace the angular terrain, with feathered edges and softer pine clusters on warm silk.
