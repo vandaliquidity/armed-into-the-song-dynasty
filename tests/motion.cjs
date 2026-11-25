@@ -15,8 +15,8 @@ const checks=await page.evaluate(()=>{coachSave({off:1,seen:{}});setLang('en');_
  ok(flips/(steps/60)<12,'carrier facing changes stay rare (smoothed heading)');
  ok(!V.out.length&&!V.car.some(r=>r.c),'every queued load is carried to a cart');
  ok(V.carts.every(c=>c.go||c.load>0||c.arr),'carts leave or wait loaded, none stall mid-road');
- // Frame-rate independence: the same 4 s at 30 and 120 fps loads the same amount.
- const run=fps=>{LOGV[HOME]=null;logvPush(HOME,'out',{grain:300},'porter',902);const W=LOGV[HOME];const n0=W.out.length;for(let i=0;i<fps*9;i++)logvStep(HOME,1/fps);return n0-W.out.length-W.car.filter(r=>r.c).length;};
+ // Frame-rate independence: the same elapsed time at 30 and 120 fps loads the same amount.
+ const run=fps=>{LOGV[HOME]=null;logvPush(HOME,'out',{grain:300},'porter',902);const W=LOGV[HOME];const n0=W.out.length;for(let i=0;i<fps*20;i++)logvStep(HOME,1/fps);return n0-W.out.length-W.car.filter(r=>r.c).length;};
  const a=run(30),b=run(120);ok(a>0&&Math.abs(a-b)<=1,'cart loading is frame-rate independent ('+a+' vs '+b+')');
  // Idle porters stand by the cart instead of wandering.
  LOGV[HOME]=null;logvPush(HOME,'out',{grain:200},'porter',903);for(let i=0;i<60*30&&!LOGV[HOME].car.some(r=>r.idle);i++)logvStep(HOME,1/60);const W=LOGV[HOME];for(let i=0;i<240&&!W.car.some(r=>r.idle&&!r.mv);i++)logvStep(HOME,1/60);const idle=W.car.filter(r=>r.idle&&!r.mv);

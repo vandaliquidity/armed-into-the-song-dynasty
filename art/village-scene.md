@@ -25,3 +25,9 @@ These assets are rendered from local 3D source, rather than imagegen pictures. N
 ## Checks
 
 `tests/town-scene.cjs` covers visible gates on desktop/phone, absent unbuilt facilities, real construction receipts, complete deliveries, unchanged inventory, saved orders, rendered cavalry proportions and seven settlement layouts. `tests/town-economy.cjs` covers actual recipes, inputs before outputs, empty returns, pauses, shortages, wage funding, dense-town footprints and full routes. These replace the four default-runner checks tied specifically to the retired fixed template (`village-chains`, `village-haul`, `village-unified`, `village-overlap`). Their historical scripts remain available. Current asset, people, hospital, logistics, campaign, production and supply tests continue to cover the shared owners.
+
+## Streets and enclosure
+
+`town-streets.js` defines the perimeter, shared avenues, short building approaches, road surfaces and bounded horse movement. The named gate is part of the curtain wall; an eastern ward leaves room for later development. A small northern gate and side service entrances connect the road network. Plot allocation checks all corners against the enclosure and searches clear land if a preferred neighbourhood is occupied. Large farm and paddock plots are reserved first.
+
+Street paving is painted in common layers so junctions have no overlapping curb seams. The collision grid favours established streets while retaining open ground for access. Horses use a convex paddock area and distance-driven gait; their movement cannot change livestock inventory. `tests/town-streets.cjs` checks the wall, gate opening, expansion space, street approaches, bounded movement and stock conservation.

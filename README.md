@@ -2,6 +2,14 @@
 
 A browser strategy game.
 
+### v0.64 — Within the Town Walls
+
+Shared avenues, connected junctions and short paved building approaches replace the separate roads that ran back to one strip. Porters prefer the streets while retaining their existing material and construction jobs. A continuous perimeter joins the named gate, encloses the occupied town and leaves an open expansion ward. Service entrances keep caravan routes usable. Basic enclosures and upgraded masonry follow the existing settlement and wall levels; this presentation change grants no additional combat statistics.
+
+Stable horses now walk, turn and pause inside a fenced paddock, using their directional gait frames. The number of visible horses continues to follow actual local stock. The resource recipes, inventory payments and monthly settlement rules are retained.
+
+The current enclosure, road and horse checks are in `tests/town-streets.cjs`; the construction and production checks remain in `tests/town-scene.cjs` and `tests/town-economy.cjs`.
+
 ### v0.63 — Villages With a Life
 
 The village opens with its named gate in view on desktop and phone. A Gate focus control joins the existing district controls. Population creates inhabited housing clusters; settlements have different district arrangements, approaches, woodland and river frontage. The larger world remains pannable as development spreads.
