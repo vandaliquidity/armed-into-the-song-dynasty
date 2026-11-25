@@ -15,8 +15,7 @@ function drawCampaignGround(g){
       if(CL.terr.some(t=>{const p=tPos(t.id);return Math.hypot(x-p.x,y-p.y)<48;}))continue;
       q.fillStyle='rgba(53,83,65,.12)';q.beginPath();q.ellipse(x+3,y+3,h*.8,h*.25,0,0,TAU);q.fill();
       q.strokeStyle='#807b55';q.lineWidth=.9;q.beginPath();q.moveTo(x,y);q.lineTo(x,y-h*.9);q.stroke();
-      q.fillStyle=['#75856a','#8e9b78','#637d67'][i%3];q.beginPath();q.moveTo(x,y-h*1.3);q.lineTo(x-h*.45,y-h*.25);q.lineTo(x+h*.45,y-h*.25);q.closePath();q.fill();
-      q.fillStyle='rgba(207,213,157,.35)';q.beginPath();q.moveTo(x,y-h*1.3);q.lineTo(x-h*.45,y-h*.25);q.lineTo(x-1,y-h*.4);q.fill();
+      q.strokeStyle='#586a52';q.lineWidth=.75;for(let b=0;b<3;b++){const yy=y-h*(.45+b*.28),xx=x+(b%2?2:-2),ww=h*(.48-b*.07);q.beginPath();q.moveTo(x,y-h*.3);q.lineTo(xx,yy);q.stroke();q.fillStyle=['#6c7e60','#84916b','#5b755c'][b];for(let j=0;j<3;j++){q.beginPath();q.ellipse(xx-ww+j*ww,yy-2,ww*.65,h*.16,-.1,0,TAU);q.fill();}}q.fillStyle='rgba(207,213,157,.3)';q.beginPath();q.ellipse(x-2,y-h*1.04,h*.3,h*.08,-.1,0,TAU);q.fill();
     }}MAP_GROUND=c;
   }
   g.drawImage(MAP_GROUND,0,0,CMW,CMH);

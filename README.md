@@ -2,6 +2,14 @@
 
 A browser strategy game.
 
+### v0.61 — A Song Landscape
+
+The campaign map and village now share a Song-inspired architectural set: thatched cottages, timber courtyard homes, two-storey wine houses, granaries, military halls and a modest county yamen. Settlement icons use different compositions as villages grow into walled villages, towns and cities; ownership flags, labels, supply and influence overlays remain functional. Xia and Jin retain their separate art. Ink-painted rocky, loess and blue-green ranges replace the angular terrain, with feathered edges and softer pine clusters on warm silk.
+
+Six workshop models distinguish bowyers, tanners, armourers, saddlers, powder workers and weavers; smithies have their own forge. Commerce and production cards use matching models. Village roads gain stone edging while keeping existing paths, yards, workers and cart animations. The official treasury has an exposed roof and empty trays in its base art; actual gold and silver are drawn dynamically, so an empty treasury contains no fictional bullion. Roofless resource stores remain visible. This is a visual adaptation, not a claim of exact architectural reconstruction.
+
+Three generated atlases are stored locally, with independent cell/scale caches, deferred workshop loading and existing-renderer fallbacks. No save migration, balancing change or new menu is required. Art provenance, historical references and generation prompts are in [art/song-visuals.md](art/song-visuals.md).
+
 ### v0.60 — Call the Reserves
 
 Each selected banner in Muster now has an exact soldier-count field and Assign nearest soldiers. One order gathers existing unassigned healthy troops from the nearest reachable owned towns, with a short source/count/travel preview. Whole companies keep their IDs; partial detachments retain their experience, armour, weapon quality and history. Wounded stay at their source. Civilians, other banners, convoy escorts, reserved recruits and units with medical transfers are not drawn into the order. No manpower, equipment or money is created or charged again.
