@@ -1,0 +1,104 @@
+'use strict';
+// One scene description owns buildings, collision, entrances and economic jobs.
+// Saved buildings remain authoritative. Empty development slots have no model.
+const TOWN={scene:null,version:3};
+const TOWN_STORE_GROUPS=[['grain','fish','vegetables','fruit','beans','salt'],['timber','stone','ore','clay','coal','copper','steel'],['hide','leather','hemp','cloth','paper','silk','tea'],['sulphur','nitre','charcoal','blackpowder','oil','herbs'],['wine','cosmetics','ceramics']];
+function townKey(id){const s=CG.T[id];return [id,s.pop,s.prosp,Object.entries(s.bld).join(';'),Object.entries(s.businesses||{}).map(([k,b])=>k+':'+b.level+':'+!!b.build).join(';'),building(id).map(b=>b.k).join(';'),hospLv(id),campaignMonth()].join('|');}
+function townScene(id=CVIL.id){const key=townKey(id);if(TOWN.scene?.key===key)return TOWN.scene;
+ const s=CG.T[id],identity=villageIdentity(id),R=srand(identity.seed),type=identity.type,mirror=(identity.seed>>>4)%2===1&&id!==HOME;
+ const width=3200+(s.visualExtent||0)*280,height=2100+(s.visualExtent||0)*160,records=[],reserved=[],byKey={},stock=[],fields=[];
+ const layout={farm:[0,0,0],market:[180,-40,1],fort:[-80,120,2],city:[100,100,3],crossing:[240,30,4],quarry:[-40,-60,5],steppe:[140,80,6]}[type];
+ const flip=x=>mirror?width-x:x,gate={x:flip(650+layout[0]),y:1180+layout[1]};
+ reserved.push([0,465,width,550],[gate.x-55,60,gate.x+55,gate.y+180],[gate.x-170,gate.y-215,gate.x+170,gate.y+75]);if(type==='crossing')reserved.push([mirror?width-180:20,720,mirror?width-80:120,height-40]);
+ const overlaps=(a,b)=>a[0]<b[2]&&a[2]>b[0]&&a[1]<b[3]&&a[3]>b[1];
+ function place(k,x,y,w=180,h=165,extra={}){const group=k.split(':')[0],seed=battlefieldHash(id+':'+group);if(group==='biz'||group==='dev'||group==='store'){x+=((seed>>>4)%5-2)*45;y+=((seed>>>9)%5-2)*26;}x=flip(x);let rect;const center={x,y};for(let n=0;n<900;n++){const ring=Math.ceil(Math.sqrt(n)),a=n*2.39996;x=center.x+(n?Math.cos(a)*ring*48:0);y=center.y+(n?Math.sin(a)*ring*40:0);rect=[x-w/2-22,y-h-24,x+w/2+22,y+65];if(x>110&&x<width-120&&y>190&&y<height-80&&!reserved.some(r=>overlaps(rect,r)))break;}
+  reserved.push(rect);const record={k,x,y,w,h,door:{x,y:y-8},rect,model:'courtyard',built:false,...extra};records.push(record);byKey[k]=record;return record;}
+ // Reserve every development's stable footprint, then show only real levels.
+ const storeCount=Math.max(1,Math.min(3,s.bld.store||0));for(let i=0;i<3;i++)stock.push(place('store:'+i,280+i*350,360,290,145,{model:'store',built:i<(s.bld.store||0),goods:i<storeCount?TOWN_STORE_GROUPS.filter((g,j)=>j%storeCount===i).flat():[]}));
+ const treasury=place('treasury',430,860,230,170,{model:'treasury',built:(s.bld.store||0)>0});
+ const arm=place('armoury',850,890,220,160,{model:'armoury',built:(s.bld.yard||0)>0});
+ const yard=place('yard',1000,1270,300,180,{model:'barracks',built:(s.bld.yard||0)>0});
+ const stable=place('stable',1800,1600,310,150,{model:'stable',built:(s.bld.stable||0)>0});
+ const hospital=place('hospital',270,1260,230,260,{model:'hospital',dev:'hosp',built:hospLv(id)>0});
+ for(const [i,k]of WK_ORDER.entries())place('dev:'+k,...[[1620,730],[2050,1000],[1370,850],[1870,740],[2100,1310],[2440,1130]][i],190,170,{model:SONG_WORKSHOP[WKV[k]]||'smithy',dev:k,built:!!s.bld[k]});
+ const civic=['market','mine','quarry','lumber','saltw','hosp','wall','tower'];for(const [i,k]of civic.entries())if(!['hosp','wall','tower'].includes(k))place('dev:'+k,k==='market'?1080:2200+i%3*280,k==='market'?680:1350+Math.floor(i/3)*280,200,165,{model:k==='market'?'winehouse':k==='lumber'?'saddler':'smithy',dev:k,built:!!s.bld[k]});
+ const bizKeys=Object.keys(DY_BUSINESSES),cols=type==='market'||type==='crossing'?4:type==='fort'?2:3;
+ for(const [i,k]of bizKeys.entries())place('biz:'+k,1180+i%cols*260,370+Math.floor(i/cols)*285,185,175,{model:songBusinessModel(k),biz:k,built:!!s.businesses?.[k]?.level});
+ byKey['dev:hosp']=hospital;byKey['dev:yard']=yard;byKey['dev:stable']=stable;byKey['dev:store']=stock[0];
+ for(const k of ['wall','tower'])place('dev:'+k,650+(k==='wall'?-250:250),1180,120,125,{model:k==='tower'?'watchtower':'barracks',dev:k,built:k==='tower'&&!!s.bld.tower});
+ const farm=place('dev:farm',2580,1650,360,220,{model:'field',dev:'farm',built:!!s.bld.farm});
+ if(farm.built)for(let i=0;i<Math.min(6,s.bld.farm*2);i++)fields.push({x:farm.x+(i%2-.5)*180,y:farm.y-130+Math.floor(i/2)*100});
+ reserved.splice(type==='crossing'?4:3,reserved.length-(type==='crossing'?4:3),...records.filter(r=>r.built||building(id).some(b=>r.dev===b.k||r.k===b.k||b.k==='store'&&r.k==='store:0')||s.businesses?.[r.biz]?.build).map(r=>r.rect));
+ const nh=s.pop>0?clamp(Math.round(s.pop/150),3,30):0,housing=[];const homeSites=[[180,690],[380,690],[1020,180],[1160,1030],[340,1190],[1390,1180],[930,200],[1230,220],[140,920],[1180,1450],[430,1470],[840,1510]];
+ for(let i=0;i<nh;i++){const row=Math.floor(i/9),site=homeSites[i],x=site?site[0]:150+i%9*285+(type==='crossing'?row*80:0),y=site?site[1]:190+row*320;const h=place('home:'+i,x+(R()-.5)*40,y+(R()-.5)*30,135,120,{model:s.prosp>55&&R()>.35?'courtyard':'cottage',built:true,house:true});housing.push(h);}
+ const occupied=records.filter(r=>r.built||building(id).some(b=>r.dev===b.k||r.k===b.k||b.k==='store'&&r.k==='store:0')||s.businesses?.[r.biz]?.build),present=records.filter(r=>r.built),trees=[];for(let y=170;y<height-100;y+=160)for(let x=100;x<width-80;x+=150){const tx=x+(R()-.5)*80,ty=y+(R()-.5)*60;if(R()<(type==='farm'?.55:type==='city'?.22:.38)&&Math.abs(ty-503)>75&&Math.abs(tx-gate.x)>70&&!(type==='crossing'&&ty>720&&tx>(mirror?width-180:20)&&tx<(mirror?width-80:120))&&!occupied.some(r=>tx>r.rect[0]-30&&tx<r.rect[2]+30&&ty>r.rect[1]-70&&ty<r.rect[3]+20)&&!occupied.some(r=>Math.abs(tx-r.x)<40&&ty>Math.min(503,r.y)&&ty<Math.max(503,r.y)))trees.push({x:tx,y:ty,v:Math.floor(R()*4)});}const water=type==='crossing'?{x:mirror?width-180:20,y:720,w:100,h:height-760}:null;
+ const scene={key,id,width,height,identity,mirror,records,byKey,present,stock,fields,housing,gate,water,trees,ground:null,jobs:[],people:[],animals:[],delivered:{},jobClock:0};
+ const buildings=building(id);for(const b of buildings){const rec=byKey['dev:'+b.k]||byKey[b.k]||byKey[b.k==='store'?'store:0':b.k==='stable'?'stable':b.k==='yard'?'yard':'dev:'+b.k];if(rec){rec.construction={kind:'dev',key:b.k,cost:b.visualCost||devCost(b.k,s.bld[b.k])||{},token:b.visualToken||'legacy:'+b.k+':'+campaignMonth()};}}
+ for(const [k,b]of Object.entries(s.businesses||{}))if(b.build&&byKey['biz:'+k])byKey['biz:'+k].construction={kind:'biz',key:k,cost:b.visualCost||dynastyBuildCost(id,k),token:b.visualToken||'legacy:biz:'+k+':'+campaignMonth()};
+ TOWN.scene=scene;VWW=width;VWH=height;VILLAGE_NAV.current=null;townZones(scene);townPeople(scene);return scene;
+}
+function townZones(scene){const rect=(r,p=25)=>[r.x-r.w/2-p,r.y-r.h,r.x+r.w/2+p,r.y+50];VZ.store=[Math.min(...scene.stock.map(r=>r.x))-140,180,Math.max(...scene.stock.map(r=>r.x))+140,650];for(const [zone,key]of [['treasury','treasury'],['arm','armoury'],['yard','yard'],['pad','stable'],['mkt','dev:market'],['fld','dev:farm']])VZ[zone]=rect(scene.byKey[key]);const ws=WK_ORDER.map(k=>scene.byKey['dev:'+k]);VZ.wk=[Math.min(...ws.map(r=>r.x))-120,350,Math.max(...ws.map(r=>r.x))+120,1150];VZ.gate=[scene.gate.x-150,scene.gate.y-200,scene.gate.x+150,scene.gate.y+60];VZ.well={x:scene.gate.x+160,y:730};VL.X=scene.byKey.hospital.x-110;VL.Y=scene.byKey.hospital.y-310;}
+function townPeople(scene){const R=srand(scene.identity.seed+44),n=CG.T[scene.id].pop>0?clamp(Math.round(CG.T[scene.id].pop/90),8,mobNarrow()?18:32):0,sites=scene.present.filter(r=>r.house||r.biz||r.dev);for(let i=0;i<n;i++){const at=sites[i%sites.length]||scene.gate;scene.people.push({x:at.door?.x||at.x,y:at.door?.y||at.y,tx:at.door?.x||at.x,ty:at.door?.y||at.y,wait:R()*2,ph:R(),f:Math.PI/2,spr:['villager','vil_w','vil_e','vil_k','merchant'][i%5],wk:null});}for(let i=0;i<Math.min(8,scene.housing.length);i++)scene.animals.push({x:scene.housing[i].x+45,y:scene.housing[i].y+40,home:scene.housing[i],f:R()*TAU,ph:R()});}
+function townNav(){const scene=townScene();if(scene.nav)return scene.nav;const C=16,W=Math.ceil(VWW/C),H=Math.ceil(VWH/C),blocked=new Uint8Array(W*H),sites=[];
+ const mark=(r,value=1)=>{for(let y=Math.max(0,Math.floor(r[1]/C));y<=Math.min(H-1,Math.floor(r[3]/C));y++)for(let x=Math.max(0,Math.floor(r[0]/C));x<=Math.min(W-1,Math.floor(r[2]/C));x++)blocked[y*W+x]=value;};
+ for(const r of scene.records.filter(r=>r.built||r.construction)){if(r.model==='field'||r.k==='yard')continue;const body=[r.x-r.w*.43,r.y-(r.model==='hospital'?260:72),r.x+r.w*.43,r.y+5];mark(body);mark([r.x-18,r.model==='hospital'?r.y-230:r.y-20,r.x+18,r.y+45],0);sites.push({x:r.x,y:r.y+30,k:r.biz||r.dev?'work':'house'});}
+ for(const tr of scene.trees)mark([tr.x-8,tr.y-6,tr.x+8,tr.y+6]);
+ const water=scene.water;if(water){mark([water.x,water.y,water.x+water.w,water.y+water.h]);mark([water.x,480,water.x+water.w,530],0);}
+ scene.nav={key:scene.key,C,W,H,blocked,rects:[],sites,flows:new Map()};return scene.nav;
+}
+// Keep the established routing and transfer API, backed by the scene's doors.
+villageNav=townNav;__villageRoutes.nav=townNav;
+villageNavKey=function(){return townKey(CVIL.id);};
+function townStore(k){const scene=townScene();if(k==='silver'||k==='gold')return scene.byKey.treasury.built?scene.byKey.treasury:scene.housing[0]||scene.byKey.treasury;return EQ.includes(k)?scene.byKey.armoury:scene.stock.find(r=>r.goods.includes(k))||scene.stock[0];}
+logvSpot=function(k){const r=townStore(k);return {x:r.x,y:r.model==='store'?r.y-18:r.y+28};};
+vcBin=function(k){const p=logvSpot(k);return {d:[p.x,p.y],via:[],port:[p.x,503]};};
+vcArm=function(){return vcBin('spear');};
+function townGround(scene){if(scene.ground)return scene.ground;const c=mkCanvas(VWW,VWH),g=c.getContext('2d'),R=srand(scene.identity.seed),colors=scene.identity.colors;g.fillStyle=colors[0];g.fillRect(0,0,VWW,VWH);if(GROUNDS.grass){g.globalAlpha=.32;g.fillStyle=g.createPattern(GROUNDS.grass,'repeat');g.fillRect(0,0,VWW,VWH);g.globalAlpha=1;}const season=seasonOf(CG.turn);if(season===3||season===2){g.fillStyle=season===3?'#d5dfd088':'#c9a86633';g.fillRect(0,0,VWW,VWH);}for(let i=0;i<450;i++){g.fillStyle=i%2?'#b9b47b18':'#546f4c12';g.beginPath();g.ellipse(R()*VWW,R()*VWH,20+R()*70,7+R()*24,0,0,TAU);g.fill();}
+ const road=(points,w=30)=>{g.lineWidth=w;g.lineJoin='round';g.lineCap='round';g.strokeStyle=GROUNDS.lane?g.createPattern(GROUNDS.lane,'repeat'):colors[1];g.beginPath();points.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.stroke();g.strokeStyle='#665c3e38';g.lineWidth=1;g.stroke();};
+ road([[0,503],[VWW,503]],52);road([[scene.gate.x,160],[scene.gate.x,scene.gate.y+180]],56);
+ for(const r of scene.records.filter(r=>r.built||r.construction))road([[r.x,r.y+35],[r.x,503]],r.house?16:24);
+ g.fillStyle='#d7c8a348';for(const r of scene.present)if(!r.house&&r.model!=='field')g.fillRect(r.x-r.w/2-12,r.y-75,r.w+24,115);
+ if(scene.water){const w=scene.water;g.fillStyle='#789a95';g.fillRect(w.x,w.y,w.w,w.h);g.strokeStyle='#bbd0bb88';g.lineWidth=1.4;for(let i=0;i<70;i++){const y=w.y+R()*w.h,x=w.x+R()*w.w;g.beginPath();g.moveTo(x,y);g.lineTo(x+20,y-2);g.stroke();}}
+ scene.ground=c;return c;
+}
+function townLabel(g,r,text){g.font='600 12px "Noto Serif SC",serif';const w=g.measureText(text).width+16;g.fillStyle='#e5d8b8eb';g.fillRect(r.x-w/2,r.y+38,w,19);g.fillStyle='#394536';g.textAlign='center';g.fillText(text,r.x,r.y+52);}
+function townFoundation(g,r,t){g.save();g.translate(r.x,r.y);g.fillStyle='#a293704d';g.fillRect(-r.w/2,-85,r.w,100);g.strokeStyle='#8e7b58';g.lineWidth=2;g.strokeRect(-r.w/2,-85,r.w,100);for(const x of [-r.w/2,0,r.w/2]){g.strokeStyle='#785737';g.lineWidth=4;g.beginPath();g.moveTo(x,20);g.lineTo(x,-95);g.stroke();}g.lineWidth=2;g.beginPath();g.moveTo(-r.w/2,-75);g.lineTo(r.w/2,-75);g.moveTo(-r.w/2,-75);g.lineTo(0,10);g.moveTo(0,-75);g.lineTo(r.w/2,10);g.stroke();g.restore();townLabel(g,r,Tz('营建中','Under construction'));}
+function townBuilding(add,g,r,s,t){if(!r.built&&!r.construction)return;if(r.construction&&!r.built){add(r.y,()=>townFoundation(g,r,t));return;}
+ const name=r.biz?Tz(...DY_BUSINESSES[r.biz].name):r.dev?Tz(DEV[r.dev].zh,DEV[r.dev].en):{treasury:Tz('大宋官库','Song treasury'),armoury:Tz('武库','Armoury'),yard:Tz('校场','Drill yard'),stable:Tz('马厩','Stables')}[r.k];
+ if(r.model==='store'){add(r.y-80,()=>sprProp('store2',r.x,r.y,0,1.25));add(r.y+1,()=>sprProp('store2',r.x,r.y,1,1.25));}
+ else if(r.model==='hospital')return;
+ else if(r.model==='watchtower')add(r.y,()=>sprProp('tower',r.x,r.y,0,.9));
+ else if(r.model==='field'){for(const f of townScene().fields)add(f.y-45,()=>sprProp('field',f.x,f.y,seasonOf(CG.turn),.82));return;}
+ else if(r.model==='armoury'){add(r.y-80,()=>sprProp('store2',r.x,r.y,0,1.15));add(r.y+1,()=>sprProp('store2',r.x,r.y,1,1.15));}
+ else if(r.k==='yard'){add(r.y,()=>{g.fillStyle='#c1ac7a70';g.fillRect(r.x-150,r.y-160,300,185);songSprite(g,'barracks',r.x,r.y-120,130,90);});}
+ else if(r.k==='stable'){add(r.y,()=>songSprite(g,'saddler',r.x,r.y,200,155));}
+ else add(r.y,()=>{if(s.own==='xia'||s.own==='jin'){if(r.house)sprProp('yurt',r.x,r.y,0,1);else songSprite(g,r.model,r.x,r.y,r.w,r.h);}else if(!songSprite(g,r.model,r.x,r.y,r.w,r.h))sprProp('vhouse8',r.x,r.y,0,1);if(r.model==='treasury'){const src=SONG_ART.cells.get('treasury');if(src){const h=Math.min(r.h,r.w*src.height/src.width);songTreasuryPieces(g,s.st.gold||0,CVIL.id===HOME?CAMP.res.silver:s.stock?.silver||0,r.x,r.y-h,r.w,h);}}});
+ if(name)add(r.y+42,()=>townLabel(g,r,name));
+ CVIL.hot.push({r:r.k==='treasury'?VZ.treasury:[r.x-r.w/2,r.y-r.h,r.x+r.w/2,r.y+35],t:(name||Tz('民居','Home'))+(r.k==='treasury'?' · '+Tz('屋顶剖视','roof cutaway')+'\n'+Tz('黄金 ','Gold ')+(s.st.gold||0)+'\n'+Tz('白银 ','Silver ')+(CVIL.id===HOME?CAMP.res.silver:s.stock?.silver||0):'')+(r.biz?' · Lv'+s.businesses[r.biz].level:r.dev?' · Lv'+s.bld[r.dev]:'')});
+ if(r.construction)add(r.y+2,()=>townFoundation(g,{...r,w:95},t));
+}
+function townStocks(add,g,scene,s){for(const r of scene.stock){const goods=r.goods.filter(k=>s.st[k]>0);if(!goods.length)continue;add(r.y-6,()=>{goods.forEach((k,i)=>{const n=Math.min(5,Math.ceil(s.st[k]/100)),baseY=i<8?r.y-66+Math.floor(i/4)*28:r.y+28+Math.floor((i-8)/4)*28;for(let j=0;j<n;j++)songGoods(g,k,r.x-90+(i%4)*58+j%2*12,baseY-Math.floor(j/2)*7,.65);});});CVIL.hot.push({r:[r.x-130,r.y-120,r.x+130,r.y+25],t:goods.map(k=>vcName(k)+' '+Math.floor(s.st[k])).join('\n')});}
+ const arm=scene.byKey.armoury,kit=EQ.filter(k=>s.eq[k]>0);if(kit.length)add(arm.y+12,()=>kit.slice(0,12).forEach((k,i)=>songGoods(g,k,arm.x-90+i%5*42,arm.y-40+Math.floor(i/5)*38,.58,true)));
+}
+function townGate(add,g,scene,s){const p=scene.gate,q=villageGateQuality(scene.id),key=['gate_hamlet','gate_village','gate_town'][q],w=285;add(p.y+8,()=>{if(!songSprite(g,key,p.x,p.y+10,w,210))sprProp('vgate8',p.x,p.y,0,1);const src=SONG_ART.cells.get(key),h=src?Math.min(210,w*src.height/src.width):180,py=p.y+10-h*(q===2?.40:.50);g.fillStyle='#3b2b1f';g.fillRect(p.x-48,py-12,96,23);g.strokeStyle='#bd9e65';g.strokeRect(p.x-48,py-12,96,23);g.font='600 15px "Noto Serif SC",serif';g.textAlign='center';g.fillStyle='#ead5a3';g.fillText(CT[scene.id].zh,p.x,py+5,88);});
+ if(s.bld.wall>0){const left=p.x-420,right=p.x+420;for(let x=left;x<right;x+=48)if(Math.abs(x-p.x)>155)add(p.y,()=>songWall(g,x,p.y-5,48,23+s.bld.wall*3));}
+ CVIL.hot.push({r:[p.x-150,p.y-210,p.x+150,p.y+20],t:tName(scene.id)+' · '+Tz('村门','Village gate')});
+}
+function townTroops(add,g,scene,s,t){const r=scene.byKey.yard,units=[...unitsAt(scene.id),...CG.armies.filter(a=>a.loc===scene.id).flatMap(armyUnits)],seen=new Set();let row=0;for(const u of units){if(seen.has(u.id)||u.men<=0)continue;seen.add(u.id);const n=clamp(Math.ceil(u.men/30),1,8),sp=UNITS[UT[u.type]?.eng]?.spr||'song_militia';for(let i=0;i<n;i++){const x=r.x-140+i%6*42,y=r.y-60+Math.floor(i/6)*42+row*90;add(y,()=>sprUnit(sp,x,y,9,-Math.PI/2,0));}row++;if(row>=4)break;}}
+function townLife(add,g,scene,s,t,dt){const nav=townNav();CVIL.wp=nav.sites;for(const p of scene.people){if(!villageFree(nav,p.x,p.y)){const at=villageNearest(nav,p.x,p.y);p.x=(at%nav.W+.5)*nav.C;p.y=(Math.floor(at/nav.W)+.5)*nav.C;p.tx=p.x;p.ty=p.y;}const move=walkTo8(p,p.spr==='vil_k'?34:25,dt);add(p.y,()=>sprUnit(p.spr,p.x,p.y,9,p.f,move?frontierWalkFrame(p.spr,p.ph):0));}
+ for(const a of scene.animals){a.ph+=dt;const face=a.f+Math.sin(a.ph*.4)*.2;add(a.y,()=>songAnimal(g,'chicken',a.x,a.y,face,Math.floor(a.ph*2)%3,8));}
+ const stable=scene.byKey.stable,n=Math.min(7,Math.ceil((s.st.horse||0)/10));for(let i=0;i<n;i++){const x=stable.x-115+i%4*64,y=stable.y+45+Math.floor(i/4)*65;add(y,()=>songAnimal(g,'horse',x,y,i%2?Math.PI:0,0,31));}
+ if(hospLv(scene.id)>0)vlDraw(add,s,t,dt);
+}
+function townFrame(dt){const scene=townScene(),s=CG.T[CVIL.id],g=ctx,aw=mobNarrow()?VW:VW-360;CVIL.t+=dt;CVIL._vdt=dt;CVIL.hot=[];CVIL.lay={v8:true,houses:scene.housing,trees:[],stalls:[],alleys:[]};CVIL.peo=scene.people;
+ const sc=Math.min(aw/VWW,VH/VWH)*(CVIL.z||1);CVIL._sc=sc;if((CVIL.z||1)<=1.001){CVIL.fx=VWW/2;CVIL.fy=VWH/2;}CVIL.fx=clamp(CVIL.fx,Math.min(aw/2/sc,VWW/2),Math.max(VWW-aw/2/sc,VWW/2));CVIL.fy=clamp(CVIL.fy,Math.min(VH/2/sc,VWH/2),Math.max(VWH-VH/2/sc,VWH/2));const ox=aw/2-CVIL.fx*sc,oy=VH/2-CVIL.fy*sc;CVIL._ox=ox;CVIL._oy=oy;SPR_DEV=sc*DPR;g.setTransform(DPR,0,0,DPR,0,0);g.fillStyle='#25362c';g.fillRect(0,0,VW,VH);g.save();g.beginPath();g.rect(0,0,aw,VH);g.clip();g.translate(ox,oy);g.scale(sc,sc);g.drawImage(townGround(scene),0,0);const z=[],add=(y,fn)=>z.push({y,fn});
+ for(const tr of scene.trees)add(tr.y,()=>sprProp('tree',tr.x,tr.y,seasonOf(CG.turn)===3?2:[0,1,3,4][tr.v],1.25));for(const r of scene.records)townBuilding(add,g,r,s,CVIL.t);townStocks(add,g,scene,s);townGate(add,g,scene,s);townTroops(add,g,scene,s,CVIL.t);townEconomy(add,g,scene,s,CVIL.t,dt);townLife(add,g,scene,s,CVIL.t,dt);if(LOGV[scene.id])logvDraw(add,g,CVIL.t,dt);edictDraw(add,g,CVIL.t,dt);z.sort((a,b)=>a.y-b.y);for(const item of z)item.fn();g.restore();SPR_DEV=0;
+ g.fillStyle='#21362de8';g.fillRect(14,14,Math.min(410,aw-28),67);g.strokeStyle='#bba36d';g.strokeRect(14,14,Math.min(410,aw-28),67);txt(tName(scene.id),28,43,23,'#ecd8a4','left','bold ');txt(Tz(...scene.identity.name)+' · '+s.pop+' · '+dateTxt(CG.turn),28,67,12,'#d3d8bd','left');cvilTip(g);edictOverlay(g,CVIL.t);
+}
+cvil8Frame=townFrame;
+{const old=showCVil;showCVil=function(id){TOWN.scene=null;const r=old(id),scene=townScene(id),aw=mobNarrow()?VW:VW-360,scale=mobNarrow()?.70:.83;CVIL.lay=null;CVIL.vc=null;CVIL.z=scale/Math.min(aw/VWW,VH/VWH);CVIL.fx=scene.gate.x+(mobNarrow()?0:scene.mirror?-130:130);CVIL.fy=scene.gate.y-(mobNarrow()?420:480);vuLoad();songPeopleLoad();songGoodsLoad();songAnimalsLoad();songLoad('gates');songLoad('workshops');return r;};}
+{const old=cvilUI;cvilUI=function(){const r=old(...arguments);const p=campEl(),buttons=[...p.querySelectorAll('.btn')],whole=buttons.find(b=>/Whole|全景/.test(b.textContent.trim()));if(whole&&!p.querySelector('[data-town-gate]')){const b=btn('村门','Gate',()=>{const q=townScene().gate;CVIL.fx=q.x;CVIL.fy=q.y-80;CVIL.z=1.1/Math.min((mobNarrow()?VW:VW-360)/VWW,VH/VWH);});b.dataset.townGate='1';whole.before(b);}return r;};}
+window.__townScene={scene:townScene,nav:townNav,frame:townFrame,records:()=>townScene().records};
+
+vlPath=function(){const sc=townScene(),h=sc.byKey.hospital;return villageRoute({x:sc.gate.x,y:sc.gate.y+50},h.door)||[[sc.gate.x,sc.gate.y+50],[sc.gate.x,sc.gate.y+50]];};
+{const old=vlStep;vlStep=function(s,dt){const v=old(...arguments),sc=townScene();for(const r of v.ready)if(r._townRoute!==sc.key){const start=r.P[0],h=sc.byKey.hospital,target=sc.byKey.yard,tail=villageRoute(h.door,{x:target.x,y:target.y+35});if(tail){r.P=[start,[h.x,start[1]],[h.door.x,h.door.y],...tail];r.d=0;r._townRoute=sc.key;}}return v;};}

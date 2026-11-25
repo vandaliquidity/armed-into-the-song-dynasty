@@ -7,7 +7,7 @@ const checks=await page.evaluate(async()=>{const checks=[],ok=(v,s)=>{if(!v)thro
  ok(typeof CPD==='undefined'&&typeof cpdView==='undefined'&&![...document.scripts].some(s=>/compound\.js/.test(s.src))&&localStorage.getItem('sw_cpd3')===null,'the compound view is gone: no compound.js, no toggle state, no default');
  __sw.cstart();if(CG.evQ)CG.evQ.length=0;const s=CG.T[HOME];for(const k in s.bld)s.bld[k]=Math.max(s.bld[k]||0,(DEV[k]&&DEV[k].max)||2);s.prosp=95;s.pop=900;for(const k in CAMP.bld)CAMP.bld[k]=2;CAMP.bld.clinic=2;
  s.businesses=s.businesses||{};for(const k in DY_BUSINESSES)s.businesses[k]={level:3,paused:false};for(const u of unitsAt(HOME))u.wnd=Math.max(u.wnd||0,30);
- __vu.set(true);showCVil(HOME);const need=['villager','vil_w','vil_b','vil_e','vil_k','porter','merchant','song_militia','song_spear','song_xbow','song_archer','song_fire','song_cav','song_gun'];
+ __vu.set(true);showCVil(HOME);for(let i=0;i<900&&SONG_ANIMALS.poses.size<224;i++){cvil8Frame(0);await w(100);}const need=['villager','vil_w','vil_b','vil_e','vil_k','porter','merchant','song_militia','song_spear','song_xbow','song_archer','song_fire','song_cav','song_gun'];
  for(let i=0;i<300;i++){for(const n of need)vuSpr(n);cvil8Frame(1/60);await w(30);if(need.every(n=>SPR['vu_'+n])&&VP.img.workers&&VP.img.patients&&VL.img.ward)break;}
  ok(need.every(n=>SPR['vu_'+n]),'every person type drawn in the village has a re-rendered (vu) atlas, the gun crew included');
  ok(/vp_workers/.test(VP.img.workers.src)&&/vp_patients/.test(VP.img.patients.src),'artisans, physicians and patients load from the same pipeline (vp_ atlases)');
@@ -33,10 +33,10 @@ const checks=await page.evaluate(async()=>{const checks=[],ok=(v,s)=>{if(!v)thro
  ok(pat/md<1.06,'a patient sitting up is no taller than a standing adult ('+pat.toFixed(1)+')');
  // compound room functions in the main village view
  for(let i=0;i<5;i++)cvil8Frame(1/30);const hot=CVIL.hot.map(h=>h.t);
- const biz=Object.keys(VP.BIZ_ACT).filter(k=>s.businesses[k]?.level&&hot.some(t=>t.startsWith(Ts(...DY_BUSINESSES[k].name)+' Lv')));
+ const biz=Object.keys(VP.BIZ_ACT).filter(k=>s.businesses[k]?.level&&townScene().byKey['biz:'+k]?.built);
  ok(biz.length>=8&&biz.every(k=>hot.some(t=>t.startsWith(Ts(...DY_BUSINESSES[k].name)+' · '+Ts('匠人','artisan')))),'every business shown in the village has an artisan at its station with a status line ('+biz.length+')');
  ok(hot.some(t=>t.includes(Ts('库吏','clerk'))&&t.includes(Ts('银','Silver')))&&hot.some(t=>t.includes(Ts('司仓','stacker'))&&t.includes(Ts('存粮','Grain'))),'the treasury clerk and the storehouse stacker carry the old compound rooms\' status lines');
- ok(typeof vlOn==='function'&&vlOn()&&!!CVIL.vc,'the hospital ward and production chains still run in the main village');
+ ok(typeof vlOn==='function'&&vlOn()&&!!TOWN.scene.production,'the hospital ward and production chains still run in the main village');
  const t0=performance.now();for(let i=0;i<30;i++)cvil8Frame(1/60);const ms=(performance.now()-t0)/30;ok(ms<14,'fully built village frame '+ms.toFixed(2)+' ms (budget 14)');
  __vu.set(false);return checks;});
 if(errors.length)throw Error(errors.join('\n'));console.log(JSON.stringify({checks,errors},null,2));

@@ -2,6 +2,18 @@
 
 A browser strategy game.
 
+### v0.63 — Villages With a Life
+
+The village opens with its named gate in view on desktop and phone. A Gate focus control joins the existing district controls. Population creates inhabited housing clusters; settlements have different district arrangements, approaches, woodland and river frontage. The larger world remains pannable as development spreads.
+
+The scene now reads actual development levels, commerce buildings and construction orders. Unbuilt facilities have no model, sign, workers or dark hospital placeholder. Stored resources remain visible as goods; warehouse shells appear only for built storage. New construction shows a scaffold, porters collecting its already-paid materials, deliveries and material piles at the site. Completed models appear when the normal monthly construction owner finishes the order. Animations never charge the cost again or delay campaign completion.
+
+Workshop inputs reach the worker before its visible work phase; finished goods then travel to storage and carriers return empty. Raw extraction, harvest, commerce, tax, actual convoy loading and hospital transport use the scene's entrances and collision grid. Paused businesses, missing materials and unavailable wages stop new production jobs. Gold can still fund wages through the existing conversion rules.
+
+Chickens, horses, mounted troops and ox carts now share an eight-direction Blender pipeline with the newer civilians. Cavalry scale is measured against the rider's body rather than the tip of a lance. Song, Xia and Jin retain separate mounted colour/kit variants. Existing armies, inventories, saves and battle rules are preserved.
+
+Source and renderer notes: [art/village-scene.md](art/village-scene.md). The current geometry and production checks are `tests/town-scene.cjs` and `tests/town-economy.cjs`; they replace the older fixed-template layout checks in the default runner.
+
 ### v0.62 — A Living Frontier
 
 Village civilians now use actual articulated Blender models rendered in eight directions, with six roles, walking frames and six work actions. Shaded figures, contact shadows, exposed workshop interiors and directional cargo occlusion preserve the established 2.5D view. Resource piles, weapon racks and tiered Song-inspired gatehouses share the architectural palette. The gate carries the settlement's actual Chinese name.
