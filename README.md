@@ -2,13 +2,9 @@
 
 A browser strategy game.
 
-### v0.65 — A Living Third Dimension
+### v0.65.1 — Return to 2.5D
 
-Villages now open in a real WebGL 3D scene. Orbit around solid timber buildings, curved tile roofs, named gates and connected walls; zoom into workshops and treasuries or pan across the expansion ward. Drag to rotate, scroll to zoom and right-drag to pan (two fingers on touchscreens). Roofs toggles the roofs; Reset returns to the gate. The existing district buttons focus the 3D camera. On phones, Village opens the settlement sidebar.
-
-Articulated Song villagers, porters, livestock, cavalry and ox carts use local Blender-exported meshes. Workers and carried materials follow the existing road, production and construction jobs. Buildings, stockpiles, equipment and treasury ingots follow actual settlement state. Rendering grants no goods, soldiers, building completions or extra turns. The existing 2D view remains available through the 2D button and automatically on devices without WebGL2.
-
-Three.js 0.187.0 and its MIT license are vendored locally; gameplay does not depend on a graphics CDN. See `art/village-3d.md` for sources and rebuilding. `tests/village-3d.cjs` exercises the real camera controls, roof toggle, district focus, mobile layout, return to map, fallback and inventory conservation. The older town rendering checks explicitly exercise the retained 2D view.
+The village uses the established 2.5D artwork again. The experimental WebGL renderer and its controls are removed from the active game. Named gates, connected walls and roads, moving stable horses, resource carriers and construction activity remain as in v0.64. Existing campaign saves and settlement state are retained.
 
 ### v0.64 — Within the Town Walls
 

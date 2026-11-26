@@ -6,8 +6,5 @@
   },
   "devDependencies": {
     "playwright": "1.65.0"
-  },
-  "dependencies": {
-    "three": "0.187.0"
   }
 }
