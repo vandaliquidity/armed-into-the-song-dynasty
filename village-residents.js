@@ -13,6 +13,7 @@ function townResidentEvent(roll,event){if(!roll.events.some(e=>e.token===event.t
 function townResidentDisplayCount(scene){const pop=CG.T[scene.id].pop;if(!(pop>0))return 0;const jobs=scene.present.filter(r=>r.biz||r.dev&&!['wall','tower'].includes(r.dev)||['store','treasury','armoury'].includes(r.model)).length+4;return Math.min(Math.floor(pop),64,Math.max(clamp(Math.round(pop/90),8,48),Math.ceil((jobs+Math.min(8,Math.ceil(pop/450)))/.85)));}
 function townResidentsBind(scene){
  if(!songBuildingAllowed(scene.id))return;const s=CG.T[scene.id],roll=townResidentRoll(scene.id),n=Math.min(Math.max(0,Math.floor(s.pop)),scene.people.length),porters=Math.min(8,Math.max(1,Math.ceil(s.pop/450)),Math.floor(n/3));
+ if(roll.layout!==5){for(const q of roll.people)delete q.position;roll.layout=5;}
  const populationGrew=s.pop>roll.population,levels={...s.bld,...Object.fromEntries(Object.entries(s.businesses||{}).map(([k,b])=>['biz:'+k,b.level||0]))};
  if(roll.levels)for(const [k,level]of Object.entries(levels))if(level>(roll.levels[k]||0))townResidentEvent(roll,{kind:'building',key:k,level,token:k+':'+level});roll.levels=levels;
  if(roll.population!==s.pop){townResidentEvent(roll,{kind:'population',delta:s.pop-roll.population,token:'pop:'+campaignMonth()+':'+s.pop});roll.population=s.pop;}
@@ -25,11 +26,19 @@ function townResidentsPrepare(scene){for(const p of scene.people)if(p.resident)p
 function townStaff(add,g,scene,r,act,busy,t,index=0,point=null){
  if(!scene.residentRoll)return false;const code=r.k+':'+index;let p=scene.staffAssignments.get(code);
  if(!p){const assigned=new Set(scene.staffAssignments.values());p=scene.people.find(p=>p.resident.workplace===r.k&&!assigned.has(p)&&!['porter','child'].includes(p.resident.role))||scene.people.find(p=>!assigned.has(p)&&!['porter','child'].includes(p.resident.role));if(!p)return true;scene.staffAssignments.set(code,p);}
- const sites=songBuildingStations(r),q=point||sites[index%Math.max(1,sites.length)]||{x:r.x,y:r.y-8};if(!p.resident.position&&!p.resident.arrival){const nav=townNav(),cell=villageNearest(nav,q.x,q.y);p.x=(cell%nav.W+.5)*nav.C;p.y=(Math.floor(cell/nav.W)+.5)*nav.C;p.tx=p.x;p.ty=p.y;p._route=null;p.resident.position={x:p.x,y:p.y};}p._work={r,act,busy,x:q.x,y:q.y,tool:q.tool,field:q.field};p.resident.workplace=r.k;if(typeof townConfigureWork==='function')townConfigureWork(scene,p,r,p._work,busy,index);return true;
+ const sites=songBuildingStations(r),q=point||sites[index%Math.max(1,sites.length)]||{x:r.x,y:r.y-8};if(!p.resident.position&&!p.resident.arrival){const nav=townNav(),cell=villageNearest(nav,q.x,q.y);p.x=(cell%nav.W+.5)*nav.C;p.y=(Math.floor(cell/nav.W)+.5)*nav.C;p.tx=p.x;p.ty=p.y;p._route=null;p.resident.position={x:p.x,y:p.y};}p._work={r,act,busy,x:q.x,y:q.y,tool:q.tool,field:q.field,dir:q.dir};p.resident.workplace=r.k;if(typeof townConfigureWork==='function')townConfigureWork(scene,p,r,p._work,busy,index);return true;
 }
 function townResidentLife(add,g,scene,p,t,dt){
  if(!p.resident)return false;if(p._busy){townResidentHot(p);return true;}
- const work=p._work;if(work){p.tx=work.x;p.ty=work.y;p.wait=2;const move=walkTo8(p,27,dt);if(move)add(p.y,()=>{sprUnit(p.spr,p.x,p.y,9,p.f,frontierWalkFrame(p.spr,p.ph));if(typeof townDrawWorkerCargo==='function')townDrawWorkerCargo(g,p,t);});else add(p.y,()=>{vpWorker(g,p.x,p.y,work.act,1,work.busy?Math.floor(t*5):0);if(typeof townDrawWorkerCargo==='function')townDrawWorkerCargo(g,p,t);});}
+ const work=p._work;if(work){p.tx=work.x;p.ty=work.y;p.wait=2;const move=walkTo8(p,34,dt);
+  if(move)add(p.y,()=>{sprUnit(p.spr,p.x,p.y,9,p.f,frontierWalkFrame(p.spr,p.ph));townDrawWorkerCargo(g,p,t);});
+  else{const dir=work.dir??3;p.f=dir*Math.PI/2;add(p.y,()=>{
+   if(work.rest)songSeated(g,p);
+   else if(work.busy)vpWorker(g,p.x,p.y,work.act,dir,1+Math.floor(t*5)%5);
+   else sprUnit(p.spr,p.x,p.y,9,p.f,0);
+   townDrawWorkerCargo(g,p,t);
+  });}
+ }
  else{const nav=townNav();if(!villageFree(nav,p.x,p.y)){const at=villageNearest(nav,p.x,p.y);p.x=(at%nav.W+.5)*nav.C;p.y=(Math.floor(at/nav.W)+.5)*nav.C;}const move=walkTo8(p,p.resident.role==='child'?34:25,dt);add(p.y,()=>sprUnit(p.spr,p.x,p.y,9,p.f,move?frontierWalkFrame(p.spr,p.ph):0));}
  p.resident.position={x:p.x,y:p.y};townResidentHot(p);return true;
 }

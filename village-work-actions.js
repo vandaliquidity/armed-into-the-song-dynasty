@@ -6,24 +6,38 @@ function townToolKind(act){return {hammer:'hammer',tend:'tongs',weave:'needle',c
 function townWorkGoal(p,point,stage,dt,delay=.45){const a=p._activity;p._work.x=point.x;p._work.y=point.y;p._work.busy=['takeTool','returnTool','takeInput','placeInput','takeOutput','placeOutput'].includes(stage);p._work.act=p._work.busy?'lift':p._work.act;if(a.stage!==stage){a.stage=stage;a.elapsed=0;}if(Math.hypot(p.x-point.x,p.y-point.y)>17){a.elapsed=0;return false;}a.elapsed+=dt;return a.elapsed>=delay;}
 function townConfigureWork(scene,p,r,work,busy,index){
  const dt=scene.workDt||0,a=p._activity||(p._activity={stage:'idle',elapsed:0,cargo:null}),cycle=[...(scene.production?.values()||[])].find(c=>c.plan.r.k===r.k),buffers=townWorkBuffers(scene,r),station={x:work.x,y:work.y},rack=townToolPoint(r),kind=work.tool||townToolKind(work.act);
- a.cycle=cycle;a.owner=r.k;work.tool=kind;
+ a.cycle=cycle;a.owner=r.k;work.tool=kind;work.dir=work.dir??3;work.rest=false;
  if(p.resident.tool&&(p.resident.tool.owner!==r.k||p.resident.tool.kind!==kind||!busy)){
   const old=scene.byKey[p.resident.tool.owner],goal=old?.built?townToolPoint(old):p.home?.door||rack;
   if(townWorkGoal(p,goal,'returnTool',dt)){p.resident.tool=null;a.stage='idle';a.elapsed=0;}return;
  }
- if(!busy){a.stage='idle';return;}
+ if(!busy){townRestWork(scene,p,r,work,index);return;}
  if(!p.resident.tool){if(townWorkGoal(p,rack,'takeTool',dt)){p.resident.tool={owner:r.k,slot:index,kind};a.stage='idle';a.elapsed=0;}return;}
+ if(!cycle&&r.construction==null&&work.field==null){
+  a.service=(a.service||0)+dt;const phase=a.service%28;
+  if(phase>15){townRestWork(scene,p,r,work,index);return;}
+  const goal=phase<5?songBuildingPoint(r,'input'):phase<10?station:songBuildingPoint(r,'output');
+  work.x=goal.x;work.y=goal.y;work.busy=Math.hypot(p.x-goal.x,p.y-goal.y)<12;a.stage=work.busy?'work':'walkToWork';return;
+ }
  if(cycle?.state==='finished'){
   const item=cycle.finishedItems?.find(item=>!item.placed);if(!item){cycle.readyToDispatch=true;work.busy=false;return;}
   if(!a.cargo){if(townWorkGoal(p,station,'takeOutput',dt)){a.cargo={k:item.k,n:item.n,kind:'output'};a.stage='idle';a.elapsed=0;}return;}
   if(townWorkGoal(p,songBuildingPoint(r,'output'),'placeOutput',dt)){buffers.output[item.k]=item.n;item.placed=true;a.cargo=null;a.stage='idle';a.elapsed=0;if(cycle.finishedItems.every(item=>item.placed))cycle.readyToDispatch=true;}return;
  }
+ if(cycle?.state==='input'&&!a.cargo&&!Object.values(buffers.input).some(n=>n>0)){townRestWork(scene,p,r,work,index);return;}
  if(cycle&&['input','work'].includes(cycle.state)){
   if(a.cargo){if(townWorkGoal(p,station,'placeInput',dt)){buffers.bench[a.cargo.k]=(buffers.bench[a.cargo.k]||0)+a.cargo.n;a.cargo=null;a.stage='idle';a.elapsed=0;}return;}
   const item=Object.entries(buffers.input).find(([,n])=>n>0);if(item){if(townWorkGoal(p,songBuildingPoint(r,'input'),'takeInput',dt)){a.cargo={k:item[0],n:item[1],kind:'input'};buffers.input[item[0]]=0;a.stage='idle';a.elapsed=0;}return;}
  }
  p._work.x=station.x;p._work.y=station.y;const reached=Math.hypot(p.x-station.x,p.y-station.y)<18;
  a.stage=reached?'work':'walkToWork';work.busy=reached&&(!cycle||cycle.state==='work');
+}
+function townRestWork(scene,p,r,work,index){
+ const a=p._activity,at=songBuildingPlacement(r),side=index%2?-1:1;
+ const target={x:(at?.x||r.x)+side*Math.min(28,(at?.w||r.w)*.14),y:(at?.y||r.y)-22};
+ const nav=townNav(),cell=villageNearest(nav,target.x,target.y);work.x=(cell%nav.W+.5)*nav.C;work.y=(Math.floor(cell/nav.W)+.5)*nav.C;
+ work.busy=false;work.rest=true;work.dir=1;const reached=Math.hypot(p.x-work.x,p.y-work.y)<7;
+ a.stage=reached?'sit':'walkToSeat';a.cargo=null;
 }
 function townWorkerCanWork(scene,cycle){if(!scene.residentRoll)return true;const p=scene.staffAssignments.get(cycle.plan.r.k+':0');return !!p&&p._activity?.stage==='work'&&!p._activity.cargo&&!Object.values(townWorkBuffers(scene,cycle.plan.r).input).some(n=>n>0);}
 function townBeginFinished(scene,cycle){
@@ -44,13 +58,15 @@ function townDrawTool(g,kind,x,y,phase=0,held=false){
  g.restore();
 }
 function townDrawWorkerCargo(g,p,t){
+ if(p._work?.rest)return;
  const a=p._activity,hand={x:p.x+Math.cos(p.f||0)*7,y:p.y-9+Math.sin(p.f||0)*2};
  if(a?.cargo)songGoods(g,a.cargo.k,hand.x,hand.y,.32,EQ.includes(a.cargo.k));
  else if(p.resident.tool&&(a?.stage!=='work'||p._work?.field!=null))townDrawTool(g,p.resident.tool.kind,hand.x,hand.y,p.ph*TAU,true);
 }
+function townWorkbenchPoint(r){const p=songBuildingStations(r)[0];return p?{x:p.x+Math.cos((p.dir??3)*Math.PI/2)*8,y:p.y-13}:r.door;}
 function townDrawWorkBuffers(add,g,scene){
  for(const r of scene.records.filter(r=>r.built||r.construction)){
-  const b=scene.workBuffers?.get(r.k);if(b){for(const [slot,point]of [['input',songBuildingPoint(r,'input')],['bench',songBuildingStations(r)[0]||r.door],['output',songBuildingPoint(r,'output')]]){
+  const b=scene.workBuffers?.get(r.k);if(b){for(const [slot,point]of [['input',songBuildingPoint(r,'input')],['bench',townWorkbenchPoint(r)],['output',songBuildingPoint(r,'output')]]){
    const items=Object.entries(b[slot]).filter(([,n])=>n>0);if(items.length)add(point.y-.5,()=>items.forEach(([k],i)=>songGoods(g,k,point.x+i%2*10,point.y-Math.floor(i/2)*9,.42,EQ.includes(k))));
   }}
   const assigned=[...(scene.staffAssignments?.entries()||[])].filter(([key])=>key.startsWith(r.k+':'));if(!assigned.length)continue;

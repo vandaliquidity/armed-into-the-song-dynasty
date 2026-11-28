@@ -2,6 +2,14 @@
 
 A browser strategy game.
 
+### v0.70 — Song Market Streets
+
+The village has a compact square enclosure, a south-facing gate centred in the entry view, paired market-street frontages and residential side lanes. Existing and future building plots share the same plan so new development preserves earned homes. Prosperous towns gain stone flag paving. Only developed frontage creates visible streets; future sites retain open ground.
+
+Workers follow doorways and interior routes, borrow tools, fetch inputs, work at calibrated stations and leave finished goods for porters. Furniture blocks movement and covers people passing behind it. Idle staff use genuine seated poses rendered from the existing civilian Blender models; shortages stop the artisan's work and restocking lets the same named worker resume. Clerks walk between shelves, counters and resting places. Porter inputs and outputs share queue priority so busy commerce cannot endlessly postpone workshop inputs. Seasonal fields use corrected crop-only paintings.
+
+The layout takes its street rhythm from Song-period shopfronts in the Palace Museum's Qingming scroll, adapted to readable game districts rather than a reconstruction of a particular town. Rebuild seated poses with `art/build_song_rest.py`; behavioural checks are in `tests/compact-village.cjs`.
+
 ### v0.69 — A Village to Call Home
 
 Song villages use the building handover's 49 distinct 2.5D variants: cutaway workplaces, matching removable roofs, six home designs, separate stores and armouries, working interiors and four seasonal fields. Roofs appear at overview zoom and fade away as you move closer. The treasury's six trays show actual gold and silver; the squarish hospital uses its real eight beds and four additional care mats at level two. The campaign map and existing building thumbnails use the same painting set.

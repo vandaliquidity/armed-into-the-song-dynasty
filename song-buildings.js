@@ -1,6 +1,6 @@
 'use strict';
 // Registered 2.5D layers. The town scene still owns placements, routes and jobs.
-const SONG_BUILDINGS={version:'0.69',meta:null,images:new Map(),loading:new Map(),failed:new Set(),tier:null,ready:new Set(),stats:{draws:0,roofAlpha:1}};
+const SONG_BUILDINGS={version:'0.70',meta:null,images:new Map(),loading:new Map(),failed:new Set(),tier:null,ready:new Set(),stats:{draws:0,roofAlpha:1}};
 function songBuildingKey(r,id=CVIL.id){
  if(r.house)return 'home_'+(r.model==='courtyard'?'courtyard':'cottage')+'_'+['a','b','c'][battlefieldHash(id+':'+r.k)%3];
  if(r.model==='store')return 'storehouse_'+(Number(r.k.split(':')[1])%2?'b':'a');
@@ -43,14 +43,30 @@ function songBuildingPoint(r,kind='input'){
  const at=songBuildingPlacement(r),p=at?.spec[kind==='output'?'output_rack_wu_from_anchor':'input_pile_wu_from_anchor'];
  return at&&p?{x:at.x+p.x,y:at.y+p.y}:{...r.door};
 }
-function songBuildingStations(r){const at=songBuildingPlacement(r);return at?(at.spec.stations_wu_from_anchor||[]).map(p=>({...p,x:at.x+p.x,y:at.y+p.y})):[];}
+// Furniture occupies the same world coordinates in drawing, routing and work.
+const SONG_INTERIORS={
+ smithy:{stations:[{x:0,y:-69,act:'hammer',dir:3},{x:47,y:-74,act:'tend',dir:3},{x:-42,y:-48,act:'pour',dir:3}],fixtures:[[-19,-105,17,-81],[31,-145,75,-88],[-59,-87,-26,-65]]},
+ bowyer:{stations:[{x:-34,y:-57,act:'weave',dir:3},{x:37,y:-57,act:'lift',dir:3}],fixtures:[[-61,-98,-14,-70],[16,-95,62,-70]]},
+ brewery:{stations:[{x:-30,y:-57,act:'stir',dir:3},{x:35,y:-53,act:'pour',dir:3}],fixtures:[[-51,-100,-13,-70],[21,-97,58,-66]]},
+ restaurant:{stations:[{x:-35,y:-57,act:'pour',dir:3},{x:40,y:-48,act:'count',dir:3}],fixtures:[[-61,-106,-19,-70],[24,-93,65,-60]]},
+ market:{stations:[{x:0,y:-50,act:'count',dir:3},{x:50,y:-40,act:'stack',dir:3}],fixtures:[[-26,-91,27,-63],[35,-90,70,-54]]},
+ weaver:{stations:[{x:-34,y:-56,act:'weave',dir:3},{x:36,y:-57,act:'weave',dir:3}],fixtures:[[-60,-108,-15,-69],[18,-105,61,-70]]}
+};
+function songBuildingStations(r){const at=songBuildingPlacement(r);return at?(SONG_INTERIORS[at.key]?.stations||at.spec.stations_wu_from_anchor||[]).map(p=>({...p,x:at.x+p.x,y:at.y+p.y})):[];}
+function songBuildingFixtures(r){const at=songBuildingPlacement(r);return at?(SONG_INTERIORS[at.key]?.fixtures||[]).map(box=>({box:[at.x+box[0],at.y+box[1],at.x+box[2],at.y+box[3]],at})):[];}
+function songBuildingFurniture(add,g,r){
+ for(const {box,at}of songBuildingFixtures(r))add(box[3]+.1,()=>{
+  g.save();g.beginPath();g.rect(box[0],box[1],box[2]-box[0],box[3]-box[1]);g.clip();songBuildingDraw(g,at.key,'base',at.x,at.y,at.w,at.h);g.restore();
+ });
+}
 function songBuildingLevel(r,s){return r.biz?s.businesses?.[r.biz]?.level||0:r.k.startsWith('store:')?s.bld.store||0:r.k==='treasury'?1:r.k==='armoury'?s.bld.yard||0:r.k==='yard'?s.bld.yard||0:r.k==='stable'?s.bld.stable||0:r.dev?s.bld[r.dev]||0:1;}
 function songBuildingLayers(add,g,r,s,t){
  if(!songBuildingAllowed()||!r.built)return false;const at=songBuildingPlacement(r);if(!at||!songBuildingReady(at.key))return false;
  const {key,spec,x,y,w,h}=at,level=songBuildingLevel(r,s),cut=spec.class==='W';
  add(cut?y-h*.6:y,()=>{g.save();if(r.house&&r.inhabited===false)g.globalAlpha*=.73;songBuildingDraw(g,key,'base',x,y,w,h);g.restore();if(key==='hospital'&&level>=2)songBuildingDraw(g,key,'props_l2',x,y,w,h);if(cut&&spec.plaque_text){g.save();g.fillStyle='#59412be8';g.fillRect(x-29,y-h*.79,58,16);g.strokeStyle='#a48a5c';g.lineWidth=.8;g.strokeRect(x-29,y-h*.79,58,16);g.fillStyle='#e0d4b7';g.font='600 11px "Noto Serif SC",SimSun,serif';g.textAlign='center';g.fillText(spec.plaque_text,x,y-h*.79+12,54);g.restore();}});
  if(cut){
-  add(y+1,()=>{songBuildingDraw(g,key,'props',x,y,w,h);if(key!=='hospital')for(let n=2;n<=Math.min(3,level);n++)songBuildingDraw(g,key,'props_l'+n,x,y,w,h);});
+  songBuildingFurniture(add,g,r);
+  add(y+1,()=>{songBuildingDraw(g,key,'props',x,y,w,h);});
   add(y+3,()=>{const a=songBuildingRoofAlpha();SONG_BUILDINGS.stats.roofAlpha=a;songBuildingDraw(g,key,level>=3&&spec.layers.includes('roof_l3')?'roof_l3':'roof',x,y,w,h,a);});
  }
  return true;

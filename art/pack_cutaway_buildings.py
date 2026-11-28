@@ -60,7 +60,7 @@ def furnishing(size,b,level,key):
 def prepare(key,b):
     basepath=SOURCE/(key+'-base.png');roofpath=SOURCE/(key+'-roof.png')
     if not basepath.exists() or b['class']=='W' and not roofpath.exists():return False
-    base=clean(Image.open(basepath));roof=clean(Image.open(roofpath)) if b['class']=='W' else None
+    original=clean(Image.open(basepath));base=original;roof=clean(Image.open(roofpath)) if b['class']=='W' else None
     if roof and roof.size!=base.size:roof=roof.resize(base.size,Image.Resampling.LANCZOS)
     bb=base.getbbox();W,H=b['master_canvas_px'];margin=18;scale=min(W*.86/(bb[2]-bb[0]),(H-margin*2)/(bb[3]-bb[1]));cx=(bb[0]+bb[2])/2
     union=base.copy()
@@ -71,6 +71,11 @@ def prepare(key,b):
         # All seasons tile on one registered earthen plot outline.
         mask=Image.new('L',(W,H));md=ImageDraw.Draw(mask);points=[(W*.07,H*.24),(W*.81,H*.16),(W*.93,H*.84),(W*.19,H*.92)];md.polygon(points,fill=255)
         plot=Image.new('RGBA',(W,H));pd=ImageDraw.Draw(plot);pd.polygon(points,fill='#b6b6a4' if key.endswith('winter') else '#aa9065');pd.line(points+[points[0]],fill='#786d50',width=6)
+        corners={'spring':[(.23,.35),(.92,.285),(.75,.78),(.08,.78)],'summer':[(.24,.30),(.93,.28),(.76,.76),(.065,.76)],'autumn':[(.24,.31),(.93,.28),(.76,.76),(.065,.76)],'winter':[(.24,.36),(.94,.30),(.77,.80),(.05,.80)]}[key.split('_')[1]]
+        target=points;source=[(x*original.width,y*original.height) for x,y in corners];matrix=[];values=[]
+        for (x,y),(u,v) in zip(target,source):
+            matrix.extend([[x,y,1,0,0,0,-u*x,-u*y],[0,0,0,x,y,1,-v*x,-v*y]]);values.extend([u,v])
+        coefficients=np.linalg.solve(np.array(matrix),np.array(values));base=original.transform((W,H),Image.Transform.PERSPECTIVE,coefficients,Image.Resampling.BICUBIC)
         arr=np.array(base);arr[:,:,3]=np.minimum(arr[:,:,3],np.asarray(mask));base=Image.alpha_composite(plot,Image.fromarray(arr));layers={'base':base}
     if roof:
         arr=np.array(base);yy,xx=np.indices((H,W));mask=((yy>H-b['box_wu'][1]*6*.13)&(np.abs(xx-W/2)>W*.15))|((np.abs(xx-W/2)>W*.37)&(yy>H*.35))
