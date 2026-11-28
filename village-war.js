@@ -79,7 +79,7 @@ function vwDay(){return ((VWX.t/150)+.32)%1;}
 function vwDark(){const d=vwDay();return d<.62?0:d<.72?(d-.62)/.1:d<.9?1:1-(d-.9)/.1;}
 function vwWeather(){const m=townMonth(),se=townSeason(),h=vwH('wx',campaignMonth());if(se===3)return h<.65?'snow':'clear';if(se===2)return h<.25?'rain':'leaves';if(se===0)return h<.3?'rain':'petals';return h<.35?'rain':'clear';}
 function vwKeyPeople(scene,s){const out=[],B=scene.byKey,id=scene.id;if(id!==HOME&&!owned(id))return out;
- const su=hospLv(id)>0?B.hospital:B.yard;if(id===HOME&&su)out.push({k:'su',spr:SPR.sq_medic?'sq_medic':'vil_w',x:su.model==='hospital'?su.door.x+38:su.x+120,y:su.model==='hospital'?su.door.y+34:su.y+30,f:Math.PI/2});
+ const su=hospLv(id)>0?B.hospital:B.yard;if(id===HOME&&su)out.push({k:'su',spr:'vil_w',x:su.model==='hospital'?su.door.x+38:su.x+120,y:su.model==='hospital'?su.door.y+34:su.y+30,f:Math.PI/2});
  const st=B['store:0'];if(st&&st.built)out.push({k:'qm',spr:'merchant',x:st.x+st.w/2+18,y:st.y+30,f:Math.PI});
  const sm=B['dev:smithy'];const smithAt=sm&&sm.built?sm:B.armoury;if(smithAt&&smithAt.built)out.push({k:'smith',spr:'vil_k',x:smithAt.x-smithAt.w/2-14,y:smithAt.y+28,f:0});
  out.push({k:'vet',spr:'song_spear',x:scene.gate.x+92,y:scene.gate.y+34,f:Math.PI/2});return out;}
