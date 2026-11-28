@@ -12,3 +12,19 @@
 .vw-obj{margin:4px 0;padding:5px 8px;border:1px solid rgba(184,134,46,.4);border-radius:4px;font-size:12.5px}.vw-obj.met{border-color:#8fd07a;color:#cfe8bf}.vw-obj b{color:#f4d27a}
 .vw-war{border:1px solid #a0503a;background:rgba(80,20,10,.25);padding:6px 8px;border-radius:4px;margin-top:6px;font-size:12.5px}
 .vw-trib{border:1px solid #8a9a5a;background:rgba(40,60,20,.25);padding:6px 8px;border-radius:4px;margin-top:6px;font-size:12.5px}
+/* t264 phase D: Jin war readiness */
+.ja-chip{position:fixed;left:12px;bottom:14px;z-index:40;padding:6px 12px;border-radius:14px;background:rgba(28,20,12,.88);border:1px solid #caa44d;color:#f2e2bd;font:600 13px/1.2 "Noto Serif SC",serif;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.ja-chip b{color:#ffd77a}
+.ja-modal{box-sizing:border-box;width:min(560px,94vw);max-height:86vh;overflow:auto}
+.ja-panel h3{margin:4px 0 6px}
+.ja-gauge{position:relative;height:12px;border-radius:6px;background:#3a2c1c;border:1px solid #6b5332;margin:8px 0 4px;overflow:visible}
+.ja-gauge>div{height:100%;border-radius:6px;background:linear-gradient(90deg,#b5452c,#d8a640 60%,#8fd07a)}
+.ja-gauge>span{position:absolute;top:-3px;width:2px;height:18px;background:#fff3d6}
+.ja-sum{font-size:12px;margin-bottom:6px}
+.ja-row{display:grid;grid-template-columns:24px 1fr auto;gap:2px 8px;align-items:center;padding:3px 0;border-bottom:1px solid rgba(202,164,77,.18)}
+.ja-row small{grid-column:2/4;opacity:.8;font-size:11px}
+.ja-ic{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:4px;background:#6b5332;color:#fff3d6;font:700 12px serif;grid-row:span 2}
+.ja-v{font-weight:700;color:#ffe0a0}
+.ja-warn{color:#ff9a7a;font-size:12px}
+.ja-act{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+@media (max-width:700px){.ja-chip{bottom:auto;top:120px;left:8px;font-size:12px;padding:5px 9px}}
