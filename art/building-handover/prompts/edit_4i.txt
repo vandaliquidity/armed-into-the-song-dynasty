@@ -1,0 +1,1 @@
+Edit the attached ROOF-ONLY sprite. Same canvas, camera and roof shape. Output the same roof covered with a thin layer of fresh snow (white-blue shadows, tile rows still showing at the eaves, icicle hints), transparent background. Same light from the upper left.

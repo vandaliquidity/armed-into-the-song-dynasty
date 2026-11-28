@@ -1,3 +1,11 @@
 .devtools/
 node_modules/
 test-results/
+
+# Local high-resolution artwork delivery; runtime tiers and prompts are versioned.
+art/building-masters/generated/
+art/building-masters/deliverables/
+art/building-masters/sources.json
+art/building-handover/current/
+art/building-handover/refs/
+**/__pycache__/

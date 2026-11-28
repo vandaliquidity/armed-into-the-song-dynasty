@@ -1,0 +1,1 @@
+Edit the attached sprite. Same camera, framing, canvas and scale. Show it RAID-DAMAGED: scorched timber, a collapsed section of roof or wall, broken tiles, charring and soot, scattered debris; still clearly the same building, same footprint. Do not add smoke or fire (the game adds effects).

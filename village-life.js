@@ -61,16 +61,16 @@ function vlStep(s,dt){const V=vlState(),id=CVIL.id;V.sync-=dt;if(V.sync>0)return
   for(const p of healed){if(V.ready.length>=16)break;const q=vlPos(id,p,lv);V.ready.push({...p,x:q.x,y:q.y,t:0,d:0,P:[[q.x,q.y],[VL.X+110,VL.Y+VL_META.oy+236],[VL.X+110,398],[1762,398],[1762,470],[1292,470],[1292,1000],[1140+(V.ready.length%6)*22,1016+Math.floor(V.ready.length/6)*20]]});}
   V.first=0;return V;}
 // ---------------------------------------------------------------- drawing (hooked into the classic village's depth-sorted list)
-function vlDraw(add,s,t,dt){vlLoad();const A=VL.img.ward,id=CVIL.id,lv=hospLv(id),V=vlStep(s,dt),W=vlWard(id),M=VL_META,X=VL.X,Y=VL.Y,g=ctx;if(!A)return;
-  add(Y+2,()=>{g.drawImage(A,X,Y,M.W,M.H);if(!lv){g.fillStyle='rgba(30,22,14,.5)';g.fillRect(X,Y+M.oy,M.W,M.H-M.oy);g.fillStyle='rgba(30,22,14,.8)';g.fillRect(X+40,Y+M.oy+100,M.W-80,30);g.fillStyle='#f0e2c4';g.textAlign='center';g.font='12px "Noto Serif SC",serif';g.fillText(Tz('医馆未建 · 营建后可收治','Hospital not built yet'),X+M.W/2,Y+M.oy+120);}
+function vlDraw(add,s,t,dt){vlLoad();const cut=typeof songBuildingReady==='function'&&songBuildingAllowed()&&songBuildingReady('hospital');const A=VL.img.ward,id=CVIL.id,lv=hospLv(id),V=vlStep(s,dt),W=vlWard(id),M=VL_META,X=VL.X,Y=VL.Y,g=ctx;if(!A&&!cut)return;
+  if(!cut)add(Y+2,()=>{g.drawImage(A,X,Y,M.W,M.H);if(!lv){g.fillStyle='rgba(30,22,14,.5)';g.fillRect(X,Y+M.oy,M.W,M.H-M.oy);g.fillStyle='rgba(30,22,14,.8)';g.fillRect(X+40,Y+M.oy+100,M.W-80,30);g.fillStyle='#f0e2c4';g.textAlign='center';g.font='12px "Noto Serif SC",serif';g.fillText(Tz('医馆未建 · 营建后可收治','Hospital not built yet'),X+M.W/2,Y+M.oy+120);}
     if(lv>=2){g.fillStyle='rgba(160,130,80,.85)';for(let k=0;k<4;k++)g.fillRect(X+96,Y+M.oy+88+k*32,28,14);}
     const used=W.pts.filter(p=>p.slot>=0&&!p.arr).length,cap=hospCap(id),label=`${Tz('医馆','Hospital')}${lv?' Lv'+lv:''} · ${Tz('床','beds')} ${Math.min(used*VL.FIG,woundedAt(id))}/${cap}`;
     g.font='bold 12px "Noto Serif SC",serif';const w=g.measureText(label).width+14;g.fillStyle='rgba(70,28,14,.9)';g.fillRect(X+8,Y+M.oy-8,w,19);g.strokeStyle='#d9a54a';g.lineWidth=1;g.strokeRect(X+8,Y+M.oy-8,w,19);g.fillStyle='#ffe7a0';g.textAlign='left';g.fillText(label,X+15,Y+M.oy+6);});
   CVIL.hot.push({r:[X,Y+M.oy-10,X+M.W,Y+M.H],t:`${Ts('医馆','Hospital')}${lv?' Lv'+lv:` · ${Ts('未建','not built')}`}\n${Ts('伤兵','Wounded')} ${woundedAt(id)} · ${Ts('床位','Beds')} ${hospCap(id)}\n${Ts('每季康复率','Recovery per season')} ${Math.round(HEALR[lv]*100)}%${woundedAt(id)>hospCap(id)?`\n${Ts('超出床位者在外候诊，按无医馆疗效','Overflow waits outside at the no-hospital rate')}`:''}`});
-  const PR=(p,x,y,fr)=>typeof vpPatient==='function'&&vpPatient(g,p.type,x,y,fr);   // t255: one people standard (village-people.js)
+  const PR=(p,x,y,fr)=>{if(typeof vpPatient!=='function')return;if(cut){g.save();g.translate(x,y);g.scale(.72,.72);vpPatient(g,p.type,0,0,fr);g.restore();}else vpPatient(g,p.type,x,y,fr);};   // t255: one people standard (village-people.js)
   // physician + helper move between the occupied beds; the apprentice tends the stove
   const inbed=W.pts.filter(p=>!p.arr),occ=inbed.filter(p=>p.slot>=0).map(p=>({p,q:vlPos(id,p,lv)}));const tend=new Set();
-  if(lv){{const dw=(x,y,act,dir,ph)=>typeof vpWorker==='function'&&vpWorker(g,x,y,act,dir,Math.floor(t*5+ph));
+  if(lv){{const dw=(x,y,act,dir,ph)=>!cut&&typeof vpWorker==='function'&&vpWorker(g,x,y,act,dir,Math.floor(t*5+ph));
     for(const [sx,sy,act,dir] of M.stations)add(Y+M.oy+sy,()=>dw(X+sx,Y+M.oy+sy,act,dir,sx));
     if(occ.length){for(const [k,act,per] of [[0,'count',7],[1,'pour',5.3]]){if(k&&occ.length<2)break;const i=(Math.floor(t/per)+k*Math.ceil(occ.length/2))%occ.length,o=occ[i];tend.add(o.p.fid);const x=o.q.x+(k?-26:26),y=o.q.y+12;add(y,()=>dw(x,y,act,k?0:2,k*3));}}}}
   // patients: breathing in bed, stirring when tended, sitting up when nearly healed; hover names
@@ -87,7 +87,7 @@ function vlDraw(add,s,t,dt){vlLoad();const A=VL.img.ward,id=CVIL.id,lv=hospLv(id
     const a=vlAlong(P,Math.max(0,c.d)),face=c.back?a.f+Math.PI:a.f,still=c.stop>0&&!c.back;
     add(a.y+14,()=>{sprUnit('oxcart',a.x,a.y+14,14,face,still?0:Math.floor(t*6)%4);if(!c.back)c.figs.forEach((p,i)=>{if(p.arr)PR(p,a.x-6+i*5,a.y+2-i*3,0);});});
     // stretcher bearers carry the patient being unloaded
-    if(still&&!c.back){const k=Math.floor(c.stop/1.1),p=c.figs[k];if(p){const q=vlPos(id,p,lv),e=(c.stop%1.1)/1.1,x=a.x+(q.x-a.x)*e,y=a.y+(q.y-a.y)*e;add(y+2,()=>{PR(p,x,y-6,0);sprUnit(SPR.porter?'porter':'villager',x-18,y,8,Math.atan2(q.y-a.y,q.x-a.x),frontierWalkFrame('porter',t*3));sprUnit(SPR.porter?'porter':'villager',x+18,y,8,Math.atan2(q.y-a.y,q.x-a.x),frontierWalkFrame('porter',t*3+1));});}}}
+    if(still&&!c.back){const k=Math.floor(c.stop/1.1),p=c.figs[k];if(p){const q=vlPos(id,p,lv),e=(c.stop%1.1)/1.1,route=cut?villageRoute({x:a.x,y:a.y},{x:q.x,y:q.y}):null,along=route?.length>1?vlAlong(route,vlPlen(route)*e):null,x=along?along.x:a.x+(q.x-a.x)*e,y=along?along.y:a.y+(q.y-a.y)*e;add(y+2,()=>{PR(p,x,y-6,0);sprUnit(SPR.porter?'porter':'villager',x-18,y,8,Math.atan2(q.y-a.y,q.x-a.x),frontierWalkFrame('porter',t*3));sprUnit(SPR.porter?'porter':'villager',x+18,y,8,Math.atan2(q.y-a.y,q.x-a.x),frontierWalkFrame('porter',t*3+1));});}}}
   V.carts=V.carts.filter(c=>!(c.back&&c.d<=0));
   // recovered men: get up, walk to the drill yard, form up and stand ready
   for(const r of V.ready){r.t+=dt;const a=vlAlong(r.P,r.d),eng=UT[r.type]?.eng||'militia',sp=UNITS[eng]?.spr||'villager';if(!a.end)r.d+=dt*42;

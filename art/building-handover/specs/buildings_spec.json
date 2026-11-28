@@ -1,0 +1,2778 @@
+{
+ "version": 1,
+ "ppwu": {
+  "hi": 3.0,
+  "md": 1.5,
+  "lo": 0.75
+ },
+ "master_ppwu": 6.0,
+ "camera": {
+  "projection": "orthographic",
+  "elevation_deg": 38,
+  "north": "up",
+  "yaw_deg": 12
+ },
+ "light": "upper-left (north-west), shadows to lower-right",
+ "adult_height_wu": 31.1,
+ "roof_fade_sc": {
+  "alpha1_at_or_below": 0.4,
+  "alpha0_at_or_above": 0.7
+ },
+ "buildings": {
+  "home_cottage_a": {
+   "group_key": "home_cottage",
+   "class": "H",
+   "box_wu": [
+    135,
+    120
+   ],
+   "master_canvas_px": [
+    810,
+    720
+   ],
+   "anchor_wu": [
+    67.5,
+    120
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base"
+   ],
+   "layers_optional": [
+    "damaged",
+    "construct_1",
+    "night"
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    100,
+    100
+   ],
+   "plaque_text": "",
+   "name_zh": "民居(茅屋)",
+   "name_en": "Cottage (thatch)",
+   "zero_code_sheet_cell": [
+    "architecture",
+    "cottage"
+   ]
+  },
+  "home_cottage_b": {
+   "group_key": "home_cottage",
+   "class": "H",
+   "box_wu": [
+    135,
+    120
+   ],
+   "master_canvas_px": [
+    810,
+    720
+   ],
+   "anchor_wu": [
+    67.5,
+    120
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base"
+   ],
+   "layers_optional": [
+    "damaged",
+    "construct_1",
+    "night"
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    100,
+    100
+   ],
+   "plaque_text": "",
+   "name_zh": "民居(茅屋)",
+   "name_en": "Cottage (thatch)",
+   "zero_code_sheet_cell": null
+  },
+  "home_cottage_c": {
+   "group_key": "home_cottage",
+   "class": "H",
+   "box_wu": [
+    135,
+    120
+   ],
+   "master_canvas_px": [
+    810,
+    720
+   ],
+   "anchor_wu": [
+    67.5,
+    120
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base"
+   ],
+   "layers_optional": [
+    "damaged",
+    "construct_1",
+    "night"
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    100,
+    100
+   ],
+   "plaque_text": "",
+   "name_zh": "民居(茅屋)",
+   "name_en": "Cottage (thatch)",
+   "zero_code_sheet_cell": null
+  },
+  "home_courtyard_a": {
+   "group_key": "home_courtyard",
+   "class": "H",
+   "box_wu": [
+    135,
+    120
+   ],
+   "master_canvas_px": [
+    810,
+    720
+   ],
+   "anchor_wu": [
+    67.5,
+    120
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base"
+   ],
+   "layers_optional": [
+    "damaged",
+    "construct_1",
+    "night"
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    105,
+    100
+   ],
+   "plaque_text": "",
+   "name_zh": "民居(瓦院)",
+   "name_en": "Courtyard house (tile)",
+   "zero_code_sheet_cell": [
+    "architecture",
+    "courtyard"
+   ]
+  },
+  "home_courtyard_b": {
+   "group_key": "home_courtyard",
+   "class": "H",
+   "box_wu": [
+    135,
+    120
+   ],
+   "master_canvas_px": [
+    810,
+    720
+   ],
+   "anchor_wu": [
+    67.5,
+    120
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base"
+   ],
+   "layers_optional": [
+    "damaged",
+    "construct_1",
+    "night"
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    105,
+    100
+   ],
+   "plaque_text": "",
+   "name_zh": "民居(瓦院)",
+   "name_en": "Courtyard house (tile)",
+   "zero_code_sheet_cell": null
+  },
+  "home_courtyard_c": {
+   "group_key": "home_courtyard",
+   "class": "H",
+   "box_wu": [
+    135,
+    120
+   ],
+   "master_canvas_px": [
+    810,
+    720
+   ],
+   "anchor_wu": [
+    67.5,
+    120
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base"
+   ],
+   "layers_optional": [
+    "damaged",
+    "construct_1",
+    "night"
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    105,
+    100
+   ],
+   "plaque_text": "",
+   "name_zh": "民居(瓦院)",
+   "name_en": "Courtyard house (tile)",
+   "zero_code_sheet_cell": null
+  },
+  "storehouse_a": {
+   "group_key": "storehouse",
+   "class": "W",
+   "box_wu": [
+    300,
+    165
+   ],
+   "master_canvas_px": [
+    1800,
+    990
+   ],
+   "anchor_wu": [
+    150.0,
+    165
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "stack",
+     "x": 60,
+     "y": -6
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -90,
+    "y": -66
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 90,
+    "y": -66
+   },
+   "ground_plan_wu": [
+    160,
+    120
+   ],
+   "plaque_text": "倉廒",
+   "name_zh": "仓廒",
+   "name_en": "Storehouse (open-topped granary)",
+   "zero_code_sheet_cell": null
+  },
+  "storehouse_b": {
+   "group_key": "storehouse",
+   "class": "W",
+   "box_wu": [
+    300,
+    165
+   ],
+   "master_canvas_px": [
+    1800,
+    990
+   ],
+   "anchor_wu": [
+    150.0,
+    165
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "stack",
+     "x": 60,
+     "y": -6
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -90,
+    "y": -66
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 90,
+    "y": -66
+   },
+   "ground_plan_wu": [
+    160,
+    120
+   ],
+   "plaque_text": "倉廒",
+   "name_zh": "仓廒",
+   "name_en": "Storehouse (open-topped granary)",
+   "zero_code_sheet_cell": null
+  },
+  "treasury": {
+   "group_key": "treasury",
+   "class": "W",
+   "box_wu": [
+    230,
+    170
+   ],
+   "master_canvas_px": [
+    1380,
+    1020
+   ],
+   "anchor_wu": [
+    115.0,
+    170
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow"
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [
+    {
+     "act": "count",
+     "x": 25,
+     "y": -8
+    }
+   ],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    150,
+    120
+   ],
+   "plaque_text": "官庫",
+   "name_zh": "大宋官库",
+   "name_en": "Song treasury (roof cutaway)",
+   "zero_code_sheet_cell": [
+    "architecture",
+    "treasury"
+   ]
+  },
+  "armoury": {
+   "group_key": "armoury",
+   "class": "W",
+   "box_wu": [
+    280,
+    165
+   ],
+   "master_canvas_px": [
+    1680,
+    990
+   ],
+   "anchor_wu": [
+    140.0,
+    165
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow"
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [
+    {
+     "act": "count",
+     "x": 40,
+     "y": -10
+    }
+   ],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": {
+    "x": 0,
+    "y": -45
+   },
+   "ground_plan_wu": [
+    150,
+    110
+   ],
+   "plaque_text": "武庫",
+   "name_zh": "武库",
+   "name_en": "Armoury",
+   "zero_code_sheet_cell": null
+  },
+  "barracks": {
+   "group_key": "barracks",
+   "class": "W",
+   "box_wu": [
+    130,
+    90
+   ],
+   "master_canvas_px": [
+    780,
+    540
+   ],
+   "anchor_wu": [
+    65.0,
+    90
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "hammer",
+     "x": -80,
+     "y": -60
+    }
+   ],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": {
+    "x": 60,
+    "y": -105
+   },
+   "ground_plan_wu": [
+    280,
+    160
+   ],
+   "plaque_text": "校場",
+   "name_zh": "兵营 / 校场",
+   "name_en": "Barracks hall and drill yard",
+   "zero_code_sheet_cell": [
+    "architecture",
+    "barracks"
+   ]
+  },
+  "stable": {
+   "group_key": "stable",
+   "class": "W",
+   "box_wu": [
+    200,
+    155
+   ],
+   "master_canvas_px": [
+    1200,
+    930
+   ],
+   "anchor_wu": [
+    100.0,
+    155
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "lift",
+     "x": -45,
+     "y": -40
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -70,
+    "y": -30
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 70,
+    "y": -30
+   },
+   "ground_plan_wu": [
+    170,
+    120
+   ],
+   "plaque_text": "馬廄",
+   "name_zh": "马厩",
+   "name_en": "Stables",
+   "zero_code_sheet_cell": null
+  },
+  "hospital": {
+   "group_key": "hospital",
+   "class": "W",
+   "box_wu": [
+    240,
+    230
+   ],
+   "master_canvas_px": [
+    1440,
+    1380
+   ],
+   "anchor_wu": [
+    120.0,
+    230
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow"
+   ],
+   "levels": 2,
+   "stations_wu_from_anchor": [
+    {
+     "act": "stir",
+     "x": 58,
+     "y": -22
+    },
+    {
+     "act": "count",
+     "x": 0,
+     "y": -20
+    },
+    {
+     "act": "pour",
+     "x": -40,
+     "y": -60
+    }
+   ],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    190,
+    190
+   ],
+   "plaque_text": "醫館",
+   "name_zh": "医馆",
+   "name_en": "Hospital (Lv1-2)",
+   "zero_code_sheet_cell": null
+  },
+  "watchtower_l1": {
+   "group_key": "watchtower",
+   "class": "S",
+   "box_wu": [
+    70,
+    105
+   ],
+   "master_canvas_px": [
+    420,
+    630
+   ],
+   "anchor_wu": [
+    35.0,
+    105
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base"
+   ],
+   "layers_optional": [
+    "damaged",
+    "construct_1",
+    "night"
+   ],
+   "levels": 2,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    40,
+    40
+   ],
+   "plaque_text": "",
+   "name_zh": "望楼",
+   "name_en": "Watchtower (Lv1-2)",
+   "zero_code_sheet_cell": null
+  },
+  "watchtower_l2": {
+   "group_key": "watchtower",
+   "class": "S",
+   "box_wu": [
+    70,
+    105
+   ],
+   "master_canvas_px": [
+    420,
+    630
+   ],
+   "anchor_wu": [
+    35.0,
+    105
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base"
+   ],
+   "layers_optional": [
+    "damaged",
+    "construct_1",
+    "night"
+   ],
+   "levels": 2,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    40,
+    40
+   ],
+   "plaque_text": "",
+   "name_zh": "望楼",
+   "name_en": "Watchtower (Lv1-2)",
+   "zero_code_sheet_cell": null
+  },
+  "gate_hamlet": {
+   "group_key": "gate",
+   "class": "S",
+   "box_wu": [
+    285,
+    210
+   ],
+   "master_canvas_px": [
+    1710,
+    1260
+   ],
+   "anchor_wu": [
+    142.5,
+    210
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base"
+   ],
+   "layers_optional": [
+    "damaged",
+    "construct_1",
+    "night"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    200,
+    70
+   ],
+   "plaque_text": "blank plaque (the game draws the village name)",
+   "name_zh": "村门",
+   "name_en": "Village gate (3 tiers: hamlet, village, town)",
+   "zero_code_sheet_cell": [
+    "gates",
+    "gate_hamlet"
+   ]
+  },
+  "gate_village": {
+   "group_key": "gate",
+   "class": "S",
+   "box_wu": [
+    285,
+    210
+   ],
+   "master_canvas_px": [
+    1710,
+    1260
+   ],
+   "anchor_wu": [
+    142.5,
+    210
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base"
+   ],
+   "layers_optional": [
+    "damaged",
+    "construct_1",
+    "night"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    200,
+    70
+   ],
+   "plaque_text": "blank plaque (the game draws the village name)",
+   "name_zh": "村门",
+   "name_en": "Village gate (3 tiers: hamlet, village, town)",
+   "zero_code_sheet_cell": [
+    "gates",
+    "gate_village"
+   ]
+  },
+  "gate_town": {
+   "group_key": "gate",
+   "class": "S",
+   "box_wu": [
+    285,
+    210
+   ],
+   "master_canvas_px": [
+    1710,
+    1260
+   ],
+   "anchor_wu": [
+    142.5,
+    210
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base"
+   ],
+   "layers_optional": [
+    "damaged",
+    "construct_1",
+    "night"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    200,
+    70
+   ],
+   "plaque_text": "blank plaque (the game draws the village name)",
+   "name_zh": "村门",
+   "name_en": "Village gate (3 tiers: hamlet, village, town)",
+   "zero_code_sheet_cell": [
+    "gates",
+    "gate_town"
+   ]
+  },
+  "wall_kit": {
+   "group_key": "wall_kit",
+   "class": "S",
+   "box_wu": [
+    60,
+    80
+   ],
+   "master_canvas_px": [
+    360,
+    480
+   ],
+   "anchor_wu": [
+    30.0,
+    80
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base"
+   ],
+   "layers_optional": [
+    "damaged",
+    "construct_1",
+    "night"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    60,
+    20
+   ],
+   "plaque_text": "",
+   "name_zh": "寨墙",
+   "name_en": "Palisade/wall kit (optional, P3)",
+   "zero_code_sheet_cell": null
+  },
+  "field_spring": {
+   "group_key": "field",
+   "class": "F",
+   "box_wu": [
+    160,
+    106
+   ],
+   "master_canvas_px": [
+    960,
+    636
+   ],
+   "anchor_wu": [
+    80.0,
+    106
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base"
+   ],
+   "layers_optional": [
+    "damaged",
+    "construct_1",
+    "night"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "lift",
+     "x": 0,
+     "y": -30
+    }
+   ],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": {
+    "x": 60,
+    "y": -20
+   },
+   "ground_plan_wu": [
+    160,
+    106
+   ],
+   "plaque_text": "",
+   "name_zh": "田庄(农田)",
+   "name_en": "Farm field plots (4 seasons)",
+   "zero_code_sheet_cell": null
+  },
+  "field_summer": {
+   "group_key": "field",
+   "class": "F",
+   "box_wu": [
+    160,
+    106
+   ],
+   "master_canvas_px": [
+    960,
+    636
+   ],
+   "anchor_wu": [
+    80.0,
+    106
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base"
+   ],
+   "layers_optional": [
+    "damaged",
+    "construct_1",
+    "night"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "lift",
+     "x": 0,
+     "y": -30
+    }
+   ],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": {
+    "x": 60,
+    "y": -20
+   },
+   "ground_plan_wu": [
+    160,
+    106
+   ],
+   "plaque_text": "",
+   "name_zh": "田庄(农田)",
+   "name_en": "Farm field plots (4 seasons)",
+   "zero_code_sheet_cell": null
+  },
+  "field_autumn": {
+   "group_key": "field",
+   "class": "F",
+   "box_wu": [
+    160,
+    106
+   ],
+   "master_canvas_px": [
+    960,
+    636
+   ],
+   "anchor_wu": [
+    80.0,
+    106
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base"
+   ],
+   "layers_optional": [
+    "damaged",
+    "construct_1",
+    "night"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "lift",
+     "x": 0,
+     "y": -30
+    }
+   ],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": {
+    "x": 60,
+    "y": -20
+   },
+   "ground_plan_wu": [
+    160,
+    106
+   ],
+   "plaque_text": "",
+   "name_zh": "田庄(农田)",
+   "name_en": "Farm field plots (4 seasons)",
+   "zero_code_sheet_cell": null
+  },
+  "field_winter": {
+   "group_key": "field",
+   "class": "F",
+   "box_wu": [
+    160,
+    106
+   ],
+   "master_canvas_px": [
+    960,
+    636
+   ],
+   "anchor_wu": [
+    80.0,
+    106
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base"
+   ],
+   "layers_optional": [
+    "damaged",
+    "construct_1",
+    "night"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "lift",
+     "x": 0,
+     "y": -30
+    }
+   ],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": {
+    "x": 60,
+    "y": -20
+   },
+   "ground_plan_wu": [
+    160,
+    106
+   ],
+   "plaque_text": "",
+   "name_zh": "田庄(农田)",
+   "name_en": "Farm field plots (4 seasons)",
+   "zero_code_sheet_cell": null
+  },
+  "smithy": {
+   "group_key": "smithy",
+   "class": "W",
+   "box_wu": [
+    190,
+    170
+   ],
+   "master_canvas_px": [
+    1140,
+    1020
+   ],
+   "anchor_wu": [
+    95.0,
+    170
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "hammer",
+     "x": 0,
+     "y": -48
+    },
+    {
+     "act": "tend",
+     "x": 48,
+     "y": -62
+    },
+    {
+     "act": "pour",
+     "x": -50,
+     "y": -38
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "鐵匠鋪",
+   "name_zh": "铁匠铺",
+   "name_en": "Smithy",
+   "zero_code_sheet_cell": [
+    "architecture",
+    "smithy"
+   ]
+  },
+  "tannery": {
+   "group_key": "tannery",
+   "class": "W",
+   "box_wu": [
+    190,
+    170
+   ],
+   "master_canvas_px": [
+    1140,
+    1020
+   ],
+   "anchor_wu": [
+    95.0,
+    170
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "stir",
+     "x": -40,
+     "y": -45
+    },
+    {
+     "act": "stir",
+     "x": 15,
+     "y": -45
+    },
+    {
+     "act": "lift",
+     "x": 55,
+     "y": -55
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "皮坊",
+   "name_zh": "皮坊",
+   "name_en": "Tannery",
+   "zero_code_sheet_cell": [
+    "workshops",
+    "tannery"
+   ]
+  },
+  "bowyer": {
+   "group_key": "bowyer",
+   "class": "W",
+   "box_wu": [
+    190,
+    170
+   ],
+   "master_canvas_px": [
+    1140,
+    1020
+   ],
+   "anchor_wu": [
+    95.0,
+    170
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "weave",
+     "x": -35,
+     "y": -50
+    },
+    {
+     "act": "lift",
+     "x": 40,
+     "y": -50
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "弓弩坊",
+   "name_zh": "弓弩坊",
+   "name_en": "Bowyer",
+   "zero_code_sheet_cell": [
+    "workshops",
+    "bowyer"
+   ]
+  },
+  "armourer": {
+   "group_key": "armourer",
+   "class": "W",
+   "box_wu": [
+    190,
+    170
+   ],
+   "master_canvas_px": [
+    1140,
+    1020
+   ],
+   "anchor_wu": [
+    95.0,
+    170
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "hammer",
+     "x": -30,
+     "y": -48
+    },
+    {
+     "act": "weave",
+     "x": 40,
+     "y": -50
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "甲坊",
+   "name_zh": "甲坊",
+   "name_en": "Armourer",
+   "zero_code_sheet_cell": [
+    "workshops",
+    "armourer"
+   ]
+  },
+  "saddlery": {
+   "group_key": "saddlery",
+   "class": "W",
+   "box_wu": [
+    190,
+    170
+   ],
+   "master_canvas_px": [
+    1140,
+    1020
+   ],
+   "anchor_wu": [
+    95.0,
+    170
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow"
+   ],
+   "levels": 2,
+   "stations_wu_from_anchor": [
+    {
+     "act": "weave",
+     "x": -35,
+     "y": -48
+    },
+    {
+     "act": "lift",
+     "x": 40,
+     "y": -48
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "鞍坊",
+   "name_zh": "鞍坊",
+   "name_en": "Saddlery",
+   "zero_code_sheet_cell": [
+    "workshops",
+    "saddler"
+   ]
+  },
+  "firelance": {
+   "group_key": "firelance",
+   "class": "W",
+   "box_wu": [
+    190,
+    170
+   ],
+   "master_canvas_px": [
+    1140,
+    1020
+   ],
+   "anchor_wu": [
+    95.0,
+    170
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow"
+   ],
+   "levels": 2,
+   "stations_wu_from_anchor": [
+    {
+     "act": "tend",
+     "x": -35,
+     "y": -50
+    },
+    {
+     "act": "stir",
+     "x": 40,
+     "y": -48
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "火藥作",
+   "name_zh": "火药作",
+   "name_en": "Fire-lance works",
+   "zero_code_sheet_cell": [
+    "workshops",
+    "powder"
+   ]
+  },
+  "market": {
+   "group_key": "market",
+   "class": "W",
+   "box_wu": [
+    200,
+    165
+   ],
+   "master_canvas_px": [
+    1200,
+    990
+   ],
+   "anchor_wu": [
+    100.0,
+    165
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "count",
+     "x": 0,
+     "y": -45
+    },
+    {
+     "act": "stack",
+     "x": 55,
+     "y": -35
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "集市",
+   "name_zh": "集市",
+   "name_en": "Market",
+   "zero_code_sheet_cell": null
+  },
+  "lumber": {
+   "group_key": "lumber",
+   "class": "W",
+   "box_wu": [
+    200,
+    165
+   ],
+   "master_canvas_px": [
+    1200,
+    990
+   ],
+   "anchor_wu": [
+    100.0,
+    165
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "hammer",
+     "x": -40,
+     "y": -45
+    },
+    {
+     "act": "lift",
+     "x": 40,
+     "y": -35
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "伐木場",
+   "name_zh": "伐木场",
+   "name_en": "Lumber camp",
+   "zero_code_sheet_cell": null
+  },
+  "quarry": {
+   "group_key": "quarry",
+   "class": "W",
+   "box_wu": [
+    200,
+    165
+   ],
+   "master_canvas_px": [
+    1200,
+    990
+   ],
+   "anchor_wu": [
+    100.0,
+    165
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "hammer",
+     "x": -40,
+     "y": -45
+    },
+    {
+     "act": "push",
+     "x": 40,
+     "y": -35
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "石場",
+   "name_zh": "采石场",
+   "name_en": "Quarry",
+   "zero_code_sheet_cell": null
+  },
+  "mine": {
+   "group_key": "mine",
+   "class": "W",
+   "box_wu": [
+    200,
+    165
+   ],
+   "master_canvas_px": [
+    1200,
+    990
+   ],
+   "anchor_wu": [
+    100.0,
+    165
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "push",
+     "x": -40,
+     "y": -45
+    },
+    {
+     "act": "lift",
+     "x": 40,
+     "y": -35
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "坑冶",
+   "name_zh": "冶坑 (铁矿)",
+   "name_en": "Ore pits (iron)",
+   "zero_code_sheet_cell": null
+  },
+  "saltworks": {
+   "group_key": "saltworks",
+   "class": "W",
+   "box_wu": [
+    200,
+    165
+   ],
+   "master_canvas_px": [
+    1200,
+    990
+   ],
+   "anchor_wu": [
+    100.0,
+    165
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow"
+   ],
+   "levels": 2,
+   "stations_wu_from_anchor": [
+    {
+     "act": "push",
+     "x": -40,
+     "y": -45
+    },
+    {
+     "act": "stack",
+     "x": 40,
+     "y": -35
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "鹽池",
+   "name_zh": "盐池",
+   "name_en": "Salt works",
+   "zero_code_sheet_cell": null
+  },
+  "brewery": {
+   "group_key": "brewery",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "stir",
+     "x": -30,
+     "y": -48
+    },
+    {
+     "act": "pour",
+     "x": 40,
+     "y": -45
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "酒坊",
+   "name_zh": "酒坊",
+   "name_en": "Brewery",
+   "zero_code_sheet_cell": null
+  },
+  "beauty": {
+   "group_key": "beauty",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "push",
+     "x": -30,
+     "y": -48
+    },
+    {
+     "act": "stir",
+     "x": 40,
+     "y": -45
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "香藥鋪",
+   "name_zh": "香皂香膏作",
+   "name_en": "Beauty (soap and balm) workshop",
+   "zero_code_sheet_cell": null
+  },
+  "restaurant": {
+   "group_key": "restaurant",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "pour",
+     "x": -35,
+     "y": -45
+    },
+    {
+     "act": "count",
+     "x": 45,
+     "y": -40
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "清河酒樓",
+   "name_zh": "清河酒楼",
+   "name_en": "Restaurant (Qinghe tavern)",
+   "zero_code_sheet_cell": [
+    "architecture",
+    "winehouse"
+   ]
+  },
+  "kiln": {
+   "group_key": "kiln",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "tend",
+     "x": 0,
+     "y": -50
+    },
+    {
+     "act": "stack",
+     "x": 55,
+     "y": -30
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "炭窯",
+   "name_zh": "炭窑",
+   "name_en": "Charcoal kiln",
+   "zero_code_sheet_cell": null
+  },
+  "powderworks": {
+   "group_key": "powderworks",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "stir",
+     "x": -35,
+     "y": -48
+    },
+    {
+     "act": "tend",
+     "x": 40,
+     "y": -48
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "火藥作",
+   "name_zh": "军器火药作",
+   "name_en": "Powder works",
+   "zero_code_sheet_cell": null
+  },
+  "arsenal": {
+   "group_key": "arsenal",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "hammer",
+     "x": -35,
+     "y": -50
+    },
+    {
+     "act": "pour",
+     "x": 45,
+     "y": -50
+    },
+    {
+     "act": "lift",
+     "x": 0,
+     "y": -35
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "軍器監",
+   "name_zh": "军器监分作",
+   "name_en": "Ordnance foundry",
+   "zero_code_sheet_cell": null
+  },
+  "garden": {
+   "group_key": "garden",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "lift",
+     "x": -30,
+     "y": -40
+    },
+    {
+     "act": "lift",
+     "x": 40,
+     "y": -35
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "菜圃",
+   "name_zh": "菜麻圃",
+   "name_en": "Market garden",
+   "zero_code_sheet_cell": null
+  },
+  "orchard": {
+   "group_key": "orchard",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "stack",
+     "x": -30,
+     "y": -40
+    },
+    {
+     "act": "lift",
+     "x": 40,
+     "y": -35
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "果園",
+   "name_zh": "果园",
+   "name_en": "Orchard",
+   "zero_code_sheet_cell": null
+  },
+  "weaver": {
+   "group_key": "weaver",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "weave",
+     "x": -35,
+     "y": -48
+    },
+    {
+     "act": "weave",
+     "x": 40,
+     "y": -48
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "織造作",
+   "name_zh": "织造作",
+   "name_en": "Weaving house",
+   "zero_code_sheet_cell": [
+    "workshops",
+    "weaver"
+   ]
+  },
+  "papermill": {
+   "group_key": "papermill",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "lift",
+     "x": -30,
+     "y": -48
+    },
+    {
+     "act": "push",
+     "x": 40,
+     "y": -45
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "紙坊",
+   "name_zh": "纸坊",
+   "name_en": "Paper mill",
+   "zero_code_sheet_cell": null
+  },
+  "pottery": {
+   "group_key": "pottery",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "tend",
+     "x": 0,
+     "y": -50
+    },
+    {
+     "act": "push",
+     "x": -45,
+     "y": -35
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "陶窯",
+   "name_zh": "陶瓷窑",
+   "name_en": "Pottery kiln",
+   "zero_code_sheet_cell": null
+  },
+  "refinery": {
+   "group_key": "refinery",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "layers_optional": [
+    "base_damaged",
+    "roof_damaged",
+    "construct_1",
+    "construct_2",
+    "night",
+    "roof_snow",
+    "roof_l3"
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "hammer",
+     "x": -35,
+     "y": -50
+    },
+    {
+     "act": "tend",
+     "x": 45,
+     "y": -55
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "冶鐵作",
+   "name_zh": "冶铁作",
+   "name_en": "Steel works",
+   "zero_code_sheet_cell": null
+  },
+  "hall": {
+   "group_key": "hall",
+   "class": "S",
+   "box_wu": [
+    230,
+    190
+   ],
+   "master_canvas_px": [
+    1380,
+    1140
+   ],
+   "anchor_wu": [
+    115.0,
+    190
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base"
+   ],
+   "layers_optional": [
+    "damaged",
+    "construct_1",
+    "night"
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    190,
+    120
+   ],
+   "plaque_text": "官署",
+   "name_zh": "官署(衙门)",
+   "name_en": "Yamen hall (Qinghe only; also map plates)",
+   "zero_code_sheet_cell": [
+    "architecture",
+    "yamen"
+   ]
+  },
+  "memorial": {
+   "group_key": "memorial",
+   "class": "S",
+   "box_wu": [
+    170,
+    95
+   ],
+   "master_canvas_px": [
+    1020,
+    570
+   ],
+   "anchor_wu": [
+    85.0,
+    95
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base"
+   ],
+   "layers_optional": [
+    "damaged",
+    "construct_1",
+    "night"
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    140,
+    50
+   ],
+   "plaque_text": "blank face",
+   "name_zh": "纪念碑墙",
+   "name_en": "Memorial wall (Qinghe only)",
+   "zero_code_sheet_cell": null
+  },
+  "granary_map": {
+   "group_key": "granary_map",
+   "class": "S",
+   "box_wu": [
+    75,
+    62
+   ],
+   "master_canvas_px": [
+    450,
+    372
+   ],
+   "anchor_wu": [
+    37.5,
+    62
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "layers_required": [
+    "base"
+   ],
+   "layers_optional": [
+    "damaged",
+    "construct_1",
+    "night"
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    0,
+    0
+   ],
+   "plaque_text": "",
+   "name_zh": "粮仓(地图图标)",
+   "name_en": "Granary (campaign-map plates only)",
+   "zero_code_sheet_cell": [
+    "architecture",
+    "granary"
+   ]
+  }
+ }
+}

@@ -1,0 +1,1 @@
+Edit the attached approved building sprite. Keep canvas size, camera and the exact position of the roof IDENTICAL. Delete everything that is not roof (walls, floor, props, shadows) so only the roof remains on a transparent background. The roof's underside/eave edge must be clean and crisp.

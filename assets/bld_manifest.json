@@ -1,0 +1,2740 @@
+{
+ "version": 1,
+ "ppwu": {
+  "hi": 3.0,
+  "md": 1.5,
+  "lo": 0.75
+ },
+ "roof_fade_sc": {
+  "alpha1_at_or_below": 0.4,
+  "alpha0_at_or_above": 0.7
+ },
+ "buildings": {
+  "home_cottage_a": {
+   "group_key": "home_cottage",
+   "class": "H",
+   "box_wu": [
+    135,
+    120
+   ],
+   "master_canvas_px": [
+    810,
+    720
+   ],
+   "anchor_wu": [
+    67.5,
+    120
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    100,
+    100
+   ],
+   "plaque_text": "",
+   "name_zh": "民居(茅屋)",
+   "name_en": "Cottage (thatch)",
+   "layers": [
+    "base"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.5928510638297873,
+    "x": 35.35736170212766,
+    "y": 13.107063829787194
+   }
+  },
+  "home_cottage_b": {
+   "group_key": "home_cottage",
+   "class": "H",
+   "box_wu": [
+    135,
+    120
+   ],
+   "master_canvas_px": [
+    810,
+    720
+   ],
+   "anchor_wu": [
+    67.5,
+    120
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    100,
+    100
+   ],
+   "plaque_text": "",
+   "name_zh": "民居(茅屋)",
+   "name_en": "Cottage (thatch)",
+   "layers": [
+    "base"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.5663414634146342,
+    "x": 49.903902439024364,
+    "y": 41.645853658536566
+   }
+  },
+  "home_cottage_c": {
+   "group_key": "home_cottage",
+   "class": "H",
+   "box_wu": [
+    135,
+    120
+   ],
+   "master_canvas_px": [
+    810,
+    720
+   ],
+   "anchor_wu": [
+    67.5,
+    120
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    100,
+    100
+   ],
+   "plaque_text": "",
+   "name_zh": "民居(茅屋)",
+   "name_en": "Cottage (thatch)",
+   "layers": [
+    "base"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.5649635036496351,
+    "x": 49.35547445255469,
+    "y": 43.25255474452547
+   }
+  },
+  "home_courtyard_a": {
+   "group_key": "home_courtyard",
+   "class": "H",
+   "box_wu": [
+    135,
+    120
+   ],
+   "master_canvas_px": [
+    810,
+    720
+   ],
+   "anchor_wu": [
+    67.5,
+    120
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    105,
+    100
+   ],
+   "plaque_text": "",
+   "name_zh": "民居(瓦院)",
+   "name_en": "Courtyard house (tile)",
+   "layers": [
+    "base"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.5801526717557252,
+    "x": 39.79389312977099,
+    "y": -7.526717557251914
+   }
+  },
+  "home_courtyard_b": {
+   "group_key": "home_courtyard",
+   "class": "H",
+   "box_wu": [
+    135,
+    120
+   ],
+   "master_canvas_px": [
+    810,
+    720
+   ],
+   "anchor_wu": [
+    67.5,
+    120
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    105,
+    100
+   ],
+   "plaque_text": "",
+   "name_zh": "民居(瓦院)",
+   "name_en": "Courtyard house (tile)",
+   "layers": [
+    "base"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.5896551724137931,
+    "x": 29.97931034482764,
+    "y": -15.020689655172418
+   }
+  },
+  "home_courtyard_c": {
+   "group_key": "home_courtyard",
+   "class": "H",
+   "box_wu": [
+    135,
+    120
+   ],
+   "master_canvas_px": [
+    810,
+    720
+   ],
+   "anchor_wu": [
+    67.5,
+    120
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    105,
+    100
+   ],
+   "plaque_text": "",
+   "name_zh": "民居(瓦院)",
+   "name_en": "Courtyard house (tile)",
+   "layers": [
+    "base"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.5839061190276614,
+    "x": 39.18281642917009,
+    "y": -1.606873428332051
+   }
+  },
+  "storehouse_a": {
+   "group_key": "storehouse",
+   "class": "W",
+   "box_wu": [
+    300,
+    165
+   ],
+   "master_canvas_px": [
+    1800,
+    990
+   ],
+   "anchor_wu": [
+    150.0,
+    165
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "stack",
+     "x": 60,
+     "y": -42
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -85,
+    "y": -28
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 85,
+    "y": -28
+   },
+   "ground_plan_wu": [
+    160,
+    120
+   ],
+   "plaque_text": "倉廒",
+   "name_zh": "仓廒",
+   "name_en": "Storehouse (open-topped granary)",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1536,
+    "height": 1024,
+    "scale": 0.9675456389452333,
+    "x": 153.53853955375257,
+    "y": -6.188640973630868
+   }
+  },
+  "storehouse_b": {
+   "group_key": "storehouse",
+   "class": "W",
+   "box_wu": [
+    300,
+    165
+   ],
+   "master_canvas_px": [
+    1800,
+    990
+   ],
+   "anchor_wu": [
+    150.0,
+    165
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "stack",
+     "x": 60,
+     "y": -42
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -85,
+    "y": -28
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 85,
+    "y": -28
+   },
+   "ground_plan_wu": [
+    160,
+    120
+   ],
+   "plaque_text": "倉廒",
+   "name_zh": "仓廒",
+   "name_en": "Storehouse (open-topped granary)",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1536,
+    "height": 1024,
+    "scale": 1.0437636761487965,
+    "x": 98.9113785557987,
+    "y": -48.800875273522934
+   }
+  },
+  "treasury": {
+   "group_key": "treasury",
+   "class": "W",
+   "box_wu": [
+    230,
+    170
+   ],
+   "master_canvas_px": [
+    1380,
+    1020
+   ],
+   "anchor_wu": [
+    115.0,
+    170
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [
+    {
+     "act": "count",
+     "x": 70,
+     "y": -52
+    }
+   ],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    150,
+    120
+   ],
+   "plaque_text": "官庫",
+   "name_zh": "大宋官库",
+   "name_en": "Song treasury (roof cutaway)",
+   "layers": [
+    "base",
+    "props",
+    "roof"
+   ],
+   "source_registration": {
+    "width": 1536,
+    "height": 1024,
+    "scale": 0.9330188679245283,
+    "x": -33.089622641509436,
+    "y": 61.51698113207556
+   },
+   "treasury_tray_normalized": {
+    "columns": [
+     0.35,
+     0.54
+    ],
+    "rows": [
+     0.445,
+     0.525,
+     0.61
+    ]
+   }
+  },
+  "armoury": {
+   "group_key": "armoury",
+   "class": "W",
+   "box_wu": [
+    280,
+    165
+   ],
+   "master_canvas_px": [
+    1680,
+    990
+   ],
+   "anchor_wu": [
+    140.0,
+    165
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [
+    {
+     "act": "count",
+     "x": 40,
+     "y": -40
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -75,
+    "y": -30
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 75,
+    "y": -30
+   },
+   "ground_plan_wu": [
+    150,
+    110
+   ],
+   "plaque_text": "武庫",
+   "name_zh": "武库",
+   "name_en": "Armoury",
+   "layers": [
+    "base",
+    "props",
+    "roof"
+   ],
+   "source_registration": {
+    "width": 1536,
+    "height": 1024,
+    "scale": 0.9734693877551021,
+    "x": 81.18061224489793,
+    "y": -8.283673469387736
+   }
+  },
+  "barracks": {
+   "group_key": "barracks",
+   "class": "W",
+   "box_wu": [
+    130,
+    90
+   ],
+   "master_canvas_px": [
+    780,
+    540
+   ],
+   "anchor_wu": [
+    65.0,
+    90
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "hammer",
+     "x": -25,
+     "y": -26
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -34,
+    "y": -18
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 34,
+    "y": -18
+   },
+   "ground_plan_wu": [
+    280,
+    160
+   ],
+   "plaque_text": "校場",
+   "name_zh": "兵营 / 校场",
+   "name_en": "Barracks hall and drill yard",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1536,
+    "height": 1024,
+    "scale": 0.4557065217391304,
+    "x": 34.09320652173915,
+    "y": 62.64782608695657
+   }
+  },
+  "stable": {
+   "group_key": "stable",
+   "class": "W",
+   "box_wu": [
+    200,
+    155
+   ],
+   "master_canvas_px": [
+    1200,
+    930
+   ],
+   "anchor_wu": [
+    100.0,
+    155
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "lift",
+     "x": -45,
+     "y": -40
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -70,
+    "y": -30
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 70,
+    "y": -30
+   },
+   "ground_plan_wu": [
+    170,
+    120
+   ],
+   "plaque_text": "馬廄",
+   "name_zh": "马厩",
+   "name_en": "Stables",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.8339552238805971,
+    "x": 75.44216417910445,
+    "y": -83.74253731343288
+   }
+  },
+  "hospital": {
+   "group_key": "hospital",
+   "class": "W",
+   "box_wu": [
+    240,
+    230
+   ],
+   "master_canvas_px": [
+    1440,
+    1380
+   ],
+   "anchor_wu": [
+    120.0,
+    230
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 2,
+   "stations_wu_from_anchor": [
+    {
+     "act": "stir",
+     "x": 58,
+     "y": -22
+    },
+    {
+     "act": "count",
+     "x": 0,
+     "y": -20
+    },
+    {
+     "act": "pour",
+     "x": -40,
+     "y": -60
+    }
+   ],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    190,
+    190
+   ],
+   "plaque_text": "醫館",
+   "name_zh": "医馆",
+   "name_en": "Hospital (Lv1-2)",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 1.0251655629139074,
+    "x": 76.19602649006617,
+    "y": 116.42384105960264
+   },
+   "extra_mats_wu_from_anchor": [
+    {
+     "x": -83,
+     "y": -36
+    },
+    {
+     "x": 83,
+     "y": -36
+    },
+    {
+     "x": -83,
+     "y": -75
+    },
+    {
+     "x": 83,
+     "y": -75
+    }
+   ],
+   "beds_wu_from_anchor": [
+    {
+     "x": -50.09334834437086,
+     "y": -123.82088741721851
+    },
+    {
+     "x": -15.597552317880798,
+     "y": -123.82088741721851
+    },
+    {
+     "x": 19.755282119205294,
+     "y": -123.82088741721851
+    },
+    {
+     "x": 54.46533774834438,
+     "y": -123.82088741721851
+    },
+    {
+     "x": -50.09334834437086,
+     "y": -76.68377483443707
+    },
+    {
+     "x": -15.597552317880798,
+     "y": -76.68377483443707
+    },
+    {
+     "x": 19.755282119205294,
+     "y": -76.68377483443707
+    },
+    {
+     "x": 54.46533774834438,
+     "y": -76.68377483443707
+    }
+   ]
+  },
+  "watchtower_l1": {
+   "group_key": "watchtower",
+   "class": "S",
+   "box_wu": [
+    70,
+    105
+   ],
+   "master_canvas_px": [
+    420,
+    630
+   ],
+   "anchor_wu": [
+    35.0,
+    105
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 2,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    40,
+    40
+   ],
+   "plaque_text": "",
+   "name_zh": "望楼",
+   "name_en": "Watchtower (Lv1-2)",
+   "layers": [
+    "base"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.43781818181818183,
+    "x": -79.17890909090909,
+    "y": 71.29454545454541
+   }
+  },
+  "watchtower_l2": {
+   "group_key": "watchtower",
+   "class": "S",
+   "box_wu": [
+    70,
+    105
+   ],
+   "master_canvas_px": [
+    420,
+    630
+   ],
+   "anchor_wu": [
+    35.0,
+    105
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 2,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    40,
+    40
+   ],
+   "plaque_text": "",
+   "name_zh": "望楼",
+   "name_en": "Watchtower (Lv1-2)",
+   "layers": [
+    "base"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.352390243902439,
+    "x": -29.449170731707312,
+    "y": 175.38848780487808
+   }
+  },
+  "gate_hamlet": {
+   "group_key": "gate",
+   "class": "S",
+   "box_wu": [
+    285,
+    210
+   ],
+   "master_canvas_px": [
+    1710,
+    1260
+   ],
+   "anchor_wu": [
+    142.5,
+    210
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    200,
+    70
+   ],
+   "plaque_text": "blank plaque (the game draws the village name)",
+   "name_zh": "村门",
+   "name_en": "Village gate (3 tiers: hamlet, village, town)",
+   "layers": [
+    "base"
+   ],
+   "source_registration": {
+    "width": 1536,
+    "height": 1024,
+    "scale": 1.0549497847919656,
+    "x": 44.7985652797704,
+    "y": 196.54476327116208
+   },
+   "plaque_source_rect": [
+    0.392,
+    0.347,
+    0.622,
+    0.42
+   ]
+  },
+  "gate_village": {
+   "group_key": "gate",
+   "class": "S",
+   "box_wu": [
+    285,
+    210
+   ],
+   "master_canvas_px": [
+    1710,
+    1260
+   ],
+   "anchor_wu": [
+    142.5,
+    210
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    200,
+    70
+   ],
+   "plaque_text": "blank plaque (the game draws the village name)",
+   "name_zh": "村门",
+   "name_en": "Village gate (3 tiers: hamlet, village, town)",
+   "layers": [
+    "base"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 1.0909090909090908,
+    "x": 172.09090909090912,
+    "y": -56.18181818181802
+   },
+   "plaque_source_rect": [
+    0.409,
+    0.44,
+    0.577,
+    0.498
+   ]
+  },
+  "gate_town": {
+   "group_key": "gate",
+   "class": "S",
+   "box_wu": [
+    285,
+    210
+   ],
+   "master_canvas_px": [
+    1710,
+    1260
+   ],
+   "anchor_wu": [
+    142.5,
+    210
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    200,
+    70
+   ],
+   "plaque_text": "blank plaque (the game draws the village name)",
+   "name_zh": "村门",
+   "name_en": "Village gate (3 tiers: hamlet, village, town)",
+   "layers": [
+    "base"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 1.0987432675044884,
+    "x": 170.4829443447037,
+    "y": -101.76301615798934
+   },
+   "plaque_source_rect": [
+    0.399,
+    0.48,
+    0.574,
+    0.543
+   ]
+  },
+  "wall_kit": {
+   "group_key": "wall_kit",
+   "class": "S",
+   "box_wu": [
+    60,
+    80
+   ],
+   "master_canvas_px": [
+    360,
+    480
+   ],
+   "anchor_wu": [
+    30.0,
+    80
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    60,
+    20
+   ],
+   "plaque_text": "",
+   "name_zh": "寨墙",
+   "name_en": "Palisade/wall kit (optional, P3)",
+   "layers": [
+    "base"
+   ],
+   "source_registration": {
+    "width": 1024,
+    "height": 1536,
+    "scale": 0.31950464396284833,
+    "x": 17.531888544891615,
+    "y": 5.427863777089726
+   }
+  },
+  "field_spring": {
+   "group_key": "field",
+   "class": "F",
+   "box_wu": [
+    160,
+    106
+   ],
+   "master_canvas_px": [
+    960,
+    636
+   ],
+   "anchor_wu": [
+    80.0,
+    106
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "lift",
+     "x": 0,
+     "y": -30
+    }
+   ],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": {
+    "x": 60,
+    "y": -20
+   },
+   "ground_plan_wu": [
+    160,
+    106
+   ],
+   "plaque_text": "",
+   "name_zh": "田庄(农田)",
+   "name_en": "Farm field plots (4 seasons)",
+   "layers": [
+    "base"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.6741573033707865,
+    "x": 57.97752808988764,
+    "y": -120.87640449438197
+   }
+  },
+  "field_summer": {
+   "group_key": "field",
+   "class": "F",
+   "box_wu": [
+    160,
+    106
+   ],
+   "master_canvas_px": [
+    960,
+    636
+   ],
+   "anchor_wu": [
+    80.0,
+    106
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "lift",
+     "x": 0,
+     "y": -30
+    }
+   ],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": {
+    "x": 60,
+    "y": -20
+   },
+   "ground_plan_wu": [
+    160,
+    106
+   ],
+   "plaque_text": "",
+   "name_zh": "田庄(农田)",
+   "name_en": "Farm field plots (4 seasons)",
+   "layers": [
+    "base"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.5366726296958855,
+    "x": 143.50626118067981,
+    "y": -13.12701252236127
+   }
+  },
+  "field_autumn": {
+   "group_key": "field",
+   "class": "F",
+   "box_wu": [
+    160,
+    106
+   ],
+   "master_canvas_px": [
+    960,
+    636
+   ],
+   "anchor_wu": [
+    80.0,
+    106
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "lift",
+     "x": 0,
+     "y": -30
+    }
+   ],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": {
+    "x": 60,
+    "y": -20
+   },
+   "ground_plan_wu": [
+    160,
+    106
+   ],
+   "plaque_text": "",
+   "name_zh": "田庄(农田)",
+   "name_en": "Farm field plots (4 seasons)",
+   "layers": [
+    "base"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.5555555555555556,
+    "x": 131.38888888888886,
+    "y": -34.222222222222285
+   }
+  },
+  "field_winter": {
+   "group_key": "field",
+   "class": "F",
+   "box_wu": [
+    160,
+    106
+   ],
+   "master_canvas_px": [
+    960,
+    636
+   ],
+   "anchor_wu": [
+    80.0,
+    106
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "lift",
+     "x": 0,
+     "y": -30
+    }
+   ],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": {
+    "x": 60,
+    "y": -20
+   },
+   "ground_plan_wu": [
+    160,
+    106
+   ],
+   "plaque_text": "",
+   "name_zh": "田庄(农田)",
+   "name_en": "Farm field plots (4 seasons)",
+   "layers": [
+    "base"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.5545286506469501,
+    "x": 132.31053604436227,
+    "y": -34.125693160813285
+   }
+  },
+  "smithy": {
+   "group_key": "smithy",
+   "class": "W",
+   "box_wu": [
+    190,
+    170
+   ],
+   "master_canvas_px": [
+    1140,
+    1020
+   ],
+   "anchor_wu": [
+    95.0,
+    170
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "hammer",
+     "x": 0,
+     "y": -48
+    },
+    {
+     "act": "tend",
+     "x": 48,
+     "y": -62
+    },
+    {
+     "act": "pour",
+     "x": -50,
+     "y": -38
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "鐵匠鋪",
+   "name_zh": "铁匠铺",
+   "name_en": "Smithy",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.8129353233830846,
+    "x": 60.289552238805925,
+    "y": 47.61393034825869
+   }
+  },
+  "tannery": {
+   "group_key": "tannery",
+   "class": "W",
+   "box_wu": [
+    190,
+    170
+   ],
+   "master_canvas_px": [
+    1140,
+    1020
+   ],
+   "anchor_wu": [
+    95.0,
+    170
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "stir",
+     "x": -40,
+     "y": -45
+    },
+    {
+     "act": "stir",
+     "x": 15,
+     "y": -45
+    },
+    {
+     "act": "lift",
+     "x": 55,
+     "y": -55
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "皮坊",
+   "name_zh": "皮坊",
+   "name_en": "Tannery",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.8082440230832646,
+    "x": 61.210387469084935,
+    "y": 55.54624896949713
+   }
+  },
+  "bowyer": {
+   "group_key": "bowyer",
+   "class": "W",
+   "box_wu": [
+    190,
+    170
+   ],
+   "master_canvas_px": [
+    1140,
+    1020
+   ],
+   "anchor_wu": [
+    95.0,
+    170
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "weave",
+     "x": -35,
+     "y": -50
+    },
+    {
+     "act": "lift",
+     "x": 40,
+     "y": -50
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "弓弩坊",
+   "name_zh": "弓弩坊",
+   "name_en": "Bowyer",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.8115894039735099,
+    "x": 61.13344370860932,
+    "y": 47.57086092715235
+   }
+  },
+  "armourer": {
+   "group_key": "armourer",
+   "class": "W",
+   "box_wu": [
+    190,
+    170
+   ],
+   "master_canvas_px": [
+    1140,
+    1020
+   ],
+   "anchor_wu": [
+    95.0,
+    170
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "hammer",
+     "x": -30,
+     "y": -48
+    },
+    {
+     "act": "weave",
+     "x": 40,
+     "y": -50
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "甲坊",
+   "name_zh": "甲坊",
+   "name_en": "Armourer",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.8142857142857143,
+    "x": 57.81428571428569,
+    "y": 46.842857142857156
+   }
+  },
+  "saddlery": {
+   "group_key": "saddlery",
+   "class": "W",
+   "box_wu": [
+    190,
+    170
+   ],
+   "master_canvas_px": [
+    1140,
+    1020
+   ],
+   "anchor_wu": [
+    95.0,
+    170
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 2,
+   "stations_wu_from_anchor": [
+    {
+     "act": "weave",
+     "x": -35,
+     "y": -48
+    },
+    {
+     "act": "lift",
+     "x": 40,
+     "y": -48
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "鞍坊",
+   "name_zh": "鞍坊",
+   "name_en": "Saddlery",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.8176814011676397,
+    "x": 56.904920767306066,
+    "y": 25.688407005838258
+   }
+  },
+  "firelance": {
+   "group_key": "firelance",
+   "class": "W",
+   "box_wu": [
+    190,
+    170
+   ],
+   "master_canvas_px": [
+    1140,
+    1020
+   ],
+   "anchor_wu": [
+    95.0,
+    170
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 2,
+   "stations_wu_from_anchor": [
+    {
+     "act": "tend",
+     "x": -35,
+     "y": -50
+    },
+    {
+     "act": "stir",
+     "x": 40,
+     "y": -48
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "火藥作",
+   "name_zh": "火药作",
+   "name_en": "Fire-lance works",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.8089108910891089,
+    "x": 61.19504950495053,
+    "y": 51.52970297029708
+   }
+  },
+  "market": {
+   "group_key": "market",
+   "class": "W",
+   "box_wu": [
+    200,
+    165
+   ],
+   "master_canvas_px": [
+    1200,
+    990
+   ],
+   "anchor_wu": [
+    100.0,
+    165
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "count",
+     "x": 0,
+     "y": -45
+    },
+    {
+     "act": "stack",
+     "x": 55,
+     "y": -35
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "集市",
+   "name_zh": "集市",
+   "name_en": "Market",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.8543046357615894,
+    "x": 63.49668874172187,
+    "y": -34.37086092715231
+   }
+  },
+  "lumber": {
+   "group_key": "lumber",
+   "class": "W",
+   "box_wu": [
+    200,
+    165
+   ],
+   "master_canvas_px": [
+    1200,
+    990
+   ],
+   "anchor_wu": [
+    100.0,
+    165
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "hammer",
+     "x": -40,
+     "y": -45
+    },
+    {
+     "act": "lift",
+     "x": 40,
+     "y": -35
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "伐木場",
+   "name_zh": "伐木场",
+   "name_en": "Lumber camp",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.8521882741535921,
+    "x": 64.39966969446732,
+    "y": -28.469033856317083
+   }
+  },
+  "quarry": {
+   "group_key": "quarry",
+   "class": "W",
+   "box_wu": [
+    200,
+    165
+   ],
+   "master_canvas_px": [
+    1200,
+    990
+   ],
+   "anchor_wu": [
+    100.0,
+    165
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "hammer",
+     "x": -40,
+     "y": -45
+    },
+    {
+     "act": "push",
+     "x": 40,
+     "y": -35
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "石場",
+   "name_zh": "采石场",
+   "name_en": "Quarry",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.8514851485148515,
+    "x": 65.26732673267327,
+    "y": -44.673267326732685
+   }
+  },
+  "mine": {
+   "group_key": "mine",
+   "class": "W",
+   "box_wu": [
+    200,
+    165
+   ],
+   "master_canvas_px": [
+    1200,
+    990
+   ],
+   "anchor_wu": [
+    100.0,
+    165
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "push",
+     "x": -40,
+     "y": -45
+    },
+    {
+     "act": "lift",
+     "x": 40,
+     "y": -35
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "坑冶",
+   "name_zh": "冶坑 (铁矿)",
+   "name_en": "Ore pits (iron)",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.8543046357615894,
+    "x": 63.49668874172187,
+    "y": -30.953642384106047
+   }
+  },
+  "saltworks": {
+   "group_key": "saltworks",
+   "class": "W",
+   "box_wu": [
+    200,
+    165
+   ],
+   "master_canvas_px": [
+    1200,
+    990
+   ],
+   "anchor_wu": [
+    100.0,
+    165
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 2,
+   "stations_wu_from_anchor": [
+    {
+     "act": "push",
+     "x": -40,
+     "y": -45
+    },
+    {
+     "act": "stack",
+     "x": 40,
+     "y": -35
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    150,
+    150
+   ],
+   "plaque_text": "鹽池",
+   "name_zh": "盐池",
+   "name_en": "Salt works",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.8543046357615894,
+    "x": 64.3509933774834,
+    "y": -32.662251655629234
+   }
+  },
+  "brewery": {
+   "group_key": "brewery",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "stir",
+     "x": -30,
+     "y": -48
+    },
+    {
+     "act": "pour",
+     "x": 40,
+     "y": -45
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "酒坊",
+   "name_zh": "酒坊",
+   "name_en": "Brewery",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.7876237623762377,
+    "x": 58.79702970297029,
+    "y": 107.32970297029703
+   }
+  },
+  "beauty": {
+   "group_key": "beauty",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "push",
+     "x": -30,
+     "y": -48
+    },
+    {
+     "act": "stir",
+     "x": 40,
+     "y": -45
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "香藥鋪",
+   "name_zh": "香皂香膏作",
+   "name_en": "Beauty (soap and balm) workshop",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.7902317880794703,
+    "x": 58.73443708609267,
+    "y": 103.47764900662241
+   }
+  },
+  "restaurant": {
+   "group_key": "restaurant",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "pour",
+     "x": -35,
+     "y": -45
+    },
+    {
+     "act": "count",
+     "x": 45,
+     "y": -40
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "清河酒樓",
+   "name_zh": "清河酒楼",
+   "name_en": "Restaurant (Qinghe tavern)",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.796163469557965,
+    "x": 52.22276897414508,
+    "y": 76.60383653044198
+   }
+  },
+  "kiln": {
+   "group_key": "kiln",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "tend",
+     "x": 0,
+     "y": -50
+    },
+    {
+     "act": "stack",
+     "x": 55,
+     "y": -30
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "炭窯",
+   "name_zh": "炭窑",
+   "name_en": "Charcoal kiln",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.7928571428571429,
+    "x": 57.08571428571423,
+    "y": 100.39285714285711
+   }
+  },
+  "powderworks": {
+   "group_key": "powderworks",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "stir",
+     "x": -35,
+     "y": -48
+    },
+    {
+     "act": "tend",
+     "x": 40,
+     "y": -48
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "火藥作",
+   "name_zh": "军器火药作",
+   "name_en": "Powder works",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.7850328947368421,
+    "x": 61.99934210526317,
+    "y": 110.37138157894731
+   }
+  },
+  "arsenal": {
+   "group_key": "arsenal",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "hammer",
+     "x": -35,
+     "y": -50
+    },
+    {
+     "act": "pour",
+     "x": 45,
+     "y": -50
+    },
+    {
+     "act": "lift",
+     "x": 0,
+     "y": -35
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "軍器監",
+   "name_zh": "军器监分作",
+   "name_en": "Ordnance foundry",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.7889256198347108,
+    "x": 56.39900826446279,
+    "y": 105.01239669421489
+   }
+  },
+  "garden": {
+   "group_key": "garden",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "lift",
+     "x": -30,
+     "y": -40
+    },
+    {
+     "act": "lift",
+     "x": 40,
+     "y": -35
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "菜圃",
+   "name_zh": "菜麻圃",
+   "name_en": "Market garden",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.7895781637717122,
+    "x": 59.53970223325058,
+    "y": 105.03523573200994
+   }
+  },
+  "orchard": {
+   "group_key": "orchard",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "stack",
+     "x": -30,
+     "y": -40
+    },
+    {
+     "act": "lift",
+     "x": 40,
+     "y": -35
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "果園",
+   "name_zh": "果园",
+   "name_en": "Orchard",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.7882741535920726,
+    "x": 60.35796862097442,
+    "y": 78.18827415359215
+   }
+  },
+  "weaver": {
+   "group_key": "weaver",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "weave",
+     "x": -35,
+     "y": -48
+    },
+    {
+     "act": "weave",
+     "x": 40,
+     "y": -48
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "織造作",
+   "name_zh": "织造作",
+   "name_en": "Weaving house",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.7908864954432477,
+    "x": 58.71872410936203,
+    "y": 101.9174813587407
+   }
+  },
+  "papermill": {
+   "group_key": "papermill",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "lift",
+     "x": -30,
+     "y": -48
+    },
+    {
+     "act": "push",
+     "x": 40,
+     "y": -45
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "紙坊",
+   "name_zh": "纸坊",
+   "name_en": "Paper mill",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.7876237623762377,
+    "x": 59.58465346534649,
+    "y": 83.70099009900991
+   }
+  },
+  "pottery": {
+   "group_key": "pottery",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "tend",
+     "x": 0,
+     "y": -50
+    },
+    {
+     "act": "push",
+     "x": -45,
+     "y": -35
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "陶窯",
+   "name_zh": "陶瓷窑",
+   "name_en": "Pottery kiln",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.7882741535920726,
+    "x": 59.56969446738236,
+    "y": 108.14269199009084
+   }
+  },
+  "refinery": {
+   "group_key": "refinery",
+   "class": "W",
+   "box_wu": [
+    185,
+    175
+   ],
+   "master_canvas_px": [
+    1110,
+    1050
+   ],
+   "anchor_wu": [
+    92.5,
+    175
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 3,
+   "stations_wu_from_anchor": [
+    {
+     "act": "hammer",
+     "x": -35,
+     "y": -50
+    },
+    {
+     "act": "tend",
+     "x": 45,
+     "y": -55
+    }
+   ],
+   "input_pile_wu_from_anchor": {
+    "x": -65,
+    "y": -22
+   },
+   "output_rack_wu_from_anchor": {
+    "x": 65,
+    "y": -22
+   },
+   "ground_plan_wu": [
+    145,
+    145
+   ],
+   "plaque_text": "冶鐵作",
+   "name_zh": "冶铁作",
+   "name_en": "Steel works",
+   "layers": [
+    "base",
+    "props",
+    "roof",
+    "props_l2",
+    "props_l3"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.7902317880794703,
+    "x": 57.94420529801323,
+    "y": 105.0581125827814
+   }
+  },
+  "hall": {
+   "group_key": "hall",
+   "class": "S",
+   "box_wu": [
+    230,
+    190
+   ],
+   "master_canvas_px": [
+    1380,
+    1140
+   ],
+   "anchor_wu": [
+    115.0,
+    190
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    190,
+    120
+   ],
+   "plaque_text": "官署",
+   "name_zh": "官署(衙门)",
+   "name_en": "Yamen hall (Qinghe only; also map plates)",
+   "layers": [
+    "base"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.9664495114006514,
+    "x": 83.06970684039095,
+    "y": -1.014332247556922
+   }
+  },
+  "memorial": {
+   "group_key": "memorial",
+   "class": "S",
+   "box_wu": [
+    170,
+    95
+   ],
+   "master_canvas_px": [
+    1020,
+    570
+   ],
+   "anchor_wu": [
+    85.0,
+    95
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    140,
+    50
+   ],
+   "plaque_text": "blank face",
+   "name_zh": "纪念碑墙",
+   "name_en": "Memorial wall (Qinghe only)",
+   "layers": [
+    "base"
+   ],
+   "source_registration": {
+    "width": 1536,
+    "height": 1024,
+    "scale": 0.589516129032258,
+    "x": 57.841129032258095,
+    "y": -8.040322580645125
+   }
+  },
+  "granary_map": {
+   "group_key": "granary_map",
+   "class": "S",
+   "box_wu": [
+    75,
+    62
+   ],
+   "master_canvas_px": [
+    450,
+    372
+   ],
+   "anchor_wu": [
+    37.5,
+    62
+   ],
+   "door_wu_from_anchor": [
+    0,
+    -8
+   ],
+   "levels": 1,
+   "stations_wu_from_anchor": [],
+   "input_pile_wu_from_anchor": null,
+   "output_rack_wu_from_anchor": null,
+   "ground_plan_wu": [
+    0,
+    0
+   ],
+   "plaque_text": "",
+   "name_zh": "粮仓(地图图标)",
+   "name_en": "Granary (campaign-map plates only)",
+   "layers": [
+    "base"
+   ],
+   "source_registration": {
+    "width": 1254,
+    "height": 1254,
+    "scale": 0.32521008403361346,
+    "x": 23.044537815126034,
+    "y": -32.674789915966414
+   }
+  }
+ }
+}

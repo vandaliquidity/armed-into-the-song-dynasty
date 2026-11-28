@@ -2,6 +2,16 @@
 
 A browser strategy game.
 
+### v0.69 — A Village to Call Home
+
+Song villages use the building handover's 49 distinct 2.5D variants: cutaway workplaces, matching removable roofs, six home designs, separate stores and armouries, working interiors and four seasonal fields. Roofs appear at overview zoom and fade away as you move closer. The treasury's six trays show actual gold and silver; the squarish hospital uses its real eight beds and four additional care mats at level two. The campaign map and existing building thumbnails use the same painting set.
+
+Click a villager to meet them, see their home and workplace, or follow them. Visible villagers have persistent names and portraits from the existing people artwork. Named porters take one delivery at a time, walk to collect it, carry it along the navigable streets and return empty. Their completed building deliveries are remembered. Workers borrow tools, move inputs to benches, place finished goods on racks and return their tools. Farmers plant and tend rows, cut autumn crops and leave bundles for porters; harvested rows remain cut after saving. New residents introduced by population growth enter at the gate; established workers begin on duty. Population, soldiers, money and manufactured goods remain owned by the existing campaign simulation.
+
+Homes keep their plots as workshops are built. Earned homes and tile improvements remain after a population decline; unused homes become visibly vacant. Village chronicle collects actual population changes and completed developments. Qinghe's civic hall appears with its earned market-town development; its memorial records actual fallen officers and companies. The larger expansion ward supports developed settlements, and the management sidebar collapses on phones. Existing saves gain resident records as villages are visited. No WebGL renderer is used.
+
+Implementation, artwork sources and the handover adaptations are documented in `art/CUTAWAY_BUILDINGS.md`. Checks: `tests/cutaway-village.cjs`, `tests/village-work-actions.cjs`, the existing town scene/economy/street checks and hospital/edict checks.
+
 ### v0.65.1 — Return to 2.5D
 
 The village uses the established 2.5D artwork again. The experimental WebGL renderer and its controls are removed from the active game. Named gates, connected walls and roads, moving stable horses, resource carriers and construction activity remain as in v0.64. Existing campaign saves and settlement state are retained.

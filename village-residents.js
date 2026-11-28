@@ -1,0 +1,87 @@
+'use strict';
+// Named residents are a small visible part of the actual population, never a population grant.
+const RESIDENT_SURNAMES=[['陳','Chen'],['周','Zhou'],['吳','Wu'],['徐','Xu'],['何','He'],['羅','Luo'],['石','Shi'],['韓','Han'],['沈','Shen'],['杜','Du'],['許','Xu'],['馮','Feng']];
+const RESIDENT_NAMES=[['阿寧','Aning'],['守成','Shoucheng'],['小滿','Xiaoman'],['安和','Anhe'],['春生','Chunsheng'],['桂娘','Guiniang'],['成玉','Chengyu'],['阿秀','Axiu'],['明遠','Mingyuan'],['冬梅','Dongmei'],['平安','Pingan'],['景和','Jinghe']];
+function townResidentRoll(id){
+ CG.villageResidents=CG.villageResidents||{};const s=CG.T[id];
+ return CG.villageResidents[id]||(CG.villageResidents[id]={version:1,people:[],next:1,firstMonth:campaignMonth(),population:s.pop,homePeak:Math.max(0,Math.round(s.pop/150)),events:[],levels:null});
+}
+function townEarnedHousing(id,n){if(!songBuildingAllowed(id))return n;const roll=townResidentRoll(id);roll.homePeak=Math.max(roll.homePeak||0,n);return Math.min(30,roll.homePeak);}
+function townHomeModel(id,index,model){if(!songBuildingAllowed(id))return model;const roll=townResidentRoll(id);roll.homeTypes=roll.homeTypes||{};if(roll.homeTypes[index]==='courtyard'||model==='courtyard')return roll.homeTypes[index]='courtyard';return roll.homeTypes[index]='cottage';}
+function townResidentName(id,serial){const h=battlefieldHash(id+':resident:'+serial),a=RESIDENT_SURNAMES[h%RESIDENT_SURNAMES.length],b=RESIDENT_NAMES[(h>>>7)%RESIDENT_NAMES.length];return [a[0]+b[0],a[1]+' '+b[1]];}
+function townResidentEvent(roll,event){if(!roll.events.some(e=>e.token===event.token))roll.events.push({...event,month:campaignMonth()});if(roll.events.length>100)roll.events.splice(0,roll.events.length-100);}
+function townResidentDisplayCount(scene){const pop=CG.T[scene.id].pop;if(!(pop>0))return 0;const jobs=scene.present.filter(r=>r.biz||r.dev&&!['wall','tower'].includes(r.dev)||['store','treasury','armoury'].includes(r.model)).length+4;return Math.min(Math.floor(pop),64,Math.max(clamp(Math.round(pop/90),8,48),Math.ceil((jobs+Math.min(8,Math.ceil(pop/450)))/.85)));}
+function townResidentsBind(scene){
+ if(!songBuildingAllowed(scene.id))return;const s=CG.T[scene.id],roll=townResidentRoll(scene.id),n=Math.min(Math.max(0,Math.floor(s.pop)),scene.people.length),porters=Math.min(8,Math.max(1,Math.ceil(s.pop/450)),Math.floor(n/3));
+ const populationGrew=s.pop>roll.population,levels={...s.bld,...Object.fromEntries(Object.entries(s.businesses||{}).map(([k,b])=>['biz:'+k,b.level||0]))};
+ if(roll.levels)for(const [k,level]of Object.entries(levels))if(level>(roll.levels[k]||0))townResidentEvent(roll,{kind:'building',key:k,level,token:k+':'+level});roll.levels=levels;
+ if(roll.population!==s.pop){townResidentEvent(roll,{kind:'population',delta:s.pop-roll.population,token:'pop:'+campaignMonth()+':'+s.pop});roll.population=s.pop;}
+ while(roll.people.length<n){const serial=roll.next++,h=battlefieldHash(scene.id+':'+serial),homes=[...scene.housing].sort((a,b)=>roll.people.filter(p=>p.home===a.k).length-roll.people.filter(p=>p.home===b.k).length);roll.people.push({id:scene.id+':'+serial,name:townResidentName(scene.id,serial),joined:campaignMonth(),role:roll.people.length<porters?'porter':serial%7===0?'child':serial%5===0?'elder':'resident',home:homes[0]?.k||'home:0',deliveries:0,constructionLoads:0,workplace:null,arrival:populationGrew,seed:h});}
+ scene.people.length=n;for(let i=0;i<n;i++){const record=roll.people[i],p=scene.people[i];p.resident=record;p.spr=record.role==='porter'?'porter':record.role==='child'?'vil_k':record.role==='elder'?'vil_e':i%2?'vil_w':'villager';p.home=scene.byKey[record.home]||scene.housing[i%Math.max(1,scene.housing.length)];p._work=null;p._busy=false;if(record.position&&villageFree(townNav(),record.position.x,record.position.y)){p.x=record.position.x;p.y=record.position.y;}else if(p.home){p.x=p.home.door.x;p.y=p.home.door.y;}p.tx=p.x;p.ty=p.y;}
+ for(const p of scene.people)if(p.resident.arrival&&!p.resident.position){p.x=scene.gate.x;p.y=scene.gate.y+30;p.tx=p.home?.door.x||p.x;p.ty=p.home?.door.y||p.y;p.wait=0;}
+ scene.residentRoll=roll;scene.staffAssignments=new Map();scene.porters=scene.people.filter(p=>p.resident.role==='porter');for(const p of scene.people){if(scene.porters.length>=porters)break;if(p.resident.role==='resident'&&!p.resident.workplace){p.resident.role='porter';p.spr='porter';scene.porters.push(p);}}
+}
+function townResidentsPrepare(scene){for(const p of scene.people)if(p.resident)p._work=null;}
+function townStaff(add,g,scene,r,act,busy,t,index=0,point=null){
+ if(!scene.residentRoll)return false;const code=r.k+':'+index;let p=scene.staffAssignments.get(code);
+ if(!p){const assigned=new Set(scene.staffAssignments.values());p=scene.people.find(p=>p.resident.workplace===r.k&&!assigned.has(p)&&!['porter','child'].includes(p.resident.role))||scene.people.find(p=>!assigned.has(p)&&!['porter','child'].includes(p.resident.role));if(!p)return true;scene.staffAssignments.set(code,p);}
+ const sites=songBuildingStations(r),q=point||sites[index%Math.max(1,sites.length)]||{x:r.x,y:r.y-8};if(!p.resident.position&&!p.resident.arrival){const nav=townNav(),cell=villageNearest(nav,q.x,q.y);p.x=(cell%nav.W+.5)*nav.C;p.y=(Math.floor(cell/nav.W)+.5)*nav.C;p.tx=p.x;p.ty=p.y;p._route=null;p.resident.position={x:p.x,y:p.y};}p._work={r,act,busy,x:q.x,y:q.y,tool:q.tool,field:q.field};p.resident.workplace=r.k;if(typeof townConfigureWork==='function')townConfigureWork(scene,p,r,p._work,busy,index);return true;
+}
+function townResidentLife(add,g,scene,p,t,dt){
+ if(!p.resident)return false;if(p._busy){townResidentHot(p);return true;}
+ const work=p._work;if(work){p.tx=work.x;p.ty=work.y;p.wait=2;const move=walkTo8(p,27,dt);if(move)add(p.y,()=>{sprUnit(p.spr,p.x,p.y,9,p.f,frontierWalkFrame(p.spr,p.ph));if(typeof townDrawWorkerCargo==='function')townDrawWorkerCargo(g,p,t);});else add(p.y,()=>{vpWorker(g,p.x,p.y,work.act,1,work.busy?Math.floor(t*5):0);if(typeof townDrawWorkerCargo==='function')townDrawWorkerCargo(g,p,t);});}
+ else{const nav=townNav();if(!villageFree(nav,p.x,p.y)){const at=villageNearest(nav,p.x,p.y);p.x=(at%nav.W+.5)*nav.C;p.y=(Math.floor(at/nav.W)+.5)*nav.C;}const move=walkTo8(p,p.resident.role==='child'?34:25,dt);add(p.y,()=>sprUnit(p.spr,p.x,p.y,9,p.f,move?frontierWalkFrame(p.spr,p.ph):0));}
+ p.resident.position={x:p.x,y:p.y};townResidentHot(p);return true;
+}
+function townResidentHot(p){const r=p.resident;if(!r)return;const title=p._busy?Tz('搬運中','On a delivery'):p._work?townResidentBuildingName(p._work.r):Tz('村民','Resident');CVIL.hot.unshift({r:[p.x-13,p.y-33,p.x+13,p.y+5],t:Tz(...r.name)+' · '+title+'\n'+Tz('點選查看','Click to meet')});}
+function townResidentBuildingName(r){return r.biz?Tz(...DY_BUSINESSES[r.biz].name):r.dev?Tz(DEV[r.dev].zh,DEV[r.dev].en):({treasury:Tz('官庫','Treasury'),armoury:Tz('武庫','Armoury'),yard:Tz('校場','Drill yard'),stable:Tz('馬廄','Stables')}[r.k]||Tz('倉房','Storehouse'));}
+{const old=townJob;townJob=function(scene,options){if(['harvest','tax'].includes(options.kind)&&scene.jobs.some(j=>j.kind===options.kind&&j.k===options.k&&j.state!=='done'&&Math.hypot(j.from.x-options.from.x,j.from.y-options.from.y)<1))return false;const j=old(...arguments);if(j)j.onPick=options.pick;if(j&&scene.residentRoll){j.state='queued';j._residentQueued=true;const done=j.done;j.done=()=>{done?.();if(j.worker&&!j._credited){j._credited=true;j.worker.resident.deliveries++;if(j.kind==='build')j.worker.resident.constructionLoads++;}};}return j;};}
+{const old=townJobStep;townJobStep=function(job,dt){
+ if(!job._residentQueued){if(job.state==='carry'&&job.onPick){job.onPick();job.onPick=null;}return old(...arguments);}const scene=townScene();
+ if(job.state==='queued'){const p=scene.porters.find(p=>!p._busy);if(!p)return;p._busy=true;job.worker=p;job.approach=villageRoute(p,{x:job.P[0][0],y:job.P[0][1]});if(!job.approach){p._busy=false;job.worker=null;return;}job.approachLength=vcLen(job.approach);job.approachDistance=0;job.state='approach';job.x=p.x;job.y=p.y;job.d=0;job.wait=.2;}
+ if(job.state==='approach'){if(job.wait>0)job.wait-=dt;else{job.approachDistance=Math.min(job.approachLength,job.approachDistance+78*dt);const at=vcAlong(job.approach,job.approachDistance);job.x=at.x;job.y=at.y;job.face=angLerp(job.face,at.f,easeK(10,dt));job.phase+=dt*2;if(job.approachDistance>=job.approachLength){job.state='pickup';job.pickTimer=.45;}}}else if(job.state==='pickup'){job.pickTimer-=dt;if(job.pickTimer<=0){job.onPick?.();job.onPick=null;job.state='carry';job.wait=0;}}else old(...arguments);
+ const p=job.worker;if(p){p.x=job.x;p.y=job.y;p.f=job.face;p.ph=job.phase;p.resident.position={x:p.x,y:p.y};if(job.state==='done'){p._busy=false;p.tx=p.home?.door.x||p.x;p.ty=p.home?.door.y||p.y;p.wait=1;}}
+};}
+function townResidentPanel(record,context=null){
+ $('villageResidentCard')?.remove();if(!record)return;const scene=townScene(),p=scene.people.find(p=>p.resident?.id===record.id),card=document.createElement('div');card.id='villageResidentCard';card.className='panel';card.style.cssText='left:14px;bottom:18px;width:min(310px,calc(100vw - 52px));max-height:55vh;overflow:auto;pointer-events:auto;padding:14px';
+ const close=document.createElement('button');close.className='btn';close.textContent='×';close.setAttribute('aria-label',Tz('關閉','Close'));close.style.float='right';close.onclick=()=>card.remove();card.append(close);
+ const role=p?songPersonName(p.spr):record.role==='porter'?'porter':'man',pose=SONG_PEOPLE.poses.get((role||'man')+':2:0');if(pose){const portrait=document.createElement('canvas');portrait.width=80;portrait.height=100;portrait.style.cssText='float:left;margin:0 12px 10px 0;border:1px solid #a18b5b;border-radius:5px;background:#53614b';const g=portrait.getContext('2d'),scale=94/(pose.height*.55);g.imageSmoothingQuality='high';g.drawImage(pose.c,40-pose.ax*scale,4,pose.c.width*scale,pose.c.height*scale);card.append(portrait);}
+ const title=document.createElement('div');title.textContent=Tz(...record.name);title.style.cssText='font:600 21px "Noto Serif SC",serif;color:#e8d2a2;margin:4px 0 10px';card.append(title);
+ const line=text=>{const d=document.createElement('div');d.textContent=text;d.style.cssText='margin:7px 0;color:#d5d8c4;font-size:13px';card.append(d);};
+ record.meetings=(record.meetings||0)+1;const quote=document.createElement('div');quote.style.cssText='font:italic 13px Georgia,serif;color:#c9b78e;margin:8px 0';quote.textContent=context?.line|| (p?._busy?Tz('「這一趟送完，就回家歇腳。」','“One more delivery, then home for a rest.”'):record.constructionLoads?Tz('「新屋的料，我也搬過。」','“I helped carry the supplies for our new buildings.”'):record.meetings>1?Tz('「又見面了。」','“Good to see you again.”'):Tz('「在這裡安個家，不容易。」','“It takes work to make a home here.”'));card.append(quote);
+ line(tName(scene.id)+' · '+Tz('自','Here since ')+dateTxt(record.joined));
+ const workplace=scene.byKey[record.workplace];line(record.role==='child'?Tz('村中的孩子','Village child'):record.role==='porter'?Tz('村中腳夫','Village porter'):workplace?townResidentBuildingName(workplace):Tz('在村中生活','At home in the village'));
+ if(context?.need)line(context.need);if(record.deliveries)line(Tz('已完成運送 ','Deliveries completed: ')+record.deliveries);if(record.constructionLoads)line(Tz('協助營建的運料 ','Building deliveries: ')+record.constructionLoads);
+ const row=document.createElement('div');row.style.cssText='display:flex;gap:7px;flex-wrap:wrap;margin-top:12px;clear:both';
+ const action=(zh,en,fn)=>{const b=btn(zh,en,fn);row.append(b);};
+ action('跟隨','Follow',()=>{CVIL.followResident=record.id;CVIL.z=Math.max(CVIL.z,.95/Math.min((mobNarrow()?VW:VW-360)/VWW,VH/VWH));});
+ action('家','Home',()=>{const home=scene.byKey[record.home];if(home){CVIL.followResident=null;CVIL.fx=home.x;CVIL.fy=home.y-40;CVIL.z=1/Math.min((mobNarrow()?VW:VW-360)/VWW,VH/VWH);}});
+ if(workplace)action('工坊','Workplace',()=>{CVIL.followResident=null;CVIL.fx=workplace.x;CVIL.fy=workplace.y-60;CVIL.z=1/Math.min((mobNarrow()?VW:VW-360)/VWW,VH/VWH);});
+ card.append(row);campEl().append(card);
+}
+function townChronicle(){
+ const sc=townScene(),roll=townResidentRoll(sc.id);$('villageResidentCard')?.remove();const card=document.createElement('div');card.id='villageResidentCard';card.className='panel';card.style.cssText='left:14px;bottom:18px;width:min(340px,calc(100vw - 52px));max-height:55vh;overflow:auto;pointer-events:auto;padding:15px';
+ const close=btn('關閉','Close',()=>card.remove());close.style.float='right';card.append(close);const title=document.createElement('h3');title.textContent=tName(sc.id);card.append(title);
+ for(const e of roll.events.slice(-7).reverse()){const d=document.createElement('div');d.style.cssText='margin:9px 0;font-size:13px';let label;if(e.kind==='population')label=(e.delta>0?'+':'')+e.delta+' '+Tz('村民','residents');else{const key=e.key.replace('biz:','');label=e.key.startsWith('biz:')?Tz(...DY_BUSINESSES[key].name):DEV[key]?Tz(DEV[key].zh,DEV[key].en):key;label+=' · Lv'+e.level;}d.textContent=dateTxt(e.month)+' · '+label;card.append(d);}
+ const people=document.createElement('details'),summary=document.createElement('summary');summary.textContent=Tz('村民','Residents')+' · '+sc.people.length;people.append(summary);for(const p of sc.people.filter(p=>p.resident)){const b=btn(p.resident.name[0],p.resident.name[1],()=>townResidentPanel(p.resident));b.style.cssText='margin:4px;font-size:12px';people.append(b);}card.append(people);if(!roll.events.length){const d=document.createElement('div');d.textContent=Tz('村史始於','Our story began in ')+dateTxt(roll.firstMonth);card.append(d);}campEl().append(card);
+}
+{const old=cvilUI;cvilUI=function(){const r=old(...arguments);if(songBuildingAllowed()){const p=campEl().querySelector('.panel');if(p&&!p.querySelector('[data-village-chronicle]')){const b=btn('村史','Village chronicle',townChronicle);b.dataset.villageChronicle='1';p.append(b);}}return r;};}
+let residentPointer=null;
+cv.addEventListener('pointerdown',e=>{if(MODE==='cvil')residentPointer={x:e.clientX,y:e.clientY};});
+cv.addEventListener('pointerup',e=>{if(MODE!=='cvil'||!residentPointer||typeof __vw!=='undefined')return;const start=residentPointer;residentPointer=null;if(Math.hypot(e.clientX-start.x,e.clientY-start.y)>6){CVIL.followResident=null;return;}const x=(e.clientX-CVIL._ox)/CVIL._sc,y=(e.clientY-CVIL._oy)/CVIL._sc,sc=townScene(),p=sc.people.filter(p=>p.resident&&Math.abs(p.x-x)<16&&y>p.y-35&&y<p.y+8).sort((a,b)=>b.y-a.y)[0];if(p)townResidentPanel(p.resident);});
+{const old=townFrame;townFrame=function(dt){if(CVIL.followResident){const p=townScene().people.find(p=>p.resident?.id===CVIL.followResident);if(p){CVIL.fx=p.x;CVIL.fy=p.y-28;}else CVIL.followResident=null;}return old(...arguments);};cvil8Frame=townFrame;}
+
+__townScene.frame=townFrame;
+
+function townDrawMemorialNames(g,r){const names=[...Object.entries(CG.service?.people||{}).filter(([,p])=>p.status==='dead').map(([key])=>serviceName(key)),...(CG.service?.fallenCompanies||[]).map(c=>c.name)];g.save();g.font='9px "Noto Serif SC",serif';g.fillStyle='#d2cbb5';g.textAlign='center';names.slice(0,9).forEach((name,i)=>g.fillText(name,r.x+(i%3-1)*44,r.y-46+Math.floor(i/3)*12,42));g.restore();}
+function townResidentRemember(){if(!CG?.villageResidents)return;for(const [id,roll]of Object.entries(CG.villageResidents)){const s=CG.T[id];if(!s)continue;const levels={...s.bld,...Object.fromEntries(Object.entries(s.businesses||{}).map(([k,b])=>['biz:'+k,b.level||0]))};if(roll.levels)for(const [key,level]of Object.entries(levels))if(level>(roll.levels[key]||0))townResidentEvent(roll,{kind:'building',key,level,token:key+':'+level});roll.levels=levels;}}
+{const old=saveGame;saveGame=function(){townResidentRemember();return old(...arguments);};}
+{const old=showCamp;showCamp=function(){if(MODE==='cvil'&&CG){townResidentRemember();saveGame();}CVIL.followResident=null;$('villageResidentCard')?.remove();return old(...arguments);};}
+
+// One compact drawer leaves the village visible on narrow screens.
+{const style=document.createElement('style');style.textContent='body.songVillageOpen #campUI>.villageDrawerToggle{display:none!important}@media(max-width:700px){body.songVillageOpen #campUI>.villageSidebar{display:none}body.songVillageOpen.villageDrawerOpen #campUI>.villageSidebar{display:block;top:128px!important;max-width:calc(100vw - 28px)}body.songVillageOpen #campUI>.villageDrawerToggle{display:block!important;position:absolute;left:14px;top:90px;pointer-events:auto}}';document.head.append(style);}
+{const old=cvilUI;cvilUI=function(){const r=old(...arguments),ui=campEl();$('cvMobBtn')?.remove();ui.querySelector(':scope>.panel')?.classList.add('villageSidebar');if(!ui.querySelector('.villageDrawerToggle')){const b=document.createElement('button');b.type='button';b.className='btn villageDrawerToggle';b.textContent=Tz('村務','Village');b.setAttribute('aria-expanded',String(document.body.classList.contains('villageDrawerOpen')));b.onclick=()=>{const open=document.body.classList.toggle('villageDrawerOpen');document.body.classList.toggle('cv-open',open);const panel=ui.querySelector('.villageSidebar');if(panel)panel.style.display=open?'':'none';b.setAttribute('aria-expanded',String(open));};ui.append(b);}return r;};}
+{const old=showCVil;showCVil=function(){document.body.classList.add('songVillageOpen');return old(...arguments);};}
+{const old=showCamp;showCamp=function(){document.body.classList.remove('songVillageOpen','villageDrawerOpen');return old(...arguments);};}
+
+if(typeof TOWN!=='undefined')TOWN.scene=null;
